@@ -18,7 +18,7 @@ function InfoTabs({ tabs }: { tabs: Tab[] }) {
     refs.current[n]?.focus();
   };
   return (
-    <div className="mt-8">
+    <div className="mt-12">
       <div
         role="tablist"
         aria-label="Product information"
@@ -76,6 +76,7 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
   const [added, setAdded] = useState(false);
   const wished = isWished(p.slug);
   const colour = p.variants[variant] ?? p.variants[0];
+  const photoCredit = p.images.find((i) => i.credit && i.credit !== "Kanchiberry")?.credit;
   // Phones: show a sticky buy bar only while the main Add to Bag row is off screen.
   const buyRow = useRef<HTMLDivElement>(null);
   const [showBar, setShowBar] = useState(false);
@@ -98,12 +99,12 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
       <p className="eyebrow">
         {p.weaveName} · {p.collection}
       </p>
-      <h1 id="pdp-title" className="serif mt-4 text-[clamp(3rem,6vw,5rem)] font-light leading-[0.92]">
+      <h1 id="pdp-title" className="serif mt-3 text-[clamp(3rem,6vw,5rem)] font-light leading-[0.92]">
         {p.name}
       </h1>
-      <p className="mt-4 max-w-[52ch] text-[16px] leading-relaxed text-ink-soft">{p.description}</p>
+      <p className="mt-5 max-w-[52ch] text-[16px] leading-relaxed text-ink-soft">{p.description}</p>
       {p.variants.length > 1 && (
-        <fieldset className="mt-6">
+        <fieldset className="mt-10">
           <legend className="text-[13px] text-ink-soft">
             Colour: <span className="ml-1 inline-flex items-center rounded-md border border-sand px-2 py-0.5 text-[13px] text-ink" aria-live="polite">{colour.name}</span>
           </legend>
@@ -112,7 +113,7 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
               <label key={v.name} className="cursor-pointer" title={v.name}>
                 <input type="radio" name={`colour-${p.slug}`} className="peer sr-only" checked={variant === i} onChange={() => onVariant?.(i)} />
                 <span
-                  className="block size-11 rounded-full ring-1 ring-sand ring-offset-2 ring-offset-white transition peer-checked:ring-2 peer-checked:ring-ink peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-berry hover:ring-ink/50"
+                  className="block size-11 rounded-full ring-1 ring-sand ring-offset-2 ring-offset-paper transition peer-checked:ring-2 peer-checked:ring-ink peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-berry hover:ring-ink/50"
                   style={
                     i === 0 && p.fabric
                       ? { backgroundImage: `url("${p.fabric.body}")`, backgroundSize: "cover", backgroundPosition: "center" }
@@ -125,7 +126,7 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
           </div>
         </fieldset>
       )}
-      <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-3">
+      <div className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-3">
         <p className="flex items-baseline gap-3 leading-none">
           <span className="text-[30px]">{formatPrice(p.price)}</span>
           {p.compareAtPrice && p.compareAtPrice > p.price && (
@@ -142,7 +143,7 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
           </span>
         )}
       </div>
-      <div ref={buyRow} className="mt-8 flex flex-wrap items-stretch gap-3">
+      <div ref={buyRow} className="mt-5 flex flex-wrap items-stretch gap-3">
         <button
           type="button"
           className="btn btn-primary min-w-0 flex-1 basis-40"
@@ -200,6 +201,8 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
                   <dd className="text-ink">Sample listing, not available for purchase</dd>
                 </dl>
                 <p className="mt-4 text-[13px]">Product code {p.id.toUpperCase()}. Measurements are illustrative.</p>
+                {/* Openly licensed photos must stay credited; this is the only place it shows. */}
+                {photoCredit && <p className="mt-2 text-[13px]">Photos: {photoCredit}.</p>}
               </>
             ),
           },

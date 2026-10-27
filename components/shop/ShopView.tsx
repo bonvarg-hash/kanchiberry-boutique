@@ -8,6 +8,7 @@ import { products, searchProducts } from "@/lib/products";
 import { weaves } from "@/lib/weaves";
 import { ProductCard } from "@/components/product/ProductCard";
 import { CollectionFilters, PRICE_BANDS, type FilterKey } from "./CollectionFilters";
+import { SortMenu } from "./SortMenu";
 
 const SORTS = {
   featured: "Curated order",
@@ -81,8 +82,35 @@ export function ShopView() {
 
   return (
     <>
-      <header className="wrap pb-10 pt-14 lg:pt-20">
-        <p className="eyebrow">{singleWeave ? singleWeave.region : "The collection"}</p>
+      <header className="wrap pb-10 pt-8">
+        <nav aria-label="Breadcrumb" className="text-[14px] text-ink-soft">
+          <ol className="flex flex-wrap gap-2">
+            <li>
+              <Link href="/" className="hover:text-ink">
+                Home
+              </Link>{" "}
+              /
+            </li>
+            {singleWeave || q ? (
+              <>
+                <li>
+                  <Link href="/shop" className="hover:text-ink">
+                    Shop
+                  </Link>{" "}
+                  /
+                </li>
+                <li aria-current="page" className="text-ink">
+                  {singleWeave ? singleWeave.name : "Search"}
+                </li>
+              </>
+            ) : (
+              <li aria-current="page" className="text-ink">
+                Shop All Sarees
+              </li>
+            )}
+          </ol>
+        </nav>
+        <p className="eyebrow mt-10 lg:mt-14">{singleWeave ? singleWeave.region : "The collection"}</p>
         <h1 className="serif mt-4 text-[clamp(3rem,8vw,7rem)] font-light leading-[0.9]">{singleWeave ? singleWeave.name : q ? "Search" : "Shop All Sarees"}</h1>
         <p className="lede mt-6 max-w-[52ch]!">
           {singleWeave
@@ -145,16 +173,7 @@ export function ShopView() {
             <p className="order-last w-full text-[14px] sm:order-none sm:w-auto" aria-live="polite">
               {results.length} {results.length === 1 ? "saree" : "sarees"}
             </p>
-            <label className="flex items-center gap-3 text-[13px]">
-              <span className="text-ink-soft">Sort</span>
-              <select value={sort} onChange={(e) => update({ sort: e.target.value === "featured" ? null : e.target.value })} className="field min-h-11! w-auto py-0 text-[13px]">
-                {Object.entries(SORTS).map(([k, label]) => (
-                  <option key={k} value={k}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <SortMenu value={sort} options={SORTS} onChange={(k) => update({ sort: k === "featured" ? null : k })} />
           </div>
 
           {chips.length > 0 && (

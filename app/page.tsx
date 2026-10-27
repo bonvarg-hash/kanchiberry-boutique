@@ -10,44 +10,48 @@ import { SignatureSpotlight } from "@/components/home/SignatureSpotlight";
 import { CraftStats } from "@/components/home/CraftStats";
 import { ShopTheCollection } from "@/components/home/ShopTheCollection";
 import { WeaveMarquee } from "@/components/home/WeaveMarquee";
+import { FestiveCountdown } from "@/components/home/FestiveCountdown";
+import { ViewTransition } from "react";
 import { featuredProducts, products } from "@/lib/products";
 
 export default function HomePage() {
   return (
-    <>
-      <HeroSection />
-      <WeaveMarquee />
-      <section id="curated" aria-labelledby="curated-title" className="scroll-mt-16 bg-mist pb-12 pt-12 md:pb-16 md:pt-16 lg:pb-20 lg:pt-20">
-        <div className="wrap mb-6 grid gap-5 md:grid-cols-2 md:items-end">
-          <div>
-            <RailEyebrow initial={featuredProducts().length} />
-            <h2 id="curated-title" className="section-title text-[#625B50]">
-              <em className="text-[#190E14]">Curated Picks</em>
-              <br />
-              of the Week
-            </h2>
-            <p className="lede mt-3 md:hidden">Discover the weave. Find your drape.</p>
-          </div>
-          <div className="flex flex-col items-start gap-5 md:items-end md:justify-self-end md:text-right">
+    // Stays put underneath while the shop page rises over it (see app/shop/page.tsx).
+    <ViewTransition exit={{ "page-rise": "page-under", default: "none" }} enter="none" default="none">
+      <div>
+        <HeroSection />
+        <WeaveMarquee />
+        <section id="curated" aria-labelledby="curated-title" className="scroll-mt-16 bg-mist pb-12 pt-12 md:pb-16 md:pt-16 lg:pb-20 lg:pt-20">
+          <div className="wrap mb-6 flex flex-col items-center gap-5 text-center">
+            <div>
+              <RailEyebrow initial={featuredProducts().length} />
+              <h2 id="curated-title" className="section-title text-[#87264D]">
+                <em className="shimmer text-[#4E3F47]">Curated Picks</em>
+                <br />
+                of the Week
+              </h2>
+              <p className="lede mx-auto mt-3 md:hidden">Discover the weave. Find your drape.</p>
+            </div>
             <Link href="/shop" className="text-link">
               Shop the Collection <span aria-hidden>→</span>
             </Link>
           </div>
-        </div>
-        {/* Hover rail from tablet up; swipe-and-tap carousel on phones */}
-        <div className="hidden md:block">
-          <CuratedSareeGallery products={featuredProducts()} />
-        </div>
-        <div className="md:hidden">
-          <MobileSareeCarousel products={featuredProducts()} />
-        </div>
-      </section>
-      <SignatureSpotlight />
-      <ShopTheCollection products={products.filter((p) => p.images[0]?.credit === "Kanchiberry")} />
-      <CustomerTestimonials />
-      <CraftStats />
-      <CraftsmanshipSection />
-      <NewsletterSignup />
-    </>
+          {/* Hover rail from tablet up; swipe-and-tap carousel on phones */}
+          <div className="hidden md:block">
+            <CuratedSareeGallery products={featuredProducts()} />
+          </div>
+          <div className="md:hidden">
+            <MobileSareeCarousel products={featuredProducts()} />
+          </div>
+        </section>
+        <ShopTheCollection products={products.filter((p) => p.images[0]?.credit === "Kanchiberry")} />
+        <FestiveCountdown />
+        <SignatureSpotlight />
+        <CustomerTestimonials />
+        <CraftStats />
+        <CraftsmanshipSection />
+        <NewsletterSignup />
+      </div>
+    </ViewTransition>
   );
 }

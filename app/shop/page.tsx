@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
+import { Suspense, ViewTransition } from "react";
 import { ShopView } from "@/components/shop/ShopView";
 
 export const metadata: Metadata = {
@@ -9,9 +9,14 @@ export const metadata: Metadata = {
 };
 
 export default function ShopPage() {
+  // Opened from the hero CTA, the page rises from the bottom over the homepage.
   return (
-    <Suspense fallback={<div className="wrap min-h-[60vh] py-20" />}>
-      <ShopView />
-    </Suspense>
+    <ViewTransition enter={{ "page-rise": "page-rise", default: "none" }} exit="none" default="none">
+      <div className="min-h-screen bg-paper">
+        <Suspense fallback={<div className="wrap min-h-[60vh] py-20" />}>
+          <ShopView />
+        </Suspense>
+      </div>
+    </ViewTransition>
   );
 }

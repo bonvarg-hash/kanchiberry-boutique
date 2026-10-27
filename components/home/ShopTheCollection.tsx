@@ -63,23 +63,25 @@ function Card({ p }: { p: Product }) {
 
 export function ShopTheCollection({ products }: { products: Product[] }) {
   return (
-    <section aria-labelledby="shop-title" className="wrap py-24 text-center lg:py-32">
-      <h2 id="shop-title" className="section-title text-[#625B50]">
-        Find Your <em className="text-[#190E14]">Perfect Drape</em>
-        <br />
-        Shop the Collection
-      </h2>
-      <p className="lede mx-auto mt-5 max-w-[56ch]!">Explore our edit of silk, brocade and handloom sarees, chosen for every kind of celebration.</p>
-      <div className="mt-14 grid gap-6 text-left sm:grid-cols-2 lg:grid-cols-3">
-        {products.map((p, i) => (
-          <Reveal key={p.slug} delay={i * 120} className="h-full">
-            <Card p={p} />
-          </Reveal>
-        ))}
+    <section aria-labelledby="shop-title">
+      <div className="wrap py-24 text-center lg:py-32">
+        <h2 id="shop-title" className="section-title text-[#87264D]">
+          Find Your <em className="shimmer text-[#4E3F47]">Perfect Drape</em>
+          <br />
+          Shop the Collection
+        </h2>
+        <p className="lede mx-auto mt-5 max-w-[56ch]!">Explore our edit of silk, brocade and handloom sarees, chosen for every kind of celebration.</p>
+        <div className="mt-14 grid gap-6 text-left sm:grid-cols-2 lg:grid-cols-3">
+          {products.map((p, i) => (
+            <Reveal key={p.slug} delay={i * 120} className="h-full">
+              <Card p={p} />
+            </Reveal>
+          ))}
+        </div>
+        <Link href="/shop" className="text-link mt-12 text-[18px]">
+          View all sarees <span aria-hidden>→</span>
+        </Link>
       </div>
-      <Link href="/shop" className="text-link mt-12 text-[18px]">
-        View all sarees <span aria-hidden>→</span>
-      </Link>
     </section>
   );
 }

@@ -10,9 +10,9 @@
   --color-berry: #190e14;
   --color-berry-deep: #190e14;
   --color-sand: #dacbb6; /* hairlines and borders */
-  /* Secondary #DBD5CB: complementary bands, cards and image grounds. */
-  --color-sand-soft: #DBD5CB;
-  --color-mist: #DBD5CB; /* band behind the rail and the testimonials */
+  /* Secondary #E6DFD2: complementary bands, cards and image grounds. */
+  --color-sand-soft: #E6DFD2;
+  --color-mist: #E6DFD2; /* band behind the rail and the testimonials */
   --color-sage: #8c7867;
   --color-danger: #9b2f3c;
   --font-serif: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
@@ -104,6 +104,152 @@ img {
   font-size: calc(clamp(2.1rem, 4.4vw, 3.8rem) + 4px);
   line-height: 1.08;
   letter-spacing: -0.015em;
+}
+/* Italic words in section titles: a soft light sweep across the text. The
+   padding (cancelled by the margins) gives italic overhangs like the "f" room,
+   since background-clip:text clips the ink to the element's box. */
+.shimmer {
+  padding: 0.18em 0.14em 0.24em;
+  margin: -0.18em -0.14em -0.24em;
+  background: linear-gradient(110deg, currentColor 40%, #c9a77c 50%, currentColor 60%) 100% 0 / 250% 100% no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  animation: shimmer 4.5s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  60%,
+  100% {
+    background-position: 0% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shimmer {
+    animation: none;
+    background: none;
+    -webkit-text-fill-color: currentColor;
+  }
+}
+/* Festive countdown: two photo columns drifting up and down in a loop. */
+/* Side by side, the columns fill the section from top edge to bottom edge;
+   size containment stops their tall content from setting the height. */
+@media (min-width: 1024px) {
+  .photo-loop {
+    contain: size;
+    min-height: 760px;
+  }
+}
+.photo-loop {
+  overflow: hidden;
+}
+.photo-loop-grid {
+  position: absolute;
+  inset: 0;
+  align-items: start;
+}
+.photo-loop-col {
+  animation: photo-loop-up 38s linear infinite;
+}
+.photo-loop-col.is-down {
+  animation-name: photo-loop-down;
+}
+.photo-loop:hover .photo-loop-col,
+.photo-loop:focus-within .photo-loop-col {
+  animation-play-state: paused;
+}
+/* Each photo opens its saree: a slow zoom and a name bar rising on hover. */
+.loop-tile {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+.loop-tile img {
+  transition: transform 1.2s var(--ease-cloth);
+}
+.loop-tile-cap {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 28px 14px 12px;
+  background: linear-gradient(transparent, rgb(25 14 20 / 0.82));
+  color: #eee9e0;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 0.35s,
+    transform 0.5s var(--ease-cloth);
+}
+.loop-tile:hover img,
+.loop-tile:focus-visible img {
+  transform: scale(1.06);
+}
+.loop-tile:hover .loop-tile-cap,
+.loop-tile:focus-visible .loop-tile-cap {
+  opacity: 1;
+  transform: none;
+}
+.loop-tile:focus-visible {
+  outline: 2px solid #eee9e0;
+  outline-offset: -4px;
+}
+@keyframes photo-loop-up {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-33.3333%);
+  }
+}
+@keyframes photo-loop-down {
+  from {
+    transform: translateY(-33.3333%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .photo-loop-col,
+  .photo-loop-col.is-down {
+    animation: none;
+  }
+}
+/* Saree editorial band: berry panel behind the cut-out, and its outline pill. */
+.editorial-panel {
+  background:
+    radial-gradient(120% 70% at 50% 100%, rgb(25 14 20 / 0.55), transparent 70%),
+    linear-gradient(180deg, #a13a63 0%, #87264d 55%, #5b1c38 100%);
+}
+.editorial-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 56px;
+  padding: 0 30px;
+  border: 1.5px solid #190e14;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #190e14;
+  transition:
+    background 0.3s,
+    color 0.3s,
+    gap 0.3s var(--ease-cloth);
+}
+.editorial-pill:hover {
+  background: #190e14;
+  color: var(--color-paper);
+  gap: 20px;
 }
 .lede {
   font-size: 16px;
@@ -1011,6 +1157,200 @@ img {
 }
 
 /* Gentle pulse on the hero CTA; pauses while hovered or focused */
+/* Page rise: the shop page slides up from the bottom over the homepage, which
+   holds still underneath. Header and footer stay put. */
+::view-transition-group(.page-rise) {
+  z-index: 2;
+}
+::view-transition-new(.page-rise) {
+  animation: page-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+::view-transition-old(.page-under) {
+  animation: page-under 0.8s ease both;
+}
+@keyframes page-rise {
+  from {
+    transform: translateY(100vh);
+  }
+}
+@keyframes page-under {
+  to {
+    opacity: 1;
+    filter: brightness(0.92);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-new(.page-rise),
+  ::view-transition-old(.page-under) {
+    animation: none;
+  }
+}
+/* Value keywords on review cards: one line; on narrow cards it scrolls sideways
+   and fades out at the right edge. */
+@media (max-width: 639px) {
+  .review-tags {
+    mask-image: linear-gradient(90deg, #000 85%, transparent);
+    padding-right: 24px;
+  }
+}
+.review-tag {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  white-space: nowrap;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--color-sand-soft);
+  color: var(--color-ink);
+  font-size: 12px;
+  letter-spacing: 0.01em;
+}
+/* Filled review stars: a glint of light passes along them, one after another. */
+.star-shimmer {
+  animation: star-glint 3.6s ease-in-out infinite;
+  animation-delay: calc(var(--i, 1) * 0.12s);
+}
+@keyframes star-glint {
+  0%,
+  70%,
+  100% {
+    color: #c69a3c;
+    filter: none;
+  }
+  80% {
+    color: #f4d98b;
+    filter: drop-shadow(0 0 3px rgb(244 217 139 / 0.8));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .star-shimmer {
+    animation: none;
+  }
+}
+/* Shop sort menu: a quiet bordered button and a paper panel of options. */
+.sort-menu {
+  position: relative;
+}
+.sort-menu-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 14px 0 16px;
+  border: 1px solid var(--color-sand);
+  background: var(--color-paper);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  transition: border-color 0.2s;
+}
+.sort-menu-button:hover,
+.sort-menu-button[aria-expanded="true"] {
+  border-color: var(--color-ink);
+}
+.sort-menu-button:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+.sort-menu-chevron {
+  margin-left: 4px;
+  transition: transform 0.3s var(--ease-cloth);
+}
+.sort-menu-button[aria-expanded="true"] .sort-menu-chevron {
+  transform: rotate(180deg);
+}
+.sort-menu-list {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 20;
+  min-width: 100%;
+  padding: 6px;
+  border: 1px solid var(--color-sand);
+  background: var(--color-paper);
+  box-shadow: 0 18px 40px -20px rgb(25 14 20 / 0.35);
+  animation: sort-menu-in 0.22s var(--ease-cloth);
+}
+.sort-menu-list:focus {
+  outline: none;
+}
+.sort-menu-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 11px 12px;
+  font-size: 14px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.sort-menu-option[data-active] {
+  background: var(--color-sand-soft);
+}
+.sort-menu-option[aria-selected="true"] {
+  font-weight: 500;
+}
+@keyframes sort-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+/* Hero CTA: outline pill, a glow under the pointer, and an arrow that faces the cursor. */
+.cursor-cta {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 28px;
+  padding: 8px 8px 8px 30px;
+  border: 1.5px solid #190e14;
+  border-radius: 999px;
+  background: transparent;
+  color: #190e14;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+  overflow: hidden;
+  transition: transform 0.4s var(--ease-cloth);
+}
+.cursor-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(160px circle at var(--cta-x, 50%) var(--cta-y, 50%), rgb(25 14 20 / 0.07), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.cursor-cta:hover::before,
+.cursor-cta:focus-visible::before {
+  opacity: 1;
+}
+.cursor-cta:hover {
+  transform: scale(1.02);
+}
+.cursor-cta:focus-visible {
+  outline: 2px solid #190e14;
+  outline-offset: 3px;
+}
+.cursor-cta-dot {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #87264d;
+  color: #eee9e0;
+  transition: background 0.3s;
+}
+.cursor-cta-dot svg {
+  transform: rotate(var(--cta-angle, 0rad));
+  transition: transform 0.25s ease-out;
+}
+.cursor-cta:hover .cursor-cta-dot {
+  background: #a13a63;
+}
 .cta-pulse {
   transform-origin: left center;
   animation: cta-pulse 2.8s ease-in-out 1.6s infinite;

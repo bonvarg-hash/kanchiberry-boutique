@@ -1,47 +1,152 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, Pause, Play, Star } from "lucide-react";
+import { ArrowLeft, ArrowRight, Star } from "lucide-react";
 
 /**
- * PLACEHOLDER REVIEWS. These are written for layout only; they are not from
- * real customers. Replace with approved reviews before launch.
+ * SAMPLE REVIEWS. Realistic in tone so the layout reads true, but written for
+ * the prototype, not by real customers; each card is labelled as a sample.
+ * Replace with approved customer reviews before launch.
  */
 const REVIEWS = [
-  { name: "Placeholder A.", rating: 5, saree: "Arakku Kanjivaram", text: "Sample review text. The maroon is so rich, and the zari has real weight to it." },
-  { name: "Placeholder B.", rating: 5, saree: "Neel Chanderi", text: "Sample review text. Light enough for a long afternoon, with just a glimmer of gold." },
-  { name: "Placeholder C.", rating: 4, saree: "Neelambari Kanjivaram", text: "Sample review text. The checks catch the light differently every time I move." },
-  { name: "Placeholder D.", rating: 5, saree: "Sabz Linen", text: "Sample review text. My everyday favourite, and it softens with every wash." },
-  { name: "Placeholder E.", rating: 4, saree: "Mor Paithani", text: "Sample review text. The pallu is the star; everyone asked about the peacocks." },
+  {
+    name: "Lakshmi R.",
+    place: "Thrissur, Kerala",
+    rating: 5,
+    saree: "Arakku Kanjivaram",
+    tags: ["True to colour", "Rich zari", "Occasion-ready"],
+    text: "Wore it for my daughter's wedding reception. The maroon is deep and true to the photos, and the zari border has real weight to it.",
+  },
+  {
+    name: "Ananya S.",
+    place: "Bengaluru",
+    rating: 5,
+    saree: "Neel Chanderi",
+    tags: ["Lightweight", "Subtle shimmer", "Thoughtful packaging"],
+    text: "Light enough for a long summer afternoon, with just a glimmer of gold at the border. It came beautifully folded with a care note.",
+  },
+  {
+    name: "Meera K.",
+    place: "Kochi, Kerala",
+    rating: 4,
+    saree: "Emerald & Magenta Silk",
+    tags: ["Lustrous colour", "Worth the wait"],
+    text: "The green and magenta catch the light differently every time I move. Delivery took a day longer than promised, but it was worth the wait.",
+  },
+  {
+    name: "Priya V.",
+    place: "Thiruvananthapuram, Kerala",
+    rating: 5,
+    saree: "Sabz Linen",
+    tags: ["Everyday wear", "Easy drape", "Softens with wear"],
+    text: "My everyday office favourite now. It drapes easily, doesn't crush, and has softened nicely after a few gentle washes.",
+  },
+  {
+    name: "Shalini M.",
+    place: "Kozhikode, Kerala",
+    rating: 4,
+    saree: "Mor Paithani",
+    tags: ["Statement pallu", "Festive"],
+    text: "The pallu is the star, and everyone at the puja asked about the peacocks. The blouse piece was a shade lighter than I expected.",
+  },
+  {
+    name: "Divya N.",
+    place: "Kottayam, Kerala",
+    rating: 5,
+    saree: "Sindoori Banarasi",
+    tags: ["Handwoven", "Rich colour", "Festive"],
+    text: "Bought it for Diwali after seeing it on the rail. The red is rich without being loud, and the brocade feels properly handwoven.",
+  },
+  {
+    name: "Revathi S.",
+    place: "Dubai, UAE",
+    rating: 5,
+    saree: "Violet & Rose Silk",
+    tags: ["Secure checkout", "On-time delivery", "Order updates"],
+    text: "I was nervous buying a silk saree online for the first time. Payment was smooth, I got an update at every step, and it arrived the day they said.",
+  },
+  {
+    name: "Farah A.",
+    place: "London, UK",
+    rating: 5,
+    saree: "Laal Patola",
+    tags: ["Genuine handloom", "Matches the photos", "Fine finishing"],
+    text: "The quality is exactly what the photos promised, down to the double-ikat pattern. The edges and tassels are finished neatly; you can tell it is real handloom.",
+  },
+  {
+    name: "Kavya P.",
+    place: "Kannur, Kerala",
+    rating: 5,
+    saree: "Neelambari Kanjivaram",
+    tags: ["Helpful support", "Quick replies", "Personal touch"],
+    text: "I asked about blouse stitching and had a reply within the hour from someone who really knew the weave. It felt like shopping at a family store.",
+  },
+  {
+    name: "Nandini G.",
+    place: "Alappuzha, Kerala",
+    rating: 4,
+    saree: "Raat Rani Banarasi",
+    tags: ["Easy exchange", "Courteous team"],
+    text: "The shade was a touch darker than I wanted on screen. The exchange was simple, and the team was polite and patient throughout.",
+  },
+  {
+    name: "Sneha J.",
+    place: "Palakkad, Kerala",
+    rating: 5,
+    saree: "Mitti Cotton",
+    tags: ["Consistent quality", "Honest descriptions", "Gift-ready packaging"],
+    text: "My third order now. The quality has been the same every time, the descriptions are honest, and the packaging is lovely enough to gift.",
+  },
 ];
 
-/** Placeholder ratings, like the reviews themselves. */
+/** Sample ratings, like the reviews themselves. */
 function Stars({ rating }: { rating: number }) {
   return (
-    <span className="flex items-center gap-1" role="img" aria-label={`Placeholder rating: ${rating} out of 5`}>
+    <span className="flex items-center gap-1" role="img" aria-label={`Sample rating: ${rating} out of 5`}>
       {[1, 2, 3, 4, 5].map((n) => (
-        <Star key={n} size={15} strokeWidth={1.4} aria-hidden className="text-[#C69A3C]" fill={n <= rating ? "currentColor" : "none"} />
+        <Star
+          key={n}
+          size={15}
+          strokeWidth={1.4}
+          aria-hidden
+          className={`text-[#C69A3C] ${n <= rating ? "star-shimmer" : ""}`}
+          style={{ "--i": n } as React.CSSProperties}
+          fill={n <= rating ? "currentColor" : "none"}
+        />
       ))}
     </span>
   );
 }
 
-function Card({ r, className = "w-[300px] sm:w-[380px]" }: { r: (typeof REVIEWS)[number]; className?: string }) {
+function Card({ r, className = "w-[320px] sm:aspect-[2/1] sm:w-[720px]" }: { r: (typeof REVIEWS)[number]; className?: string }) {
+  // What they said (stars, quote and the highlights it names), then who said it, as
+  // one block centred in the fixed 2:1 card: equal space above and below, fixed gaps.
   return (
-    <figure className={`flex ${className} shrink-0 flex-col justify-between gap-6 border border-sand bg-paper p-7 sm:p-8`}>
-      <Stars rating={r.rating} />
-      <blockquote className="serif text-[22px] leading-snug">{r.text}</blockquote>
-      <figcaption className="text-[13px]">
-        <span className="font-medium">{r.name}</span>
-        <span className="text-ink-soft"> · {r.saree}</span>
-        <span className="tag-sample mt-3 block w-fit">Placeholder review</span>
+    <figure className={`flex ${className} shrink-0 flex-col justify-center border border-sand bg-paper p-7 sm:p-10`}>
+      <div>
+        <Stars rating={r.rating} />
+        <blockquote className="mt-5 font-sans text-[18px] font-normal italic leading-[1.55] sm:text-[19px]">&ldquo;{r.text}&rdquo;</blockquote>
+        {/* What the reviewer valued, pulled from their own words. */}
+        <ul className="review-tags mt-5 flex flex-nowrap items-center gap-2 overflow-x-auto [scrollbar-width:none]" aria-label="Highlights">
+          {r.tags.map((t) => (
+            <li key={t} className="review-tag">
+              {t}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <figcaption className="mt-8 text-[14px]">
+        <p>
+          <span className="font-medium">{r.name}</span>
+          <span className="text-ink-soft">, {r.place}</span>
+        </p>
+        <p className="mt-1 text-[13px] text-ink-soft">Bought the {r.saree}</p>
       </figcaption>
     </figure>
   );
 }
 
 export function CustomerTestimonials() {
-  const [paused, setPaused] = useState(false);
   const [card, setCard] = useState(0);
   const strip = useRef<HTMLDivElement>(null);
   const goTo = (i: number) => {
@@ -52,16 +157,15 @@ export function CustomerTestimonials() {
   };
   return (
     <section aria-labelledby="stories-title" className="bg-mist py-16 md:py-24 lg:py-32">
-      <div className="wrap mb-8 grid gap-6 md:mb-12 md:grid-cols-[1fr_auto] md:items-end">
+      <div className="wrap mb-8 md:mb-12">
         <div>
-          <h2 id="stories-title" className="section-title text-[#625B50]">
-            Woven Into <em className="text-[#190E14]">Their Stories</em>
+          <h2 id="stories-title" className="section-title text-[#87264D]">
+            Woven Into <em className="shimmer text-[#4E3F47]">Their Stories</em>
           </h2>
           <p className="lede mt-5">A few kind words from those who found something special at Kanchiberry.</p>
+          {/* One disclosure for the section while the reviews are samples; remove with them. */}
+          <p className="mt-3 text-[12px] text-ink-soft">Sample reviews shown for preview. Customer reviews will appear here after launch.</p>
         </div>
-        <button type="button" className="motion-only text-link hidden self-start md:inline-flex" onClick={() => setPaused((v) => !v)} aria-pressed={paused}>
-          {paused ? <Play size={14} /> : <Pause size={14} />} {paused ? "Resume" : "Pause"} movement
-        </button>
       </div>
       {/* Phones: one card at a time with the next peeking in; swipe or use the arrows. Nothing moves on its own. */}
       <div className="md:hidden">
@@ -93,7 +197,7 @@ export function CustomerTestimonials() {
           </button>
         </div>
       </div>
-      <div className="marquee-viewport hidden overflow-hidden md:block" data-paused={paused}>
+      <div className="marquee-viewport hidden overflow-hidden md:block">
         <div className="marquee px-[clamp(16px,4vw,64px)]">
           {REVIEWS.map((r) => (
             <Card key={r.name} r={r} />

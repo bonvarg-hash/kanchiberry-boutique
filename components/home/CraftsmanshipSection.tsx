@@ -34,10 +34,10 @@ export function CraftsmanshipSection() {
       </figure>
       <div className="order-1 md:order-none md:col-span-5 md:self-end md:pl-6">
         <p className="eyebrow">The art behind the drape</p>
-        <h2 id="craft-title" className="section-title mt-5 text-[#625B50]">
+        <h2 id="craft-title" className="section-title mt-5 text-[#87264D]">
           Not Just Worn.
           <br />
-          <em className="text-[#190E14]">Cherished.</em>
+          <em className="shimmer text-[#4E3F47]">Cherished.</em>
         </h2>
       </div>
       <div className="order-3 md:order-none md:col-span-5 md:self-start md:pl-6">

@@ -7,8 +7,8 @@ export function CraftStats() {
   const editions = new Set(products.map((p) => p.collection)).size;
   return (
     <section aria-labelledby="stats-title" className="wrap overflow-x-clip py-16 text-center md:py-24 lg:py-32">
-      <h2 id="stats-title" className="section-title text-[#625B50]">
-        Woven <em className="text-[#190E14]">With Care</em>, One Thread at a Time
+      <h2 id="stats-title" className="section-title text-[#87264D]">
+        Woven <em className="shimmer text-[#4E3F47]">With Care</em>, One Thread at a Time
       </h2>
       <p className="lede mx-auto mt-5 max-w-[56ch]!">
         A boutique of weaves from across India, each chosen for its colour, its border and the way it falls.

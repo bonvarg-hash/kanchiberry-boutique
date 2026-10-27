@@ -20,12 +20,6 @@ export function ProductGallery({ images, name, filter }: { images: ProductImage[
     swipe.current?.scrollTo({ left: swipe.current.clientWidth * i, behavior: "smooth" });
   };
 
-  const caption = (
-    <p className="mt-3 text-[11px] tracking-[0.06em] text-ink-soft">
-      {images[active]?.label} · {images[active]?.credit ? `Photo: ${images[active].credit}` : "Illustrative render, to be replaced with product photography"}
-    </p>
-  );
-
   return (
     <section aria-label={`${name} images`} className="min-w-0 lg:sticky lg:top-24 lg:self-start">
       {/* Phones */}
@@ -68,7 +62,6 @@ export function ProductGallery({ images, name, filter }: { images: ProductImage[
             ))}
           </div>
         )}
-        <div className="wrap">{caption}</div>
       </div>
 
       {/* Tablet and desktop */}
@@ -107,7 +100,6 @@ export function ProductGallery({ images, name, filter }: { images: ProductImage[
             ))}
           </div>
         </div>
-        {caption}
       </div>
     </section>
   );
