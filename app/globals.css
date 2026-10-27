@@ -1563,11 +1563,12 @@ html:has(dialog[open]) {
 
 /* ---------- Mobile rail (MobileSareeCarousel) ---------- */
 .rack-m {
-  --open-w: min(66vw, 300px);
+  /* Three sarees across the screen: each slot is a third of the width inside the
+     page margins, and the centred saree is a little wider than its slot. */
+  --slot: min(calc((100vw - 2 * var(--rack-margin)) / 3), 180px);
+  --open-w: calc(var(--slot) * 1.12);
   --hanger-h: calc(var(--open-w) * 0.545);
   --drape-h: calc(var(--open-w) * 0.82 * 1.4);
-  /* slots narrower than the garment, so the turned neighbours peek in at both sides */
-  --slot: calc(var(--open-w) * 0.74);
 }
 .rack-m-scroller {
   overflow-x: auto;
@@ -1602,9 +1603,9 @@ html:has(dialog[open]) {
 }
 /* resting neighbours are turned partway so their pattern still reads */
 .rack-m .saree {
-  --yaw: 62deg !important;
+  --yaw: 34deg !important; /* turned only a little, so all three read clearly */
   --tilt: 0deg !important;
-  opacity: 0.7;
+  opacity: 0.85;
   transition: opacity 0.5s ease;
 }
 .rack-m .saree.is-open {

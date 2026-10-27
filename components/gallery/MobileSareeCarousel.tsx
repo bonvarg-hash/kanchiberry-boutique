@@ -10,8 +10,8 @@ import { useOpenProduct } from "@/components/product/ProductSheet";
 const noop = () => {};
 
 /**
- * Touch version of the rail (phones and small tablets). One saree sits in the
- * centre, turned to face you, with its neighbours peeking in at the sides.
+ * Touch version of the rail (phones and small tablets). Three sarees across the
+ * screen: the centred one faces you and its neighbours are turned slightly.
  * Swipe to browse (snap-to-item); tap a neighbour to bring it to the centre;
  * tap the centred saree or the CTA to slide its details up over the page.
  */
@@ -56,7 +56,11 @@ export function MobileSareeCarousel({ products }: { products: Product[] }) {
     });
   };
 
-  useEffect(() => () => cancelAnimationFrame(frame.current), []);
+  // Open on the second saree so three are in view from the start, not one with an empty gap beside it.
+  useEffect(() => {
+    if (products.length > 2) goTo(1, false);
+    return () => cancelAnimationFrame(frame.current);
+  }, [goTo, products.length]);
 
   const p = products[active];
 
