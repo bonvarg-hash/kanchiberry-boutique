@@ -31,14 +31,15 @@ export const useMusic = () => useContext(MusicContext);
 
 /**
  * One festive track for the whole site. It lives in the root layout, so it keeps
- * playing as visitors move between pages. It starts on the first scroll (or a
- * press of play), loops, fades in and out, and holds while the tab is hidden.
+ * playing as visitors move between pages. It starts as soon as the browser
+ * allows (on landing, or on the first scroll, click, tap or key press), loops,
+ * fades in and out, and holds while the tab is hidden.
  * Pausing is remembered for the rest of the visit; a new visit starts on scroll
  * again.
  *
  * Browsers only allow sound after the visitor has interacted with the page. A
  * swipe on a phone counts; a mouse-wheel scroll doesn't, so on desktop the music
- * starts on the first scroll after any click or key press.
+ * usually starts on the first click or key press.
  */
 export function MusicProvider({ children }: { children: ReactNode }) {
   const audio = useRef<HTMLAudioElement | null>(null);
@@ -90,22 +91,27 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     }
   }, [fadeTo, play]);
 
-  // Start on the first scroll or swipe, unless paused earlier in this visit. If the
-  // browser blocks sound (no click or tap yet), try again on the next scroll.
+  // Autoplay as early as the browser allows, unless paused earlier in this visit:
+  // straight away on landing (some browsers permit it for returning visitors),
+  // then on the first scroll, swipe, click, tap or key press. A blocked attempt
+  // is simply retried on the next one.
   useEffect(() => {
     if (session.get(OFF_KEY)) return;
     let trying = false;
-    const events = ["scroll", "touchend"] as const;
-    const stop = () => events.forEach((e) => window.removeEventListener(e, onScroll));
-    function onScroll() {
+    const events = ["scroll", "wheel", "touchend", "pointerdown", "keydown"] as const;
+    const stop = () => events.forEach((e) => window.removeEventListener(e, attempt, true));
+    function attempt(e?: Event) {
       if (trying || playingRef.current) return;
+      // A press on the music button is the visitor choosing; let the button handle it.
+      if ((e?.target as Element | null)?.closest?.(".music-btn")) return;
       trying = true;
       void play().then((ok) => {
         trying = false;
         if (ok) stop();
       });
     }
-    events.forEach((e) => window.addEventListener(e, onScroll, { passive: true }));
+    events.forEach((e) => window.addEventListener(e, attempt, { passive: true, capture: true }));
+    attempt();
     return stop;
   }, [play]);
 
