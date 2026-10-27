@@ -1,0 +1,1377 @@
+@import "tailwindcss";
+
+@theme {
+  /* White ground; type and accents in shades of dark walnut brown #24170f. */
+  --color-ivory: #ffffff;
+  --color-paper: #ffffff;
+  --color-ink: #24170f;
+  --color-ink-soft: #666666; /* body copy and secondary text: neutral grey */
+  /* Highlight colour: hovers, focus rings, selection, badges, accents. */
+  --color-berry: #190e14;
+  --color-berry-deep: #190e14;
+  --color-sand: #ddd0c3;
+  --color-sand-soft: #f7f3ef;
+  --color-mist: #f5f5f4; /* light grey band behind the rail and the testimonials */
+  --color-sage: #8c7867;
+  --color-danger: #9b2f3c;
+  --font-serif: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  /* Section titles (.section-title). */
+  --font-title: var(--font-playfair), "Playfair Display", Georgia, serif;
+  /* Banner font: the hero headline only. Kept separate from --font-serif (the
+     display font) so display-font changes never touch the banner. */
+  --font-banner: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  /* Body copy, navigation, labels and buttons. */
+  --font-sans: var(--font-google-sans), "Google Sans", system-ui, sans-serif;
+  --ease-cloth: cubic-bezier(0.22, 0.68, 0.18, 1);
+}
+
+/* Dark variation on #190E14 (the logo colour): the same tokens, inverted, for whole sections. */
+.theme-dark {
+  --color-ivory: #190e14;
+  --color-paper: #231720;
+  --color-ink: #f4ede9;
+  --color-ink-soft: #b4afb2;
+  --color-berry: #e9dccf;
+  --color-berry-deep: #f4ede9;
+  --color-sand: #3e2c36;
+  --color-sand-soft: #20141b;
+  --color-mist: #20141b;
+  --color-sage: #8f8489;
+  --color-danger: #f0a3b0;
+  color: var(--color-ink);
+}
+.theme-dark .logo-img {
+  filter: brightness(0) invert(0.92);
+}
+
+/* Page titles and headings everywhere use the section-title font (Playfair Display).
+   Unlayered so it wins over utility weights; the hero uses its own banner font. */
+h1.serif,
+h2.serif,
+h3.serif {
+  font-family: var(--font-title);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+}
+
+@layer components {
+/* ---------- Base ---------- */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  background: var(--color-ivory);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+::selection {
+  background: var(--color-berry);
+  color: var(--color-paper);
+}
+:focus-visible {
+  outline: 2px solid var(--color-berry);
+  outline-offset: 3px;
+}
+img {
+  max-width: 100%;
+}
+
+.wrap {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: clamp(16px, 4vw, 64px);
+}
+.serif {
+  font-family: var(--font-serif);
+}
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+  font-weight: 500;
+}
+.section-title {
+  font-family: var(--font-title);
+  font-weight: 400;
+  font-size: calc(clamp(2.1rem, 4.4vw, 3.8rem) + 4px);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+}
+.lede {
+  font-size: 16px;
+  color: var(--color-ink-soft);
+  max-width: 38ch;
+}
+.sr-only-focusable:not(:focus) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Text link with arrow that nudges on hover */
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  padding-block: 6px;
+  border-bottom: 1px solid currentColor;
+  transition: color 0.25s, gap 0.3s var(--ease-cloth);
+}
+.text-link:hover {
+  color: var(--color-berry);
+  gap: 0.9em;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 28px;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 500;
+  transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.2s;
+  border: 1px solid transparent;
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn-primary {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+.btn-primary:hover {
+  background: var(--color-berry-deep);
+}
+.btn-ghost {
+  border-color: var(--color-ink);
+}
+.btn-ghost:hover {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+.btn[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.notice {
+  border: 1px solid var(--color-sand);
+  background: var(--color-paper);
+  padding: 14px 18px;
+  font-size: 13px;
+  color: var(--color-ink-soft);
+}
+.notice strong {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+.tag-sample {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border: 1px solid var(--color-sand);
+  color: var(--color-ink-soft);
+  background: var(--color-paper);
+}
+
+/* ---------- Header ---------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  transition: background 0.35s, box-shadow 0.35s, backdrop-filter 0.35s;
+}
+.site-header[data-solid="true"] {
+  /* frosted glass: translucent white over a strong blur keeps text and icons crisp */
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  backdrop-filter: blur(18px) saturate(1.6);
+  box-shadow:
+    0 1px 0 rgba(36, 23, 15, 0.08),
+    0 8px 24px -16px rgba(36, 23, 15, 0.25);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .site-header[data-solid="true"] {
+    background: rgba(255, 255, 255, 0.96);
+  }
+}
+.nav-link {
+  position: relative;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  padding-block: 8px;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.35s var(--ease-cloth);
+}
+.nav-link:hover::after,
+.nav-link[aria-current="page"]::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+.icon-btn {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  transition: background 0.2s;
+}
+.icon-btn:hover {
+  background: color-mix(in srgb, var(--color-sand) 45%, transparent);
+}
+.bag-count {
+  position: absolute;
+  top: 5px;
+  right: 3px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--color-berry);
+  color: var(--color-paper);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 17px;
+  text-align: center;
+}
+.bag-count[data-bump="true"] {
+  animation: bump 0.45s var(--ease-cloth);
+}
+@keyframes bump {
+  40% {
+    transform: scale(1.35);
+  }
+}
+
+/* ---------- Hero ---------- */
+.hero-line {
+  display: block;
+  overflow: hidden;
+  /* room for italic descenders (the "f" in "of") inside the reveal mask,
+     cancelled by the negative margin so line spacing is unchanged */
+  padding: 0 0.06em 0.24em;
+  margin: 0 -0.06em -0.18em;
+}
+.hero-line > span {
+  display: block;
+  animation: rise 1s var(--ease-cloth) both;
+  animation-delay: calc(var(--d, 0) * 110ms + 80ms);
+}
+.hero-fade {
+  animation: fade 0.9s ease both;
+  animation-delay: 520ms;
+}
+@keyframes rise {
+  from {
+    transform: translateY(105%);
+    opacity: 0;
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* ---------- Saree rack (signature gallery) ---------- */
+/* Saree hangers on a wooden rail. At rest each hanger is seen edge-on with the
+   folded saree turned edge-on; focused, the same object turns to face the viewer. */
+.rack {
+  --rest-w: 50px;
+  --open-w: 232px;
+  --hanger-h: 127px; /* open-w * 120/220 */
+  --drape-h: 304px; /* fabric width (82%) at 400:640 */
+  --gap: 10px;
+  --rack-margin: clamp(16px, 4vw, 64px);
+  position: relative;
+}
+.rack-scroller {
+  /* same content width and gutter as .wrap */
+  width: min(100% - 2 * var(--rack-margin), 1440px - 2 * var(--rack-margin));
+  margin-inline: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.rack-scroller::-webkit-scrollbar {
+  display: none;
+}
+.rack-track {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: safe center;
+  gap: var(--gap);
+  width: max-content;
+  min-width: 100%;
+  padding: 26px 22px 0;
+  height: calc(26px + var(--hanger-h) * 0.84 + var(--drape-h) * 1.05 + 96px);
+}
+.rack-rail {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 25px;
+  height: 13px;
+  border-radius: 7px;
+  /* walnut rod: grain over a turned-wood shading */
+  background:
+    repeating-linear-gradient(176deg, rgba(36, 19, 10, 0) 0 9px, rgba(36, 19, 10, 0.18) 9px 10px, rgba(36, 19, 10, 0) 10px 23px),
+    linear-gradient(180deg, #4a2b19 0%, #a5744f 30%, #7a4c30 52%, #3a2213 100%);
+  box-shadow:
+    0 9px 14px -7px rgba(40, 22, 12, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+/* blackened-iron wall brackets */
+.rack-rail::before,
+.rack-rail::after {
+  content: "";
+  position: absolute;
+  top: -10px;
+  width: 12px;
+  height: 33px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #2c2420, #4b3f38 45%, #221b17);
+  box-shadow: 0 3px 6px rgba(30, 20, 15, 0.35);
+}
+.rack-rail::before {
+  left: -2px;
+}
+.rack-rail::after {
+  right: -2px;
+}
+
+.saree {
+  position: relative;
+  flex: 0 0 auto;
+  width: var(--rest-w);
+  height: calc(var(--hanger-h) * 0.84 + var(--drape-h) * var(--len, 1));
+  outline: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    width 0.8s var(--ease-cloth),
+    margin 0.8s var(--ease-cloth),
+    opacity 0.5s ease,
+    filter 0.5s ease;
+}
+.saree.is-open {
+  width: var(--open-w);
+  margin-inline: 22px;
+  z-index: 2;
+}
+.saree:focus-visible .saree-face {
+  outline: 2px solid var(--color-berry);
+  outline-offset: 6px;
+}
+
+/* Wind. One gust cycle is shared by every saree and offset by its position
+   (--i), so each gust travels along the rail; --amp varies its strength. */
+@property --gust-yaw {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+.saree {
+  --wind: 11s;
+  --wind-delay: calc(var(--i, 0) * 0.16s + var(--lag, 0s));
+}
+
+/* pivots on the hook; also hosts the 3D perspective */
+.saree-swing {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: var(--open-w);
+  margin-left: calc(var(--open-w) / -2);
+  perspective: 1100px;
+  transform-origin: 50% 0;
+  /* the turned garment can overhang its neighbours; clicks hit the saree's own slot instead */
+  pointer-events: none;
+  animation: wind-swing var(--wind) cubic-bezier(0.37, 0, 0.3, 1) var(--wind-delay) infinite;
+}
+.saree.is-open .saree-swing,
+.saree.is-open .saree-3d,
+.saree.is-open .saree-drape {
+  animation-play-state: paused;
+}
+/* a gust pushes, overshoots back, then settles into a slow drift */
+@keyframes wind-swing {
+  0%,
+  100% {
+    transform: rotate(calc(-0.25deg * var(--amp, 1)));
+  }
+  14% {
+    transform: rotate(calc(1.6deg * var(--amp, 1)));
+  }
+  26% {
+    transform: rotate(calc(-0.9deg * var(--amp, 1)));
+  }
+  38% {
+    transform: rotate(calc(0.8deg * var(--amp, 1)));
+  }
+  52% {
+    transform: rotate(calc(-0.4deg * var(--amp, 1)));
+  }
+  70% {
+    transform: rotate(calc(0.35deg * var(--amp, 1)));
+  }
+  85% {
+    transform: rotate(calc(-0.3deg * var(--amp, 1)));
+  }
+}
+/* the hanger twists a little on its hook */
+@keyframes wind-turn {
+  0%,
+  100% {
+    --gust-yaw: 0deg;
+  }
+  16% {
+    --gust-yaw: calc(-7deg * var(--amp, 1));
+  }
+  30% {
+    --gust-yaw: calc(4deg * var(--amp, 1));
+  }
+  46% {
+    --gust-yaw: calc(-2.5deg * var(--amp, 1));
+  }
+  64% {
+    --gust-yaw: calc(1.2deg * var(--amp, 1));
+  }
+}
+/* the free hem lags and ripples more than the folded top */
+@keyframes wind-flutter {
+  0%,
+  100% {
+    transform: skewX(0deg) scaleY(1);
+  }
+  17% {
+    transform: skewX(calc(-2.2deg * var(--amp, 1))) scaleY(0.996);
+  }
+  29% {
+    transform: skewX(calc(1.4deg * var(--amp, 1)));
+  }
+  41% {
+    transform: skewX(calc(-0.9deg * var(--amp, 1)));
+  }
+  56% {
+    transform: skewX(calc(0.5deg * var(--amp, 1)));
+  }
+  72% {
+    transform: skewX(calc(-0.25deg * var(--amp, 1)));
+  }
+}
+
+/* The whole hanger + saree turns about the hook's vertical axis. */
+.saree-3d {
+  display: block;
+  transform-style: preserve-3d;
+  transform: rotateY(calc(var(--yaw, 76deg) + var(--gust-yaw))) rotateZ(var(--tilt, 0deg));
+  transition: transform 0.85s var(--ease-cloth);
+  animation: wind-turn var(--wind) ease-in-out var(--wind-delay) infinite;
+}
+.saree.is-open .saree-3d {
+  transform: rotateY(0deg) rotateZ(0deg);
+}
+.saree-hanger {
+  position: relative;
+  display: block;
+  height: var(--hanger-h);
+  transform-style: preserve-3d;
+}
+.saree-hanger svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Generic six-faced box: size with --w, --h and --d */
+.box3d {
+  position: absolute;
+  width: var(--w);
+  height: var(--h);
+  transform-style: preserve-3d;
+}
+.box-face {
+  position: absolute;
+}
+.box-front,
+.box-back {
+  inset: 0;
+}
+.box-front {
+  transform: translateZ(calc(var(--d) / 2));
+}
+.box-back {
+  transform: rotateY(180deg) translateZ(calc(var(--d) / 2));
+}
+.box-top,
+.box-bottom {
+  left: 0;
+  width: 100%;
+  height: var(--d);
+  top: calc(50% - var(--d) / 2);
+}
+.box-top {
+  transform: rotateX(90deg) translateZ(calc(var(--h) / 2));
+}
+.box-bottom {
+  transform: rotateX(-90deg) translateZ(calc(var(--h) / 2));
+}
+.box-left,
+.box-right {
+  top: 0;
+  height: 100%;
+  width: var(--d);
+  left: calc(50% - var(--d) / 2);
+}
+.box-left {
+  transform: rotateY(-90deg) translateZ(calc(var(--w) / 2));
+}
+.box-right {
+  transform: rotateY(90deg) translateZ(calc(var(--w) / 2));
+}
+
+/* Walnut top bar; positions match the hanger artwork (viewBox 220 x 120) */
+.hanger-bar {
+  --w: calc(var(--open-w) * 0.891);
+  --h: calc(var(--hanger-h) * 0.125);
+  --d: 12px;
+  left: 5.45%;
+  top: 30.8%;
+}
+.hanger-bar .box-front,
+.hanger-bar .box-back {
+  border-radius: 3px;
+  background:
+    repeating-linear-gradient(178deg, rgba(36, 19, 10, 0) 0 5px, rgba(36, 19, 10, 0.16) 5px 6px, rgba(36, 19, 10, 0) 6px 11px),
+    linear-gradient(180deg, #a06f4b 0%, #8a5a3b 35%, #6b4128 70%, #4a2b19 100%);
+}
+.hanger-bar .box-top {
+  background:
+    repeating-linear-gradient(90deg, rgba(36, 19, 10, 0) 0 14px, rgba(36, 19, 10, 0.14) 14px 15px),
+    linear-gradient(180deg, #b6845b, #9a6a46);
+}
+.hanger-bar .box-bottom {
+  background: #3f2416;
+}
+.hanger-bar .box-left,
+.hanger-bar .box-right {
+  border-radius: 2px;
+  background: repeating-radial-gradient(circle at 30% 60%, #6b4128 0 1.5px, #57331f 1.5px 3px);
+}
+
+/* Walnut rod the saree folds over: a round bar with end-grain discs */
+.hanger-rod {
+  --w: calc(var(--open-w) * 0.964);
+  --h: calc(var(--hanger-h) * 0.117);
+  --d: calc(var(--hanger-h) * 0.117);
+  left: 1.8%;
+  top: 79.2%;
+}
+.hanger-rod .box-front,
+.hanger-rod .box-back,
+.hanger-rod .box-top,
+.hanger-rod .box-bottom {
+  border-radius: 999px;
+  background:
+    repeating-linear-gradient(179deg, rgba(36, 19, 10, 0) 0 4px, rgba(36, 19, 10, 0.15) 4px 5px),
+    linear-gradient(180deg, #4a2b19 0%, #a5744f 32%, #7a4c30 55%, #331d10 100%);
+}
+.hanger-rod .box-left,
+.hanger-rod .box-right {
+  border-radius: 50%;
+  background: repeating-radial-gradient(circle, #6b4128 0 1.2px, #4f2e1b 1.2px 2.6px);
+  box-shadow: inset 0 0 0 1px #2c180c;
+}
+.saree-drape {
+  --fab-border: linear-gradient(180deg, var(--fz) 0 6%, var(--fb) 6% 84%, var(--fz) 84% 90%, var(--fb) 90%);
+  --dw: calc(var(--open-w) * 0.82);
+  --t: 16px; /* the cloth wraps the rod: front and back layers this far apart */
+  position: relative;
+  display: block;
+  width: var(--dw);
+  margin: calc(var(--hanger-h) * -0.165) auto 0;
+  height: calc(var(--drape-h) * var(--len, 1));
+  transform-style: preserve-3d;
+  transform-origin: 50% 0;
+  animation: wind-flutter var(--wind) ease-in-out calc(var(--wind-delay) + 0.12s) infinite;
+}
+.saree-face,
+.saree-back {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  border-radius: 10px 10px 2px 2px / 8px 8px 2px 2px;
+  /* Fabric follows the fold: the body panel is fitted to the width (never
+     stretched, never re-cropped), and the border runs along the hem, repeating
+     along its length the way a woven border does. Without a photographed
+     border strip, a woven band in the saree's own border and zari colours. */
+  background-color: var(--fc);
+  background-image: var(--fab-border), var(--fab-body);
+  background-size: auto 14%, 100% auto;
+  background-position: left bottom, center top;
+  background-repeat: repeat-x, no-repeat;
+}
+/* front layer: hangs a little shorter, so the back layer shows below its hem */
+.saree-face {
+  height: 91%;
+  transform: translateZ(calc(var(--t) / 2));
+  border-bottom: 2px solid var(--fz);
+  box-shadow: 0 10px 12px -8px rgba(30, 20, 15, 0.45);
+}
+.saree-back {
+  height: 100%;
+  transform: rotateY(180deg) translateZ(calc(var(--t) / 2));
+  filter: brightness(0.62);
+  box-shadow: 0 22px 26px -10px rgba(55, 40, 25, 0.35);
+}
+/* curvature where the cloth wraps over the rod, plus soft vertical folds */
+.saree-face::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.42) 0, rgba(0, 0, 0, 0.12) 4%, rgba(255, 255, 255, 0.1) 7%, rgba(255, 255, 255, 0) 12%),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.05) 0, rgba(255, 255, 255, 0.04) 10%, rgba(0, 0, 0, 0.06) 20%),
+    linear-gradient(180deg, transparent 80%, rgba(0, 0, 0, 0.1));
+}
+
+/* The fold seen from the side: an inverted U of cloth over the rod. Its local
+   right half faces the front layer (shorter), the left half the back layer. */
+.saree-fold {
+  position: absolute;
+  top: calc(var(--t) / -2);
+  width: var(--t);
+  height: calc(100% + var(--t) / 2);
+  left: calc(50% - var(--t) / 2);
+  border-radius: calc(var(--t) / 2) calc(var(--t) / 2) 0 0;
+  border-top: 3px solid var(--fc);
+  background:
+    /* back layer edge: full length */
+    linear-gradient(var(--fb), var(--fb)) left top / 3px 100% no-repeat,
+    linear-gradient(var(--fz), var(--fz)) 3px top / 1px 100% no-repeat,
+    /* front layer edge: stops at the shorter front hem */
+    linear-gradient(var(--fb), var(--fb)) right top / 3px 91.5% no-repeat,
+    linear-gradient(var(--fz), var(--fz)) calc(100% - 3px) top / 1px 91.5% no-repeat,
+    /* the shaded gap between the two layers */
+    linear-gradient(90deg, rgba(25, 14, 10, 0.75), rgba(25, 14, 10, 0.45) 50%, rgba(25, 14, 10, 0.7)) center top / calc(100% - 8px) 91.5% no-repeat;
+}
+.saree-fold-l {
+  transform: rotateY(-90deg) translateZ(calc(var(--dw) / 2));
+  filter: brightness(0.92);
+}
+.saree-fold-r {
+  transform: rotateY(90deg) translateZ(calc(var(--dw) / 2));
+  filter: brightness(0.72);
+}
+
+/* name + quick look under the turned saree */
+.saree-label {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--hanger-h) * 0.84 + var(--drape-h) * var(--len, 1) + 16px);
+  width: var(--open-w);
+  margin-left: calc(var(--open-w) / -2);
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease,
+    visibility 0s linear 0.25s;
+}
+.saree.is-open .saree-label {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  pointer-events: auto;
+  transition:
+    opacity 0.4s ease 0.3s,
+    transform 0.4s var(--ease-cloth) 0.3s,
+    visibility 0s;
+}
+.saree-quick {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid currentColor;
+  color: var(--color-ink);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.saree:hover .saree-quick {
+  color: var(--color-berry);
+}
+
+.rack-arrow {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--color-sand);
+  border-radius: 999px;
+  background: var(--color-paper);
+  transition: border-color 0.2s, opacity 0.2s, background 0.2s;
+}
+.rack-arrow:hover:not(:disabled) {
+  border-color: var(--color-ink);
+}
+.rack-arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+@media (max-width: 1023px) {
+  .rack {
+    --rest-w: 46px;
+    --open-w: 212px;
+    --hanger-h: 116px;
+    --drape-h: 278px;
+  }
+}
+@media (max-width: 639px) {
+  .rack {
+    --rest-w: 42px;
+    --open-w: 190px;
+    --hanger-h: 104px;
+    --drape-h: 250px;
+    --gap: 6px;
+  }
+  .saree-drape {
+    --t: 13px;
+  }
+}
+
+.rack-caption {
+  animation: fade 0.4s ease both;
+}
+
+/* ---------- Lifted-off-the-rail view ---------- */
+.focus-view::backdrop {
+  background: var(--color-ivory);
+}
+.focus-view[open] {
+  animation: fade 0.35s ease both;
+}
+.focus-wire {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 1.5px;
+  height: 5dvh;
+  background: #a7a6a0;
+}
+.focus-garment {
+  /* fabric width; the hanger is wider so the rod ends show */
+  --gw: min(340px, 70vw, calc((100dvh - 250px) * 0.53));
+  position: relative;
+  margin-top: 5dvh;
+  width: calc(var(--gw) / 0.82);
+  animation: lift 0.85s var(--ease-cloth) both;
+  transform-origin: 50% 0;
+}
+.focus-hanger {
+  display: block;
+}
+.focus-hanger svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.focus-drape {
+  position: relative;
+  display: block;
+  width: var(--gw);
+  margin: calc(var(--gw) / 0.82 * 120 / 220 * -0.165) auto 0;
+  aspect-ratio: 400 / 640;
+  overflow: hidden;
+  border-radius: 12px 12px 2px 2px / 9px 9px 2px 2px;
+  filter: drop-shadow(0 30px 30px rgba(55, 40, 25, 0.28));
+}
+.focus-drape img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.focus-folds {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.06) 0, rgba(255, 255, 255, 0.05) 7%, rgba(0, 0, 0, 0.08) 14.28%);
+}
+.focus-details > * {
+  animation: fade 0.6s ease both;
+}
+.focus-details > :nth-child(2) {
+  animation-delay: 60ms;
+}
+.focus-details > :nth-child(n + 3) {
+  animation-delay: 140ms;
+}
+@keyframes lift {
+  from {
+    opacity: 0;
+    transform: perspective(1000px) rotateY(24deg) scale(0.86) translateY(26px);
+  }
+}
+
+/* ---------- Weave tiles ---------- */
+.weave-tile {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background: var(--color-sand-soft);
+}
+.weave-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s var(--ease-cloth);
+}
+.weave-tile:hover img,
+.weave-tile:focus-visible img {
+  transform: scale(1.05);
+}
+
+/* Scroll reveal (components/Reveal.tsx) */
+.reveal[data-reveal="pending"] {
+  opacity: 0;
+  transform: translateY(32px);
+}
+.reveal[data-reveal="shown"] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.9s ease var(--reveal-delay, 0ms),
+    transform 1.1s var(--ease-cloth) var(--reveal-delay, 0ms);
+}
+
+/* Weave cards: slow zoom on the photo, arrow nudges along */
+.weave-card .weave-tile img {
+  transition: transform 1.4s var(--ease-cloth);
+}
+.weave-card:hover .weave-tile img,
+.weave-card:focus-visible .weave-tile img {
+  transform: scale(1.06);
+}
+.weave-cta {
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 3px;
+  transition: color 0.25s;
+}
+.weave-cta-arrow {
+  display: inline-block;
+  transition: transform 0.4s var(--ease-cloth);
+}
+.weave-card:hover .weave-cta {
+  color: var(--color-berry);
+}
+.weave-card:hover .weave-cta-arrow {
+  transform: translateX(5px);
+}
+
+/* Spotlight badge turns slowly */
+.spin-badge {
+  animation: spin-slow 22s linear infinite;
+}
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Half-ring arc around circular photos (DrapeYourDay) */
+.arc-ring::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  border-top-color: var(--color-ink);
+  border-left-color: var(--color-ink);
+  transform: rotate(-20deg);
+  transition: transform 1.2s var(--ease-cloth);
+}
+.arc-ring[data-flip]::before {
+  border-left-color: transparent;
+  border-right-color: var(--color-ink);
+  transform: rotate(20deg);
+}
+.arc-ring:hover::before {
+  transform: rotate(25deg);
+}
+.arc-ring[data-flip]:hover::before {
+  transform: rotate(-25deg);
+}
+
+.collage-tile img {
+  transition: transform 1.4s var(--ease-cloth);
+}
+.collage-tile:hover img {
+  transform: scale(1.05);
+}
+
+/* Stat rings (StatRing.tsx): arc draws in, then drifts around the circle */
+.stat-orbit {
+  transform: rotate(var(--start, 0deg));
+  animation: stat-orbit 36s linear infinite;
+}
+@keyframes stat-orbit {
+  to {
+    transform: rotate(calc(var(--start, 0deg) + 360deg));
+  }
+}
+.stat-arc {
+  stroke-dasharray: 0 604;
+  transition: stroke-dasharray 1.6s var(--ease-cloth);
+}
+.stat-ring[data-in] .stat-arc {
+  stroke-dasharray: 190 604;
+}
+.twinkle {
+  display: inline-block;
+  animation: twinkle 3.2s ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    transform: translateX(-50%) scale(0.75) rotate(0deg);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateX(-50%) scale(1.15) rotate(45deg);
+    opacity: 1;
+  }
+}
+
+/* Gentle pulse on the hero CTA; pauses while hovered or focused */
+.cta-pulse {
+  transform-origin: left center;
+  animation: cta-pulse 2.8s ease-in-out 1.6s infinite;
+}
+.cta-pulse > [aria-hidden] {
+  display: inline-block;
+  animation: cta-nudge 2.8s ease-in-out 1.6s infinite;
+}
+.cta-pulse:hover,
+.cta-pulse:focus-visible,
+.cta-pulse:hover > [aria-hidden],
+.cta-pulse:focus-visible > [aria-hidden] {
+  animation-play-state: paused;
+}
+@keyframes cta-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.045);
+  }
+}
+@keyframes cta-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+}
+
+/* "Shop the Collection" pill: idle halo; lift, sheen and arrow on hover; press on click */
+.cta-pill {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    transform 0.35s var(--ease-cloth),
+    box-shadow 0.35s ease;
+  animation: pill-halo 3.4s ease-out 1s infinite;
+}
+.cta-pill::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.22) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.9s var(--ease-cloth);
+}
+.cta-pill > [aria-hidden] {
+  display: inline-block;
+  transition: transform 0.4s var(--ease-cloth);
+}
+.cta-pill:hover,
+.cta-pill:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -10px rgba(25, 14, 20, 0.55);
+  animation-play-state: paused;
+}
+.cta-pill:hover::before,
+.cta-pill:focus-visible::before {
+  transform: translateX(120%);
+}
+.cta-pill:hover > [aria-hidden],
+.cta-pill:focus-visible > [aria-hidden] {
+  transform: translateX(5px);
+}
+.cta-pill:active {
+  transform: translateY(0) scale(0.98);
+}
+@keyframes pill-halo {
+  0% {
+    box-shadow: 0 0 0 0 rgba(25, 14, 20, 0.32);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 14px rgba(25, 14, 20, 0);
+  }
+}
+
+/* Product info tabs: an underline slides in under the active tab */
+.info-tab::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--color-ink);
+  transform: scaleX(0);
+  transition: transform 0.35s var(--ease-cloth);
+}
+.info-tab[aria-selected="true"]::after {
+  transform: scaleX(1);
+}
+.info-panel:not([hidden]) {
+  animation: fade 0.35s ease both;
+}
+
+/* Mobile navigation drawer slides in from the left; the page behind can't scroll */
+.drawer[open] {
+  animation: drawer-in 0.4s var(--ease-cloth) both;
+}
+@keyframes drawer-in {
+  from {
+    transform: translateX(-100%);
+  }
+}
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+
+/* Wind pauses while the rail is off screen */
+.rack[data-idle] .saree-swing,
+.rack[data-idle] .saree-3d,
+.rack[data-idle] .saree-drape {
+  animation-play-state: paused;
+}
+
+/* ---------- Mobile rail (MobileSareeCarousel) ---------- */
+.rack-m {
+  --open-w: min(66vw, 300px);
+  --hanger-h: calc(var(--open-w) * 0.545);
+  --drape-h: calc(var(--open-w) * 0.82 * 1.4);
+  /* slots narrower than the garment, so the turned neighbours peek in at both sides */
+  --slot: calc(var(--open-w) * 0.74);
+}
+.rack-m-scroller {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain; /* a swipe never triggers browser back/forward */
+  touch-action: pan-x pan-y;
+  scrollbar-width: none;
+}
+.rack-m-scroller::-webkit-scrollbar {
+  display: none;
+}
+.rack-m-track {
+  position: relative;
+  display: flex;
+  width: max-content;
+  padding: 22px calc(50vw - var(--slot) / 2) 0;
+  height: calc(22px + var(--hanger-h) * 0.84 + var(--drape-h) + 34px);
+}
+.rack-m-slot {
+  flex: 0 0 auto;
+  scroll-snap-align: center;
+}
+.rack-m .saree {
+  display: block;
+}
+.rack-m .saree,
+.rack-m .saree.is-open {
+  width: var(--slot);
+  margin-inline: 0;
+  height: calc(var(--hanger-h) * 0.84 + var(--drape-h));
+}
+/* resting neighbours are turned partway so their pattern still reads */
+.rack-m .saree {
+  --yaw: 62deg !important;
+  --tilt: 0deg !important;
+  opacity: 0.7;
+  transition: opacity 0.5s ease;
+}
+.rack-m .saree.is-open {
+  opacity: 1;
+}
+.rack-m .saree-swing,
+.rack-m .saree-3d,
+.rack-m .saree-drape {
+  animation: none !important; /* no wind on phones: lighter and steadier for touch */
+}
+.rack-m .saree-label {
+  display: none;
+}
+.rack-m .saree.is-open .saree-face {
+  box-shadow:
+    0 0 0 1px var(--color-ink),
+    0 22px 26px -10px rgba(55, 40, 25, 0.35);
+}
+
+/* Bottom sheet (shop filters) slides up */
+.sheet-bottom[open] {
+  animation: sheet-up 0.35s var(--ease-cloth) both;
+}
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+/* Desktop mega dropdown under the header */
+.mega {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.35s var(--ease-cloth),
+    visibility 0s linear 0.35s;
+}
+.mega[data-open] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity 0.25s ease,
+    transform 0.35s var(--ease-cloth),
+    visibility 0s;
+}
+.mega[data-open] > div > * {
+  animation: fade 0.35s ease both;
+}
+
+/* Product colourway switch: the saree slides in the direction of the choice */
+[data-swap] figure img {
+  animation: swap-in 0.55s var(--ease-cloth) both;
+}
+[data-swap="right"] {
+  --from: -48px;
+}
+[data-swap="left"] {
+  --from: 48px;
+}
+@keyframes swap-in {
+  from {
+    opacity: 0;
+    transform: translateX(var(--from));
+  }
+}
+
+/* ---------- Offer bar ---------- */
+.offer-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-full 38s linear infinite;
+}
+.offer-row {
+  display: flex;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.offer-bar:hover .offer-track,
+.offer-bar:focus-within .offer-track,
+.offer-bar[data-paused="true"] .offer-track {
+  animation-play-state: paused;
+}
+@keyframes marquee-full {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ---------- Testimonials marquee ---------- */
+.marquee {
+  display: flex;
+  width: max-content;
+  gap: 20px;
+  animation: marquee var(--marquee-dur, 90s) linear infinite;
+}
+.marquee-viewport:hover .marquee,
+.marquee-viewport:focus-within .marquee,
+.marquee-viewport[data-paused="true"] .marquee {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(calc(-50% - 10px));
+  }
+}
+
+/* ---------- Product page ---------- */
+.thumb[aria-current="true"] {
+  outline: 1px solid var(--color-ink);
+  outline-offset: 3px;
+}
+details.acc > summary {
+  list-style: none;
+  cursor: pointer;
+}
+details.acc > summary::-webkit-details-marker {
+  display: none;
+}
+details.acc[open] .acc-icon {
+  transform: rotate(45deg);
+}
+.acc-icon {
+  transition: transform 0.3s var(--ease-cloth);
+}
+
+/* ---------- Dialogs ---------- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(36, 23, 15, 0.4);
+  animation: fade 0.25s ease both;
+}
+.sheet {
+  animation: sheet-in 0.4s var(--ease-cloth) both;
+}
+@keyframes sheet-in {
+  from {
+    transform: translateY(-12px);
+    opacity: 0;
+  }
+}
+
+.field {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 16px;
+  background: var(--color-paper);
+  border: 1px solid var(--color-sand);
+  font-size: 15px;
+  transition: border-color 0.2s;
+}
+.field:focus {
+  border-color: var(--color-ink);
+  outline: none;
+}
+.field[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+  .saree-swing,
+  .saree-3d,
+  .saree-drape {
+    animation: none !important;
+  }
+  .marquee {
+    animation: none;
+  }
+  .offer-track {
+    animation: none;
+  }
+  .offer-row[aria-hidden] {
+    display: none;
+  }
+  .reveal[data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .spin-badge {
+    animation: none !important;
+  }
+  .stat-orbit,
+  .twinkle {
+    animation: none !important;
+  }
+  .stat-arc {
+    stroke-dasharray: 190 604 !important;
+  }
+  .cta-pill,
+  .cta-pulse,
+  .cta-pulse > [aria-hidden] {
+    animation: none !important;
+  }
+  .marquee-dupe,
+  .motion-only {
+    display: none !important;
+  }
+  .marquee-viewport {
+    overflow-x: auto;
+  }
+}

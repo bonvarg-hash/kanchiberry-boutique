@@ -1,0 +1,269 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import { Check, Heart } from "lucide-react";
+import { formatPrice, type Product } from "@/lib/products";
+import { useStore } from "@/lib/store";
+
+type Tab = { id: string; label: string; content: React.ReactNode };
+
+/** Accessible tabs: click or use the arrow keys, Home and End to move between them. */
+function InfoTabs({ tabs }: { tabs: Tab[] }) {
+  const [active, setActive] = useState(0);
+  const refs = useRef<(HTMLButtonElement | null)[]>([]);
+  const go = (i: number) => {
+    const n = (i + tabs.length) % tabs.length;
+    setActive(n);
+    refs.current[n]?.focus();
+  };
+  return (
+    <div className="mt-8">
+      <div
+        role="tablist"
+        aria-label="Product information"
+        className="flex gap-6 overflow-x-auto border-b border-sand [scrollbar-width:none]"
+        onKeyDown={(e) => {
+          if (e.key === "ArrowRight") go(active + 1);
+          else if (e.key === "ArrowLeft") go(active - 1);
+          else if (e.key === "Home") go(0);
+          else if (e.key === "End") go(tabs.length - 1);
+          else return;
+          e.preventDefault();
+        }}
+      >
+        {tabs.map((t, i) => (
+          <button
+            key={t.id}
+            ref={(el) => {
+              refs.current[i] = el;
+            }}
+            type="button"
+            role="tab"
+            id={`tab-${t.id}`}
+            aria-selected={active === i}
+            aria-controls={`panel-${t.id}`}
+            tabIndex={active === i ? 0 : -1}
+            onClick={() => setActive(i)}
+            className={`info-tab relative shrink-0 whitespace-nowrap pb-3 pt-1 text-[14px] tracking-[0.04em] transition-colors ${
+              active === i ? "text-ink" : "text-ink-soft hover:text-ink"
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+      {tabs.map((t, i) => (
+        <div
+          key={t.id}
+          role="tabpanel"
+          id={`panel-${t.id}`}
+          aria-labelledby={`tab-${t.id}`}
+          hidden={active !== i}
+          tabIndex={0}
+          className="info-panel pt-6 text-[16px] leading-relaxed text-ink-soft"
+        >
+          {t.content}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function ProductInformation({ product: p, variant = 0, onVariant }: { product: Product; variant?: number; onVariant?: (i: number) => void }) {
+  const { addToBag, isWished, toggleWish } = useStore();
+  const qty = 1;
+  const [added, setAdded] = useState(false);
+  const wished = isWished(p.slug);
+  const colour = p.variants[variant] ?? p.variants[0];
+  // Phones: show a sticky buy bar only while the main Add to Bag row is off screen.
+  const buyRow = useRef<HTMLDivElement>(null);
+  const [showBar, setShowBar] = useState(false);
+  useEffect(() => {
+    const el = buyRow.current;
+    if (!el || !("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver(([e]) => setShowBar(!e.isIntersecting && e.boundingClientRect.top < 0));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!added) return;
+    const t = setTimeout(() => setAdded(false), 2600);
+    return () => clearTimeout(t);
+  }, [added]);
+
+  return (
+    <section aria-labelledby="pdp-title" className="min-w-0 lg:pt-6">
+      <p className="eyebrow">
+        {p.weaveName} · {p.collection}
+      </p>
+      <h1 id="pdp-title" className="serif mt-4 text-[clamp(3rem,6vw,5rem)] font-light leading-[0.92]">
+        {p.name}
+      </h1>
+      <p className="mt-4 max-w-[52ch] text-[16px] leading-relaxed text-ink-soft">{p.description}</p>
+      {p.variants.length > 1 && (
+        <fieldset className="mt-6">
+          <legend className="text-[13px] text-ink-soft">
+            Colour: <span className="ml-1 inline-flex items-center rounded-md border border-sand px-2 py-0.5 text-[13px] text-ink" aria-live="polite">{colour.name}</span>
+          </legend>
+          <div className="mt-3 flex flex-wrap gap-3">
+            {p.variants.map((v, i) => (
+              <label key={v.name} className="cursor-pointer" title={v.name}>
+                <input type="radio" name={`colour-${p.slug}`} className="peer sr-only" checked={variant === i} onChange={() => onVariant?.(i)} />
+                <span
+                  className="block size-11 rounded-full ring-1 ring-sand ring-offset-2 ring-offset-white transition peer-checked:ring-2 peer-checked:ring-ink peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-berry hover:ring-ink/50"
+                  style={
+                    i === 0 && p.fabric
+                      ? { backgroundImage: `url("${p.fabric.body}")`, backgroundSize: "cover", backgroundPosition: "center" }
+                      : { background: `linear-gradient(135deg, ${v.hex} 0 62%, ${v.accent ?? v.hex} 62% 70%, ${v.hex} 70%)` }
+                  }
+                />
+                <span className="sr-only">{v.name}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      )}
+      <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-3">
+        <p className="flex items-baseline gap-3 leading-none">
+          <span className="text-[30px]">{formatPrice(p.price)}</span>
+          {p.compareAtPrice && p.compareAtPrice > p.price && (
+            <s className="text-[20px] text-ink-soft/70">
+              <span className="sr-only">Was </span>
+              {formatPrice(p.compareAtPrice)}
+            </s>
+          )}
+        </p>
+        {p.stock !== undefined && p.stock > 0 && p.stock <= 3 && (
+          <span className="inline-flex items-center gap-2 rounded-md border border-[#c69a3c]/60 bg-[#fbf6ec] px-3 py-1.5 text-[11px] uppercase tracking-[0.14em] text-[#8a5a12]">
+            <span className="size-1.5 rounded-full bg-[#c0392b] motion-safe:animate-pulse" aria-hidden />
+            Only {p.stock} left in stock
+          </span>
+        )}
+      </div>
+      <div ref={buyRow} className="mt-8 flex flex-wrap items-stretch gap-3">
+        <button
+          type="button"
+          className="btn btn-primary min-w-0 flex-1 basis-40"
+          onClick={() => {
+            addToBag(p.slug, qty, p.variants.length > 1 ? colour.name : undefined);
+            setAdded(true);
+          }}
+        >
+          {added ? (
+            <>
+              <Check size={16} /> Added to Bag
+            </>
+          ) : (
+            "Add to Bag"
+          )}
+        </button>
+        <button
+          type="button"
+          className="btn btn-ghost px-4"
+          aria-pressed={wished}
+          aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
+          onClick={() => toggleWish(p.slug)}
+        >
+          <Heart size={18} strokeWidth={1.5} fill={wished ? "currentColor" : "none"} className={wished ? "text-berry" : ""} />
+        </button>
+      </div>
+      <p role="status" className="mt-3 min-h-5 text-[13px]">
+        {added && (
+          <>
+            Added to your bag. <Link href="/bag" className="underline">View bag</Link>
+          </>
+        )}
+      </p>
+      <p className="text-[12px] text-ink-soft">Delivery estimates and PIN code checks will appear once a shipping service is connected.</p>
+
+      <InfoTabs
+        tabs={[
+          {
+            id: "details",
+            label: "Product Details",
+            content: (
+              <>
+                <dl className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-2 text-[14px]">
+                  <dt>Weave</dt>
+                  <dd className="text-ink">{p.weaveName}</dd>
+                  <dt>Colour</dt>
+                  <dd className="text-ink">{colour.name}</dd>
+                  <dt>Length</dt>
+                  <dd className="text-ink">{p.length}</dd>
+                  <dt>Occasion</dt>
+                  <dd className="text-ink">{p.occasion.join(", ")}</dd>
+                  <dt>Blouse</dt>
+                  <dd className="text-ink">{p.blousePiece}</dd>
+                  <dt>Availability</dt>
+                  <dd className="text-ink">Sample listing, not available for purchase</dd>
+                </dl>
+                <p className="mt-4 text-[13px]">Product code {p.id.toUpperCase()}. Measurements are illustrative.</p>
+              </>
+            ),
+          },
+          {
+            id: "fabric",
+            label: "Fabric & Craftsmanship",
+            content: (
+              <>
+                <p>{p.craftDetails}</p>
+                <p className="mt-3">
+                  Read more in <Link href={`/art-of-weaving#${p.weave}`} className="underline">The Art of Weaving</Link>.
+                </p>
+              </>
+            ),
+          },
+          {
+            id: "care",
+            label: "Care Instructions",
+            content: (
+              <ul className="list-disc space-y-1 pl-5">
+                {p.careInstructions.map((c) => (
+                  <li key={c}>{c}</li>
+                ))}
+              </ul>
+            ),
+          },
+          {
+            id: "shipping",
+            label: "Shipping & Returns",
+            content: <p>Shipping and returns policies are pending and will be published before launch. No delivery timelines are promised in this prototype.</p>,
+          },
+        ]}
+      />
+
+
+      {/* Sticky buy bar (phones), above the bottom safe area */}
+      <div
+        className={`fixed inset-x-0 bottom-0 z-30 border-t border-sand bg-paper/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur transition-transform duration-300 md:hidden ${
+          showBar ? "translate-y-0" : "pointer-events-none translate-y-full"
+        }`}
+        aria-hidden={!showBar}
+      >
+        <div className="flex items-center gap-4">
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-[14px]" style={{ fontFamily: "var(--font-title)" }}>
+              {p.name}
+            </p>
+            <p className="text-[13px] text-ink-soft">
+              {formatPrice(p.price)} <span className="text-[11px]">(sample)</span>
+            </p>
+          </div>
+          <button
+            type="button"
+            tabIndex={showBar ? 0 : -1}
+            className="btn btn-primary min-h-12 shrink-0 px-6"
+            onClick={() => {
+              addToBag(p.slug, qty, p.variants.length > 1 ? colour.name : undefined);
+              setAdded(true);
+            }}
+          >
+            {added ? "Added" : "Add to Bag"}
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
