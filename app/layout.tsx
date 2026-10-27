@@ -5,6 +5,7 @@ import { StoreProvider } from "@/lib/store";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ProductSheetProvider } from "@/components/product/ProductSheet";
+import { ClickSound } from "@/components/ClickSound";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -54,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <a href="#main" className="sr-only-focusable fixed left-4 top-3 z-[70] bg-ink px-4 py-2 text-sm text-paper">
             Skip to content
           </a>
+          <ClickSound />
           <ProductSheetProvider>
             <SiteHeader />
             <main id="main">{children}</main>

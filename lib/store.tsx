@@ -26,6 +26,8 @@ interface StoreValue {
   setQty: (key: string, qty: number) => void;
   removeFromBag: (key: string) => void;
   clearBag: () => void;
+  /** Whether this saree, in any colourway, is already in the bag. */
+  inBag: (slug: string) => boolean;
   isWished: (slug: string) => boolean;
   toggleWish: (slug: string) => void;
   lastAdded: { slug: string; at: number } | null;
@@ -34,7 +36,8 @@ interface StoreValue {
 const StoreContext = createContext<StoreValue | null>(null);
 const BAG_KEY = "kb.bag.v1";
 const WISH_KEY = "kb.wishlist.v1";
-export const MAX_QTY = 5;
+/** Each saree is handwoven and stocked in single pieces: one of each saree per order, in any one colourway. */
+export const MAX_QTY = 1;
 
 function read<T>(key: string, fallback: T): T {
   try {
@@ -62,7 +65,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [lastAdded, setLastAdded] = useState<StoreValue["lastAdded"]>(null);
 
   useEffect(() => {
-    const storedBag = read<BagLine[]>(BAG_KEY, []).filter((l) => getProduct(l.slug) && l.qty > 0);
+    // Older bags could hold several of a saree; keep one line per saree, at one piece.
+    const storedBag = read<BagLine[]>(BAG_KEY, [])
+      .filter((l, i, all) => getProduct(l.slug) && l.qty > 0 && all.findIndex((o) => o.slug === l.slug) === i)
+      .map((l) => ({ ...l, qty: Math.min(MAX_QTY, l.qty) }));
     const storedWish = read<string[]>(WISH_KEY, []).filter((s) => getProduct(s));
     setLines(storedBag);
     setWishlist(storedWish);
@@ -83,12 +89,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, [wishlist, ready]);
 
   const addToBag = useCallback((slug: string, qty = 1, variant?: string) => {
-    const k = lineKey({ slug, variant });
-    setLines((prev) => {
-      const found = prev.find((l) => lineKey(l) === k);
-      if (found) return prev.map((l) => (lineKey(l) === k ? { ...l, qty: Math.min(MAX_QTY, l.qty + qty) } : l));
-      return [...prev, { slug, variant, qty: Math.min(MAX_QTY, qty) }];
-    });
+    // One of each saree: adding again (even in another colourway) leaves the bag as it is.
+    setLines((prev) => (prev.some((l) => l.slug === slug) ? prev : [...prev, { slug, variant, qty: Math.min(MAX_QTY, qty) }]));
     setLastAdded({ slug, at: Date.now() });
   }, []);
 
@@ -120,6 +122,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setQty,
       removeFromBag,
       clearBag,
+      inBag: (slug) => lines.some((l) => l.slug === slug),
       isWished: (slug) => wishlist.includes(slug),
       toggleWish,
       lastAdded,

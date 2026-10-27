@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { Heart, Menu, Search, ShoppingBag, X } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { SearchDialog } from "./SearchDialog";
+import { MusicToggle } from "./MusicToggle";
 import { Wordmark } from "./Wordmark";
 import { OfferBar } from "./OfferBar";
 import { MEGA_PANELS } from "./MegaMenu";
@@ -115,6 +116,7 @@ export function SiteHeader() {
             </ul>
           </nav>
           <div className="flex items-center justify-end gap-0 sm:gap-1 lg:ml-auto">
+            <MusicToggle />
             <button type="button" className="icon-btn" aria-label="Search sarees" onClick={() => setSearchOpen(true)}>
               <Search size={19} strokeWidth={1.5} />
             </button>

@@ -1,12 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Minus, Plus } from "lucide-react";
 import { formatPrice } from "@/lib/products";
-import { MAX_QTY, useStore } from "@/lib/store";
+import { useStore } from "@/lib/store";
 
 export function ShoppingBag() {
-  const { bag, subtotal, setQty, removeFromBag, ready } = useStore();
+  const { bag, subtotal, removeFromBag, ready } = useStore();
 
   if (!ready) return <div className="min-h-[40vh]" aria-busy="true" />;
 
@@ -40,18 +39,11 @@ export function ShoppingBag() {
                 {p.name}
               </Link>
               <p className="mt-1 text-[13px] text-ink-soft">
-                {variant ?? p.color} · {formatPrice(p.price)} each <span className="text-[11px]">(sample)</span>
+                {variant ?? p.color} · {formatPrice(p.price)} <span className="text-[11px]">(sample)</span>
               </p>
               <div className="mt-5 flex items-center gap-5">
-                <div className="flex items-center border border-sand" role="group" aria-label={`Quantity of ${p.name}`}>
-                  <button type="button" className="grid size-11 place-items-center" onClick={() => setQty(key, qty - 1)} aria-label={qty === 1 ? `Remove ${p.name}` : "Decrease quantity"}>
-                    <Minus size={14} />
-                  </button>
-                  <span className="w-7 text-center tabular-nums">{qty}</span>
-                  <button type="button" className="grid size-11 place-items-center disabled:opacity-30" onClick={() => setQty(key, qty + 1)} disabled={qty >= MAX_QTY} aria-label="Increase quantity">
-                    <Plus size={14} />
-                  </button>
-                </div>
+                {/* One of each saree per order, so there's no quantity to change. */}
+                <p className="text-[13px] text-ink-soft">Qty 1 · One per order</p>
                 <button type="button" onClick={() => removeFromBag(key)} className="ml-auto min-h-11 px-1 text-[13px] text-ink-soft underline hover:text-ink sm:ml-0">
                   Remove
                 </button>

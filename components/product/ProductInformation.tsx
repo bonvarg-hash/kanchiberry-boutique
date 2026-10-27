@@ -71,11 +71,19 @@ function InfoTabs({ tabs }: { tabs: Tab[] }) {
 }
 
 export function ProductInformation({ product: p, variant = 0, onVariant }: { product: Product; variant?: number; onVariant?: (i: number) => void }) {
-  const { addToBag, isWished, toggleWish } = useStore();
-  const qty = 1;
+  const { addToBag, isWished, toggleWish, inBag, bag } = useStore();
   const [added, setAdded] = useState(false);
+  // One of each saree per order: once it's in the bag, the buy button turns into a
+  // link to the bag instead of adding another.
+  const inBagLine = bag.find((l) => l.slug === p.slug);
+  const isInBag = inBag(p.slug);
   const wished = isWished(p.slug);
   const colour = p.variants[variant] ?? p.variants[0];
+  const variantName = p.variants.length > 1 ? colour.name : undefined;
+  const add = () => {
+    addToBag(p.slug, 1, variantName);
+    setAdded(true);
+  };
   const photoCredit = p.images.find((i) => i.credit && i.credit !== "Kanchiberry")?.credit;
   // Phones: show a sticky buy bar only while the main Add to Bag row is off screen.
   const buyRow = useRef<HTMLDivElement>(null);
@@ -144,22 +152,15 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
         )}
       </div>
       <div ref={buyRow} className="mt-5 flex flex-wrap items-stretch gap-3">
-        <button
-          type="button"
-          className="btn btn-primary min-w-0 flex-1 basis-40"
-          onClick={() => {
-            addToBag(p.slug, qty, p.variants.length > 1 ? colour.name : undefined);
-            setAdded(true);
-          }}
-        >
-          {added ? (
-            <>
-              <Check size={16} /> Added to Bag
-            </>
-          ) : (
-            "Add to Bag"
-          )}
-        </button>
+        {isInBag ? (
+          <Link href="/bag" className="btn btn-primary min-w-0 flex-1 basis-40">
+            <Check size={16} aria-hidden /> In Your Bag · View Bag
+          </Link>
+        ) : (
+          <button type="button" className="btn btn-primary min-w-0 flex-1 basis-40" onClick={add}>
+            Add to Bag
+          </button>
+        )}
         <button
           type="button"
           className="btn btn-ghost wish-btn px-4"
@@ -171,10 +172,14 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
         </button>
       </div>
       <p role="status" className="mt-3 min-h-5 text-[13px]">
-        {added && (
-          <>
-            Added to your bag. <Link href="/bag" className="underline">View bag</Link>
-          </>
+        {added ? (
+          <>Added to your bag.</>
+        ) : isInBag && inBagLine?.variant && variantName && inBagLine.variant !== variantName ? (
+          <span className="text-ink-soft">
+            Already in your bag in {inBagLine.variant}. To choose {variantName} instead, remove it from your bag first.
+          </span>
+        ) : (
+          <span className="text-ink-soft">One per order. Each saree is handwoven, so every piece is one of a kind.</span>
         )}
       </p>
       <p className="text-[12px] text-ink-soft">Delivery estimates and PIN code checks will appear once a shipping service is connected.</p>
@@ -254,17 +259,15 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
               {formatPrice(p.price)} <span className="text-[11px]">(sample)</span>
             </p>
           </div>
-          <button
-            type="button"
-            tabIndex={showBar ? 0 : -1}
-            className="btn btn-primary min-h-12 shrink-0 px-6"
-            onClick={() => {
-              addToBag(p.slug, qty, p.variants.length > 1 ? colour.name : undefined);
-              setAdded(true);
-            }}
-          >
-            {added ? "Added" : "Add to Bag"}
-          </button>
+          {isInBag ? (
+            <Link href="/bag" tabIndex={showBar ? 0 : -1} className="btn btn-primary min-h-12 shrink-0 px-6">
+              <Check size={16} aria-hidden /> In Bag
+            </Link>
+          ) : (
+            <button type="button" tabIndex={showBar ? 0 : -1} className="btn btn-primary min-h-12 shrink-0 px-6" onClick={add}>
+              Add to Bag
+            </button>
+          )}
         </div>
       </div>
     </section>

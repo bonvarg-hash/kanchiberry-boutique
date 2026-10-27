@@ -6,7 +6,7 @@ import { useStore } from "@/lib/store";
 import { ProductCard } from "@/components/product/ProductCard";
 
 export default function WishlistPage() {
-  const { wishlist, ready, addToBag } = useStore();
+  const { wishlist, ready, addToBag, inBag } = useStore();
   const items = wishlist.flatMap((s) => {
     const p = getProduct(s);
     return p ? [p] : [];
@@ -32,9 +32,15 @@ export default function WishlistPage() {
           {items.map((p) => (
             <div key={p.slug}>
               <ProductCard product={p} />
-              <button type="button" className="btn btn-ghost mt-4 min-h-11! w-full" onClick={() => addToBag(p.slug)}>
-                Move to Bag
-              </button>
+              {inBag(p.slug) ? (
+                <Link href="/bag" className="btn btn-ghost mt-4 min-h-11! w-full">
+                  In Your Bag · View Bag
+                </Link>
+              ) : (
+                <button type="button" className="btn btn-ghost mt-4 min-h-11! w-full" onClick={() => addToBag(p.slug)}>
+                  Move to Bag
+                </button>
+              )}
             </div>
           ))}
         </div>

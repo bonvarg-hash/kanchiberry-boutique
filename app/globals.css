@@ -1227,6 +1227,35 @@ img {
     animation: none;
   }
 }
+/* Header music button: a soft ring pulses around it while the track plays. */
+.music-btn[data-playing] {
+  position: relative;
+}
+.music-btn[data-playing]::after {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border-radius: 999px;
+  border: 1px solid #87264d;
+  animation: music-ring 2.4s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes music-ring {
+  from {
+    transform: scale(0.85);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .music-btn[data-playing]::after {
+    animation: none;
+    opacity: 0.6;
+  }
+}
 /* Shop sort menu: a quiet bordered button and a paper panel of options. */
 .sort-menu {
   position: relative;

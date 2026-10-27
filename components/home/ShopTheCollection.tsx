@@ -8,7 +8,7 @@ import { useStore } from "@/lib/store";
 import { Reveal } from "@/components/Reveal";
 
 function Card({ p }: { p: Product }) {
-  const { addToBag } = useStore();
+  const { addToBag, inBag } = useStore();
   const [added, setAdded] = useState(false);
   const off = p.compareAtPrice && p.compareAtPrice > p.price ? Math.round((1 - p.price / p.compareAtPrice) * 100) : 0;
   return (
@@ -38,23 +38,27 @@ function Card({ p }: { p: Product }) {
               <span className="text-[15px] text-ink-soft">(sample)</span>
             )}
           </span>
-          <button
-            type="button"
-            onClick={() => {
-              addToBag(p.slug);
-              setAdded(true);
-              setTimeout(() => setAdded(false), 2200);
-            }}
-            className="inline-flex min-h-10 items-center gap-1.5 bg-[#190E14] px-4 text-[11px] uppercase tracking-[0.14em] text-white"
-          >
-            {added ? (
-              <>
-                <Check size={13} /> Added
-              </>
-            ) : (
-              "Add to Bag"
-            )}
-          </button>
+          {/* One of each saree per order: once added, the button links to the bag instead. */}
+          {inBag(p.slug) ? (
+            <Link
+              href="/bag"
+              className="inline-flex min-h-10 items-center gap-1.5 border border-[#190E14] px-4 text-[11px] uppercase tracking-[0.14em] text-[#190E14]"
+            >
+              <Check size={13} aria-hidden /> {added ? "Added" : "In Bag"}
+            </Link>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                addToBag(p.slug);
+                setAdded(true);
+                setTimeout(() => setAdded(false), 2200);
+              }}
+              className="inline-flex min-h-10 items-center gap-1.5 bg-[#190E14] px-4 text-[11px] uppercase tracking-[0.14em] text-white"
+            >
+              Add to Bag
+            </button>
+          )}
         </div>
       </div>
     </article>
