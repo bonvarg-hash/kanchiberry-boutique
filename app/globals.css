@@ -1,17 +1,18 @@
 @import "tailwindcss";
 
 @theme {
-  /* White ground; type and accents in shades of dark walnut brown #24170f. */
-  --color-ivory: #ffffff;
-  --color-paper: #ffffff;
+  /* Primary ground: warm off-white #EEE9E0; type and accents in dark walnut brown #24170f. */
+  --color-ivory: #EEE9E0;
+  --color-paper: #EEE9E0;
   --color-ink: #24170f;
-  --color-ink-soft: #666666; /* body copy and secondary text: neutral grey */
-  /* Highlight colour: hovers, focus rings, selection, badges, accents. */
+  --color-ink-soft: #575757; /* body copy and secondary text: neutral grey, AA on both grounds */
+  /* Tertiary #190E14: primary buttons and CTAs, plus hovers, focus rings and selection. */
   --color-berry: #190e14;
   --color-berry-deep: #190e14;
-  --color-sand: #ddd0c3;
-  --color-sand-soft: #f7f3ef;
-  --color-mist: #f5f5f4; /* light grey band behind the rail and the testimonials */
+  --color-sand: #dacbb6; /* hairlines and borders */
+  /* Secondary #DBD5CB: complementary bands, cards and image grounds. */
+  --color-sand-soft: #DBD5CB;
+  --color-mist: #DBD5CB; /* band behind the rail and the testimonials */
   --color-sage: #8c7867;
   --color-danger: #9b2f3c;
   --font-serif: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
@@ -151,12 +152,13 @@ img {
 .btn:active {
   transform: translateY(1px);
 }
+/* Tertiary colour: CTAs only. */
 .btn-primary {
-  background: var(--color-ink);
+  background: var(--color-berry-deep);
   color: var(--color-paper);
 }
 .btn-primary:hover {
-  background: var(--color-berry-deep);
+  background: color-mix(in srgb, var(--color-berry-deep) 84%, var(--color-paper));
 }
 .btn-ghost {
   border-color: var(--color-ink);
@@ -164,6 +166,25 @@ img {
 .btn-ghost:hover {
   background: var(--color-ink);
   color: var(--color-paper);
+}
+/* Wishlist heart: the button stays clear; hover darkens the heart, saved turns it red. */
+.wish-btn svg {
+  transition: color 0.25s, fill 0.25s, transform 0.25s var(--ease-cloth);
+}
+.btn-ghost.wish-btn:hover {
+  background: transparent;
+  color: var(--color-ink);
+}
+.wish-btn:hover svg {
+  color: #190e14;
+  fill: #190e14;
+}
+.wish-btn[aria-pressed="true"] svg {
+  color: #d22f3c;
+  fill: #d22f3c;
+}
+.wish-btn:active svg {
+  transform: scale(0.88);
 }
 .btn[disabled] {
   opacity: 0.45;
@@ -201,7 +222,7 @@ img {
 }
 .site-header[data-solid="true"] {
   /* frosted glass: translucent white over a strong blur keeps text and icons crisp */
-  background: rgba(255, 255, 255, 0.72);
+  background: rgb(238 233 224 / 0.72);
   -webkit-backdrop-filter: blur(18px) saturate(1.6);
   backdrop-filter: blur(18px) saturate(1.6);
   box-shadow:
@@ -210,7 +231,7 @@ img {
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .site-header[data-solid="true"] {
-    background: rgba(255, 255, 255, 0.96);
+    background: rgb(238 233 224 / 0.96);
   }
 }
 .nav-link {
@@ -1394,7 +1415,7 @@ details.acc[open] .acc-icon {
   overflow-x: clip;
   overflow-y: auto;
   overscroll-behavior: contain;
-  background: var(--color-paper, #fff);
+  background: var(--color-paper);
   box-shadow: 0 -18px 50px -20px rgb(25 14 20 / 0.45);
   outline: none;
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
@@ -1424,7 +1445,7 @@ details.acc[open] .acc-icon {
   gap: 16px;
   min-height: 64px;
   padding: 12px max(clamp(16px, 4vw, 64px), calc((100% - 1440px) / 2 + 64px)) 10px;
-  background: rgb(255 255 255 / 0.9);
+  background: rgb(238 233 224 / 0.9);
   backdrop-filter: blur(14px) saturate(1.2);
   -webkit-backdrop-filter: blur(14px) saturate(1.2);
   cursor: grab;

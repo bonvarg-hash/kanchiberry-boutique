@@ -161,12 +161,12 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
         </button>
         <button
           type="button"
-          className="btn btn-ghost px-4"
+          className="btn btn-ghost wish-btn px-4"
           aria-pressed={wished}
           aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
           onClick={() => toggleWish(p.slug)}
         >
-          <Heart size={18} strokeWidth={1.5} fill={wished ? "currentColor" : "none"} className={wished ? "text-berry" : ""} />
+          <Heart size={18} strokeWidth={1.5} />
         </button>
       </div>
       <p role="status" className="mt-3 min-h-5 text-[13px]">

@@ -89,9 +89,7 @@ export function SignatureSpotlight() {
             </ul>
             <p className="mt-8 flex items-baseline gap-3">
               <span className="text-[12px] uppercase tracking-[0.16em] text-ink-soft">Price</span>
-              <span className="text-[28px]" style={{ fontFamily: "var(--font-title)" }}>
-                {formatPrice(p.price)}
-              </span>
+              <span className="font-sans text-[28px]">{formatPrice(p.price)}</span>
               <span className="tag-sample">Sample</span>
             </p>
           </div>

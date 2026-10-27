@@ -54,8 +54,8 @@ export function CustomerTestimonials() {
     <section aria-labelledby="stories-title" className="bg-mist py-16 md:py-24 lg:py-32">
       <div className="wrap mb-8 grid gap-6 md:mb-12 md:grid-cols-[1fr_auto] md:items-end">
         <div>
-          <h2 id="stories-title" className="section-title">
-            Woven Into Their Stories
+          <h2 id="stories-title" className="section-title text-[#625B50]">
+            Woven Into <em className="text-[#190E14]">Their Stories</em>
           </h2>
           <p className="lede mt-5">A few kind words from those who found something special at Kanchiberry.</p>
         </div>

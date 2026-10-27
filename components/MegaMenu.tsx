@@ -70,7 +70,7 @@ function EntryList({ title, entries }: { title: string; entries: Entry[] }) {
             <Link href={e.href} className="group flex min-h-11 items-center gap-3 rounded-md px-1 transition-colors hover:bg-mist">
               <img src={e.thumb} alt="" loading="lazy" className="size-9 shrink-0 rounded-full object-cover ring-1 ring-sand" />
               <span className="min-w-0 flex-1 truncate text-[15px]">{e.name}</span>
-              <span className="shrink-0 rounded-full bg-mist px-2 py-0.5 text-[11px] tabular-nums text-ink-soft group-hover:bg-white">{e.count}</span>
+              <span className="shrink-0 rounded-full bg-mist px-2 py-0.5 text-[11px] tabular-nums text-ink-soft group-hover:bg-paper">{e.count}</span>
             </Link>
           </li>
         ))}

@@ -136,7 +136,7 @@ export function SiteHeader() {
         {/* End-to-end dropdown (desktop) */}
         <div
           id="mega-panel"
-          className="mega absolute inset-x-0 top-full hidden border-t border-sand bg-white shadow-[0_24px_40px_-24px_rgba(36,23,15,0.35)] lg:block"
+          className="mega absolute inset-x-0 top-full hidden border-t border-sand bg-paper shadow-[0_24px_40px_-24px_rgba(36,23,15,0.35)] lg:block"
           data-open={mega !== null || undefined}
           onMouseEnter={() => mega && openMega(mega, 0)}
           onFocus={() => mega && openMega(mega, 0)}

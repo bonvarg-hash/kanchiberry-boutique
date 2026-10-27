@@ -17,8 +17,8 @@ export function ProductCard({ product: p, priority = false }: { product: Product
         <span className="mt-4 block">
           <span className="eyebrow block">{p.weaveName}</span>
           <span className="serif mt-1 block text-[26px] leading-tight">{p.name}</span>
-          <span className="mt-1 block text-[14px] text-ink-soft">
-            {formatPrice(p.price)} <span className="text-[11px]">(sample)</span>
+          <span className="mt-1 block text-[18px] text-ink-soft">
+            {formatPrice(p.price)} <span className="text-[15px]">(sample)</span>
           </span>
         </span>
       </Link>

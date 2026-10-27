@@ -91,7 +91,7 @@ export function WeaveMarquee() {
   );
 
   return (
-    <section aria-label="Weaves we offer" className="border-y border-sand bg-white">
+    <section aria-label="Weaves we offer" className="border-y border-sand bg-paper">
       <div
         ref={strip}
         className="flex overflow-x-auto overscroll-x-contain py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"

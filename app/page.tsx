@@ -5,12 +5,10 @@ import { MobileSareeCarousel } from "@/components/gallery/MobileSareeCarousel";
 import { RailEyebrow } from "@/components/gallery/RailEyebrow";
 import { CustomerTestimonials } from "@/components/home/CustomerTestimonials";
 import { CraftsmanshipSection } from "@/components/home/CraftsmanshipSection";
-import { ShoppingBenefits } from "@/components/home/ShoppingBenefits";
 import { NewsletterSignup } from "@/components/home/NewsletterSignup";
 import { SignatureSpotlight } from "@/components/home/SignatureSpotlight";
 import { CraftStats } from "@/components/home/CraftStats";
 import { ShopTheCollection } from "@/components/home/ShopTheCollection";
-import { DrapeYourDay } from "@/components/home/DrapeYourDay";
 import { WeaveMarquee } from "@/components/home/WeaveMarquee";
 import { featuredProducts, products } from "@/lib/products";
 
@@ -23,8 +21,8 @@ export default function HomePage() {
         <div className="wrap mb-6 grid gap-5 md:grid-cols-2 md:items-end">
           <div>
             <RailEyebrow initial={featuredProducts().length} />
-            <h2 id="curated-title" className="section-title">
-              Curated Picks
+            <h2 id="curated-title" className="section-title text-[#625B50]">
+              <em className="text-[#190E14]">Curated Picks</em>
               <br />
               of the Week
             </h2>
@@ -46,11 +44,9 @@ export default function HomePage() {
       </section>
       <SignatureSpotlight />
       <ShopTheCollection products={products.filter((p) => p.images[0]?.credit === "Kanchiberry")} />
-      <CraftStats />
-      <DrapeYourDay />
       <CustomerTestimonials />
+      <CraftStats />
       <CraftsmanshipSection />
-      <ShoppingBenefits />
       <NewsletterSignup />
     </>
   );
