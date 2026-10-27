@@ -5,11 +5,12 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import type { Product } from "@/lib/products";
 import { SareeItem } from "./SareeItem";
 import { RAIL_COUNT_EVENT } from "./RailEyebrow";
+import { useOpenProduct } from "@/components/product/ProductSheet";
 
 /**
  * The boutique rail. Each saree hangs side-on; hovering (or keyboard focus, or a
- * first tap on touch) turns it to face the viewer. Clicking it opens its
- * product page.
+ * first tap on touch) turns it to face the viewer. Clicking it slides its
+ * product details up over the page (see ProductSheet).
  */
 export function CuratedSareeGallery({ products }: { products: Product[] }) {
   const [open, setOpen] = useState<number | null>(null);
@@ -21,6 +22,7 @@ export function CuratedSareeGallery({ products }: { products: Product[] }) {
   const items = useRef<(HTMLAnchorElement | null)[]>([]);
   const hoverTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const lastPointer = useRef<{ type: string; at: number }>({ type: "mouse", at: 0 });
+  const openProduct = useOpenProduct();
 
   const updateEdges = useCallback(() => {
     const el = scroller.current;
@@ -109,7 +111,7 @@ export function CuratedSareeGallery({ products }: { products: Product[] }) {
       if (!(e.relatedTarget as Element | null)?.closest?.("[data-saree]")) setOpen((cur) => (cur === i ? null : cur));
     },
     onClick: (e: MouseEvent) => {
-      // A click (or Enter) follows the link straight to the product page.
+      // A click (or Enter) slides the saree's details up over the rail.
       // On touch there is no hover, so the first tap turns the saree and the second opens it.
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
       const touch = e.detail > 0 && lastPointer.current.type !== "mouse";
@@ -117,7 +119,9 @@ export function CuratedSareeGallery({ products }: { products: Product[] }) {
         e.preventDefault();
         setOpen(i);
         center(i);
+        return;
       }
+      if (openProduct((e.currentTarget as HTMLAnchorElement).href)) e.preventDefault();
     },
   });
 

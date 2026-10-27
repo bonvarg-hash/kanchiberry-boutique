@@ -1,0 +1,15 @@
+import { relatedProducts, type Product } from "@/lib/products";
+import { ProductView } from "./ProductView";
+import { RelatedProducts } from "./RelatedProducts";
+
+/** The body of a product page: gallery, details and related sarees. Shared by the page and the slide-up sheet. */
+export function ProductDetails({ product: p }: { product: Product }) {
+  return (
+    <>
+      <div className="wrap grid gap-8 pb-16 pt-4 md:gap-10 md:pb-20 md:pt-6 lg:grid-cols-[1.15fr_1fr] lg:gap-20">
+        <ProductView product={p} />
+      </div>
+      <RelatedProducts products={relatedProducts(p)} />
+    </>
+  );
+}

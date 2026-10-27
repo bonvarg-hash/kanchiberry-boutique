@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProduct, products, relatedProducts } from "@/lib/products";
-import { ProductView } from "@/components/product/ProductView";
-import { RelatedProducts } from "@/components/product/RelatedProducts";
+import { getProduct, products } from "@/lib/products";
+import { ProductDetails } from "@/components/product/ProductDetails";
 
 export function generateStaticParams() {
   return products.map((p) => ({ slug: p.slug }));
@@ -48,10 +47,7 @@ export default async function ProductPage({ params }: PageProps<"/sarees/[slug]"
           </li>
         </ol>
       </nav>
-      <div className="wrap grid gap-8 pb-16 pt-4 md:gap-10 md:pb-20 md:pt-6 lg:grid-cols-[1.15fr_1fr] lg:gap-20">
-        <ProductView product={p} />
-      </div>
-      <RelatedProducts products={relatedProducts(p)} />
+      <ProductDetails product={p} />
     </>
   );
 }

@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { formatPrice, type Product } from "@/lib/products";
 import { SareeItem } from "./SareeItem";
+import { useOpenProduct } from "@/components/product/ProductSheet";
 
 const noop = () => {};
 
@@ -12,13 +13,18 @@ const noop = () => {};
  * Touch version of the rail (phones and small tablets). One saree sits in the
  * centre, turned to face you, with its neighbours peeking in at the sides.
  * Swipe to browse (snap-to-item); tap a neighbour to bring it to the centre;
- * tap the centred saree or the CTA to open its product page.
+ * tap the centred saree or the CTA to slide its details up over the page.
  */
 export function MobileSareeCarousel({ products }: { products: Product[] }) {
   const [active, setActive] = useState(0);
   const scroller = useRef<HTMLDivElement>(null);
   const items = useRef<(HTMLAnchorElement | null)[]>([]);
   const frame = useRef(0);
+  const openProduct = useOpenProduct();
+  const openDetails = (e: MouseEvent) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    if (openProduct((e.currentTarget as HTMLAnchorElement).href)) e.preventDefault();
+  };
 
   const goTo = useCallback((i: number, smooth = true) => {
     const n = Math.max(0, Math.min(products.length - 1, i));
@@ -81,7 +87,7 @@ export function MobileSareeCarousel({ products }: { products: Product[] }) {
                   if (i !== active) {
                     e.preventDefault();
                     goTo(i);
-                  }
+                  } else openDetails(e);
                 }}
               />
             </div>
@@ -122,7 +128,7 @@ export function MobileSareeCarousel({ products }: { products: Product[] }) {
             </button>
           </div>
         </div>
-        <Link href={`/sarees/${p.slug}`} className="btn btn-primary mt-4 w-full whitespace-nowrap">
+        <Link href={`/sarees/${p.slug}`} onClick={openDetails} className="btn btn-primary mt-4 w-full whitespace-nowrap">
           Explore This Saree <span aria-hidden>→</span>
         </Link>
         <p className="sr-only" aria-live="polite">
