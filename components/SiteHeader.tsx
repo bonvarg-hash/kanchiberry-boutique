@@ -116,7 +116,7 @@ export function SiteHeader() {
             </ul>
           </nav>
           <div className="flex items-center justify-end gap-0 sm:gap-1 lg:ml-auto">
-            <MusicToggle />
+            <MusicToggle hint />
             <button type="button" className="icon-btn" aria-label="Search sarees" onClick={() => setSearchOpen(true)}>
               <Search size={19} strokeWidth={1.5} />
             </button>

@@ -1256,6 +1256,59 @@ img {
     opacity: 0.6;
   }
 }
+/* "Tap for festive music" prompt under the header play button, shown while the
+   browser is waiting for a first click or tap before it allows sound. */
+.music-hint {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: -8px;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 4px 4px 14px;
+  border-radius: 999px;
+  background: #190e14;
+  color: #eee9e0;
+  font-size: 13px;
+  white-space: nowrap;
+  box-shadow: 0 12px 28px -14px rgb(25 14 20 / 0.6);
+  animation: music-hint-in 0.45s var(--ease-cloth) both;
+}
+.music-hint::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  right: 22px;
+  width: 10px;
+  height: 10px;
+  background: #190e14;
+  transform: rotate(45deg);
+}
+.music-hint-play {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px 4px 0;
+}
+.music-hint-close {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  color: rgb(238 233 224 / 0.7);
+}
+.music-hint-close:hover {
+  color: #eee9e0;
+  background: rgb(238 233 224 / 0.12);
+}
+@keyframes music-hint-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
 /* Shop sort menu: a quiet bordered button and a paper panel of options. */
 .sort-menu {
   position: relative;

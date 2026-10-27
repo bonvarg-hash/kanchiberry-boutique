@@ -25,8 +25,14 @@ const session = {
   },
 };
 
-type Music = { playing: boolean; toggle: () => void };
-const MusicContext = createContext<Music>({ playing: false, toggle: () => {} });
+type Music = {
+  playing: boolean;
+  toggle: () => void;
+  /** The browser refused to start the music on its own; one tap or click will. */
+  needsTap: boolean;
+  dismiss: () => void;
+};
+const MusicContext = createContext<Music>({ playing: false, toggle: () => {}, needsTap: false, dismiss: () => {} });
 export const useMusic = () => useContext(MusicContext);
 
 /**
@@ -37,14 +43,16 @@ export const useMusic = () => useContext(MusicContext);
  * Pausing is remembered for the rest of the visit; a new visit starts on scroll
  * again.
  *
- * Browsers only allow sound after the visitor has interacted with the page. A
- * swipe on a phone counts; a mouse-wheel scroll doesn't, so on desktop the music
- * usually starts on the first click or key press.
+ * Browsers only allow sound after a click, tap or key press; scrolling doesn't
+ * count on any of them. So when a landing or scroll attempt is blocked, needsTap
+ * turns on and the header shows a small "tap for music" prompt, and the very next
+ * click, tap or key press anywhere starts the track.
  */
 export function MusicProvider({ children }: { children: ReactNode }) {
   const audio = useRef<HTMLAudioElement | null>(null);
   const fade = useRef(0);
   const [playing, setPlaying] = useState(false);
+  const [needsTap, setNeedsTap] = useState(false);
   const playingRef = useRef(false);
   playingRef.current = playing;
 
@@ -73,6 +81,7 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     return audio.current.play().then(
       () => {
         setPlaying(true);
+        setNeedsTap(false);
         fadeTo(VOLUME);
         return true;
       },
@@ -91,6 +100,12 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     }
   }, [fadeTo, play]);
 
+  /** Visitor closed the prompt: no music, and no more prompts, for this visit. */
+  const dismiss = useCallback(() => {
+    session.set(OFF_KEY, "1");
+    setNeedsTap(false);
+  }, []);
+
   // Autoplay as early as the browser allows, unless paused earlier in this visit:
   // straight away on landing (some browsers permit it for returning visitors),
   // then on the first scroll, swipe, click, tap or key press. A blocked attempt
@@ -98,16 +113,20 @@ export function MusicProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (session.get(OFF_KEY)) return;
     let trying = false;
-    const events = ["scroll", "wheel", "touchend", "pointerdown", "keydown"] as const;
+    // Scroll and wheel never unlock sound, but they're tried (some browsers allow
+    // returning visitors) and reveal the prompt; the rest are what unlock it.
+    const events = ["scroll", "wheel", "pointerdown", "pointerup", "touchend", "click", "keydown"] as const;
     const stop = () => events.forEach((e) => window.removeEventListener(e, attempt, true));
     function attempt(e?: Event) {
+      if (session.get(OFF_KEY)) return stop(); // dismissed or paused in this visit
       if (trying || playingRef.current) return;
-      // A press on the music button is the visitor choosing; let the button handle it.
-      if ((e?.target as Element | null)?.closest?.(".music-btn")) return;
+      // A press on the music button or its prompt is the visitor choosing; let those handle it.
+      if ((e?.target as Element | null)?.closest?.(".music-btn, .music-hint")) return;
       trying = true;
       void play().then((ok) => {
         trying = false;
         if (ok) stop();
+        else if (!session.get(OFF_KEY)) setNeedsTap(true);
       });
     }
     events.forEach((e) => window.addEventListener(e, attempt, { passive: true, capture: true }));
@@ -136,6 +155,6 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const value = useMemo(() => ({ playing, toggle }), [playing, toggle]);
+  const value = useMemo(() => ({ playing, toggle, needsTap, dismiss }), [playing, toggle, needsTap, dismiss]);
   return <MusicContext.Provider value={value}>{children}</MusicContext.Provider>;
 }

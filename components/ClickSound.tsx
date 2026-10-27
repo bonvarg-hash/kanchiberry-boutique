@@ -2,14 +2,15 @@
 
 import { useEffect } from "react";
 
-/** Calls to action that tick when clicked. Add data-click-sound to opt anything else in. */
-const CTA = ".btn, .cursor-cta, .text-link, .editorial-pill, [data-click-sound]";
+/** Buttons, including links styled as buttons (CTAs, header icons); plain text links stay silent. */
+const BUTTONS =
+  "button, [role='button'], input[type='submit'], input[type='button'], .btn, .cursor-cta, .editorial-pill, .icon-btn";
 
 /**
- * A soft, short "tick" on mouse clicks on calls to action, synthesised with the
- * Web Audio API (no sound file to load or license). The audio context starts on
- * the first click, as browsers require. Touch and keyboard presses stay silent,
- * and so do disabled buttons.
+ * A soft, modern "pop" on mouse clicks on buttons, synthesised with
+ * the Web Audio API (no sound file to load or license). The audio context starts
+ * on the first click, as browsers require. Touch and keyboard presses stay silent,
+ * and so do clicks on disabled buttons.
  */
 export function ClickSound() {
   useEffect(() => {
@@ -19,23 +20,24 @@ export function ClickSound() {
       ctx ??= new AudioContext();
       if (ctx.state === "suspended") void ctx.resume();
       const t = ctx.currentTime;
-      // A quick downward chirp with a fast fade: reads as a gentle wooden tap.
+      // A soft "pop": a short sine whose pitch lifts quickly, with a rounded fade,
+      // like a gentle bubble or a light key press.
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = "sine";
-      osc.frequency.setValueAtTime(1400, t);
-      osc.frequency.exponentialRampToValueAtTime(520, t + 0.05);
+      osc.frequency.setValueAtTime(420, t);
+      osc.frequency.exponentialRampToValueAtTime(980, t + 0.035);
       gain.gain.setValueAtTime(0.0001, t);
-      gain.gain.exponentialRampToValueAtTime(0.08, t + 0.004);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.09, t + 0.006);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.07);
       osc.connect(gain).connect(ctx.destination);
       osc.start(t);
-      osc.stop(t + 0.09);
+      osc.stop(t + 0.08);
     };
 
     const onDown = (e: PointerEvent) => {
       if (e.pointerType !== "mouse" || e.button !== 0) return;
-      const el = (e.target as Element | null)?.closest?.(CTA);
+      const el = (e.target as Element | null)?.closest?.(BUTTONS);
       if (!el || el.matches(":disabled, [aria-disabled='true']")) return;
       tick();
     };
