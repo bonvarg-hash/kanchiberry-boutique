@@ -2,14 +2,39 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { Check, Heart } from "lucide-react";
+import { Check, ChevronDown, Heart } from "lucide-react";
 import { formatPrice, type Product } from "@/lib/products";
 import { useStore } from "@/lib/store";
 
 type Tab = { id: string; label: string; content: React.ReactNode };
 
-/** Accessible tabs: click or use the arrow keys, Home and End to move between them. */
+/**
+ * Product information. From tablet width: accessible tabs (click, or arrow keys,
+ * Home and End). On phones: stacked sections that open with a tap, which beats a
+ * row of tabs running off the edge of the screen.
+ */
 function InfoTabs({ tabs }: { tabs: Tab[] }) {
+  return (
+    <>
+      <div className="mt-10 border-t border-sand max-md:order-9 md:hidden">
+        {tabs.map((t, i) => (
+          <details key={t.id} className="info-acc group border-b border-sand" open={i === 0}>
+            <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 text-[15px] [&::-webkit-details-marker]:hidden">
+              {t.label}
+              <ChevronDown size={18} strokeWidth={1.5} aria-hidden className="shrink-0 transition-transform duration-300 group-open:rotate-180" />
+            </summary>
+            <div className="pb-6 text-[15px] leading-relaxed text-ink-soft">{t.content}</div>
+          </details>
+        ))}
+      </div>
+      <div className="hidden md:block">
+        <Tabs tabs={tabs} />
+      </div>
+    </>
+  );
+}
+
+function Tabs({ tabs }: { tabs: Tab[] }) {
   const [active, setActive] = useState(0);
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
   const go = (i: number) => {
@@ -103,16 +128,18 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
   }, [added]);
 
   return (
-    <section aria-labelledby="pdp-title" className="min-w-0 lg:pt-6">
-      <p className="eyebrow">
+    <section aria-labelledby="pdp-title" className="flex min-w-0 flex-col md:block lg:pt-6">
+      {/* Phones reorder this column so price, colour and Add to Bag sit right under the
+          photos; the description and details follow. Wider screens keep the written order. */}
+      <p className="eyebrow max-md:order-1">
         {p.weaveName} · {p.collection}
       </p>
-      <h1 id="pdp-title" className="serif mt-3 text-[clamp(3rem,6vw,5rem)] font-light leading-[0.92]">
+      <h1 id="pdp-title" className="serif mt-3 text-[clamp(2.5rem,6vw,5rem)] font-light leading-[0.92] max-md:order-2">
         {p.name}
       </h1>
-      <p className="mt-5 max-w-[52ch] text-[16px] leading-relaxed text-ink-soft">{p.description}</p>
+      <p className="mt-5 max-w-[52ch] text-[16px] leading-relaxed text-ink-soft max-md:order-8 max-md:mt-8">{p.description}</p>
       {p.variants.length > 1 && (
-        <fieldset className="mt-10">
+        <fieldset className="mt-10 max-md:order-4 max-md:mt-7">
           <legend className="text-[13px] text-ink-soft">
             Colour: <span className="ml-1 inline-flex items-center rounded-md border border-sand px-2 py-0.5 text-[13px] text-ink" aria-live="polite">{colour.name}</span>
           </legend>
@@ -134,7 +161,7 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
           </div>
         </fieldset>
       )}
-      <div className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-3">
+      <div className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-3 max-md:order-3 max-md:mt-5">
         <p className="flex items-baseline gap-3 leading-none">
           <span className="text-[30px]">{formatPrice(p.price)}</span>
           {p.compareAtPrice && p.compareAtPrice > p.price && (
@@ -151,7 +178,7 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
           </span>
         )}
       </div>
-      <div ref={buyRow} className="mt-5 flex flex-wrap items-stretch gap-3">
+      <div ref={buyRow} className="mt-5 flex flex-wrap items-stretch gap-3 max-md:order-5 max-md:mt-7">
         {isInBag ? (
           <Link href="/bag" className="btn btn-primary min-w-0 flex-1 basis-40">
             <Check size={16} aria-hidden /> In Your Bag · View Bag
@@ -171,7 +198,7 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
           <Heart size={18} strokeWidth={1.5} />
         </button>
       </div>
-      <p role="status" className="mt-3 min-h-5 text-[13px]">
+      <p role="status" className="mt-3 min-h-5 text-[13px] max-md:order-6">
         {added ? (
           <>Added to your bag.</>
         ) : isInBag && inBagLine?.variant && variantName && inBagLine.variant !== variantName ? (
@@ -182,7 +209,7 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
           <span className="text-ink-soft">One per order. Each saree is handwoven, so every piece is one of a kind.</span>
         )}
       </p>
-      <p className="text-[12px] text-ink-soft">Delivery estimates and PIN code checks will appear once a shipping service is connected.</p>
+      <p className="text-[12px] text-ink-soft max-md:order-7">Delivery estimates and PIN code checks will appear once a shipping service is connected.</p>
 
       <InfoTabs
         tabs={[
@@ -245,8 +272,8 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
 
       {/* Sticky buy bar (phones), above the bottom safe area */}
       <div
-        className={`fixed inset-x-0 bottom-0 z-30 border-t border-sand bg-paper/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur transition-transform duration-300 md:hidden ${
-          showBar ? "translate-y-0" : "pointer-events-none translate-y-full"
+        className={`fixed inset-x-0 bottom-(--tabbar-h) z-30 border-t border-sand bg-paper/95 px-4 py-3 backdrop-blur transition-transform duration-300 md:hidden ${
+          showBar ? "translate-y-0" : "pointer-events-none invisible translate-y-full opacity-0"
         }`}
         aria-hidden={!showBar}
       >
@@ -256,7 +283,13 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
               {p.name}
             </p>
             <p className="text-[13px] text-ink-soft">
-              {formatPrice(p.price)} <span className="text-[11px]">(sample)</span>
+              {formatPrice(p.price)}{" "}
+              {p.compareAtPrice && p.compareAtPrice > p.price && (
+                <s className="text-[12px]">
+                  <span className="sr-only">Was </span>
+                  {formatPrice(p.compareAtPrice)}
+                </s>
+              )}
             </p>
           </div>
           {isInBag ? (

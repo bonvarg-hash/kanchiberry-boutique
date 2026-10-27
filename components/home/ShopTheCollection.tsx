@@ -22,7 +22,7 @@ function Card({ p }: { p: Product }) {
         <img src={p.images[0].src} alt={p.images[0].alt} loading="lazy" className="aspect-[4/5] w-full object-cover transition-transform duration-[1400ms] ease-[var(--ease-cloth)] group-hover:scale-[1.04]" />
       </Link>
       <div className="flex flex-1 flex-col px-2 pb-2 pt-5 text-center">
-        <Link href={`/sarees/${p.slug}`} className="text-[24px] leading-tight hover:underline" style={{ fontFamily: "var(--font-title)" }}>
+        <Link href={`/sarees/${p.slug}`} className="inline-block py-2 text-[24px] leading-tight hover:underline" style={{ fontFamily: "var(--font-title)" }}>
           {p.name}
         </Link>
         <p className="mx-auto mt-2 max-w-[32ch] text-[16px] leading-relaxed text-ink-soft">{p.tagline}</p>
@@ -42,7 +42,7 @@ function Card({ p }: { p: Product }) {
           {inBag(p.slug) ? (
             <Link
               href="/bag"
-              className="inline-flex min-h-10 items-center gap-1.5 border border-[#190E14] px-4 text-[11px] uppercase tracking-[0.14em] text-[#190E14]"
+              className="inline-flex min-h-11 items-center gap-1.5 border border-[#190E14] px-4 text-[11px] uppercase tracking-[0.14em] text-[#190E14]"
             >
               <Check size={13} aria-hidden /> {added ? "Added" : "In Bag"}
             </Link>
@@ -54,7 +54,7 @@ function Card({ p }: { p: Product }) {
                 setAdded(true);
                 setTimeout(() => setAdded(false), 2200);
               }}
-              className="inline-flex min-h-10 items-center gap-1.5 bg-[#190E14] px-4 text-[11px] uppercase tracking-[0.14em] text-white"
+              className="inline-flex min-h-11 items-center gap-1.5 bg-[#190E14] px-4 text-[11px] uppercase tracking-[0.14em] text-white"
             >
               Add to Bag
             </button>
@@ -75,9 +75,10 @@ export function ShopTheCollection({ products }: { products: Product[] }) {
           Shop the Collection
         </h2>
         <p className="lede mx-auto mt-5 max-w-[56ch]!">Explore our edit of silk, brocade and handloom sarees, chosen for every kind of celebration.</p>
-        <div className="mt-14 grid gap-6 text-left sm:grid-cols-2 lg:grid-cols-3">
+        {/* Phones: a swipeable row with the next card peeking in, instead of a long stack. */}
+        <div className="mt-14 grid gap-6 text-left max-sm:-mx-(--wrap-pad) max-sm:flex max-sm:snap-x max-sm:snap-mandatory max-sm:gap-4 max-sm:overflow-x-auto max-sm:scroll-px-(--wrap-pad) max-sm:px-(--wrap-pad) max-sm:pb-2 max-sm:[scrollbar-width:none] sm:grid-cols-2 lg:grid-cols-3">
           {products.map((p, i) => (
-            <Reveal key={p.slug} delay={i * 120} className="h-full">
+            <Reveal key={p.slug} delay={i * 120} className="h-full max-sm:w-[82%] max-sm:shrink-0 max-sm:snap-start">
               <Card p={p} />
             </Reveal>
           ))}

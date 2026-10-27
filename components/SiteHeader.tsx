@@ -3,10 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Heart, Menu, Search, ShoppingBag, X } from "lucide-react";
+import { Heart, Home, Menu, Search, ShoppingBag, Store, X } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { SearchDialog } from "./SearchDialog";
-import { MusicToggle } from "./MusicToggle";
 import { Wordmark } from "./Wordmark";
 import { OfferBar } from "./OfferBar";
 import { MEGA_PANELS } from "./MegaMenu";
@@ -116,15 +115,15 @@ export function SiteHeader() {
             </ul>
           </nav>
           <div className="flex items-center justify-end gap-0 sm:gap-1 lg:ml-auto">
-            <MusicToggle hint />
-            <button type="button" className="icon-btn" aria-label="Search sarees" onClick={() => setSearchOpen(true)}>
+            {/* On phones, search, wishlist and bag move to the bottom tab bar, within thumb reach. */}
+            <button type="button" className="icon-btn hidden md:inline-grid" aria-label="Search sarees" onClick={() => setSearchOpen(true)}>
               <Search size={19} strokeWidth={1.5} />
             </button>
-            <Link href="/wishlist" className="icon-btn hidden sm:inline-grid" aria-label={`Wishlist, ${wishlist.length} saved`}>
+            <Link href="/wishlist" className="icon-btn hidden md:inline-grid" aria-label={`Wishlist, ${wishlist.length} saved`}>
               <Heart size={19} strokeWidth={1.5} />
               {ready && wishlist.length > 0 && <span className="bag-count bg-ink!">{wishlist.length}</span>}
             </Link>
-            <Link href="/bag" className="icon-btn -mr-2 lg:mr-0" aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? "item" : "items"}`}>
+            <Link href="/bag" className="icon-btn -mr-2 hidden md:inline-grid lg:mr-0" aria-label={`Shopping bag, ${bagCount} ${bagCount === 1 ? "item" : "items"}`}>
               <ShoppingBag size={19} strokeWidth={1.5} />
               {ready && bagCount > 0 && (
                 <span className="bag-count" data-bump={bump} aria-hidden>
@@ -198,6 +197,39 @@ export function SiteHeader() {
         </div>
       </dialog>
 
+      {/* Phones: the main destinations as a bottom tab bar. */}
+      <nav aria-label="Shortcuts" className="tab-bar md:hidden">
+        <Link href="/" className="tab-bar-item" aria-current={pathname === "/" ? "page" : undefined}>
+          <Home size={20} strokeWidth={1.5} aria-hidden />
+          Home
+        </Link>
+        <Link href="/shop" className="tab-bar-item" aria-current={isCurrent("/shop") ?? isCurrent("/sarees")}>
+          <Store size={20} strokeWidth={1.5} aria-hidden />
+          Shop
+        </Link>
+        <button type="button" className="tab-bar-item" onClick={() => setSearchOpen(true)} aria-haspopup="dialog">
+          <Search size={20} strokeWidth={1.5} aria-hidden />
+          Search
+        </button>
+        <Link href="/wishlist" className="tab-bar-item" aria-current={isCurrent("/wishlist")} aria-label={`Wishlist, ${wishlist.length} saved`}>
+          <span className="relative">
+            <Heart size={20} strokeWidth={1.5} aria-hidden />
+            {ready && wishlist.length > 0 && <span className="tab-bar-count bg-ink!">{wishlist.length}</span>}
+          </span>
+          <span aria-hidden>Wishlist</span>
+        </Link>
+        <Link href="/bag" className="tab-bar-item" aria-current={isCurrent("/bag")} aria-label={`Bag, ${bagCount} ${bagCount === 1 ? "item" : "items"}`}>
+          <span className="relative">
+            <ShoppingBag size={20} strokeWidth={1.5} aria-hidden />
+            {ready && bagCount > 0 && (
+              <span className="tab-bar-count" data-bump={bump}>
+                {bagCount}
+              </span>
+            )}
+          </span>
+          <span aria-hidden>Bag</span>
+        </Link>
+      </nav>
       <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );

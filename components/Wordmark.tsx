@@ -13,7 +13,7 @@ export function Wordmark({ asLink = true, height = 36, className = "" }: { asLin
     />
   );
   return asLink ? (
-    <Link href="/" aria-label="Kanchiberry home" className="shrink-0">
+    <Link href="/" aria-label="Kanchiberry home" className="inline-flex min-h-11 shrink-0 items-center">
       {mark}
     </Link>
   ) : (

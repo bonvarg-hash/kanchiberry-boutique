@@ -6,7 +6,7 @@ import { join } from "node:path";
 
 const base = process.env.PAGES_BASE_PATH ?? "";
 if (!base) process.exit(0);
-const dirs = "photos|fabric|weaves|craft|rail|cutouts|audio|kanchiberry-logo\\.svg";
+const dirs = "photos|fabric|weaves|craft|rail|cutouts|kanchiberry-logo\\.svg";
 // the path is preceded by a quote, backtick, bracket or an HTML-escaped quote
 const re = new RegExp(`(["'\`(]|&quot;|\\\\")/(${dirs})`, "g");
 

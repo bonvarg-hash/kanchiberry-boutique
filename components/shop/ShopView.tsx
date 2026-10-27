@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { SlidersHorizontal, X } from "lucide-react";
 import { products, searchProducts } from "@/lib/products";
 import { weaves } from "@/lib/weaves";
@@ -17,6 +17,9 @@ const SORTS = {
   name: "Name, A–Z",
 } as const;
 type SortKey = keyof typeof SORTS;
+
+/** Sarees shown at first, and added with each "Load more". */
+const PAGE = 24;
 
 export function ShopView() {
   const params = useSearchParams();
@@ -50,6 +53,11 @@ export function ShopView() {
     update({ [k]: next.join(",") || null });
   };
 
+  // Show the first PAGE results, more on request; start again whenever the filters or sort change.
+  const [shown, setShown] = useState(PAGE);
+  const query = params.toString();
+  useEffect(() => setShown(PAGE), [query]);
+
   const results = useMemo(() => {
     let r = q.trim() ? searchProducts(q) : products;
     if (selected.weave.length) r = r.filter((p) => selected.weave.includes(p.weave));
@@ -82,11 +90,11 @@ export function ShopView() {
 
   return (
     <>
-      <header className="wrap pb-10 pt-8">
-        <nav aria-label="Breadcrumb" className="text-[14px] text-ink-soft">
-          <ol className="flex flex-wrap gap-2">
+      <header className="wrap pb-6 pt-6 md:pb-10 md:pt-8">
+        <nav aria-label="Breadcrumb" className="-my-3 text-[14px] text-ink-soft">
+          <ol className="flex flex-wrap items-center gap-2">
             <li>
-              <Link href="/" className="hover:text-ink">
+              <Link href="/" className="inline-flex min-h-11 items-center hover:text-ink">
                 Home
               </Link>{" "}
               /
@@ -94,7 +102,7 @@ export function ShopView() {
             {singleWeave || q ? (
               <>
                 <li>
-                  <Link href="/shop" className="hover:text-ink">
+                  <Link href="/shop" className="inline-flex min-h-11 items-center hover:text-ink">
                     Shop
                   </Link>{" "}
                   /
@@ -110,9 +118,9 @@ export function ShopView() {
             )}
           </ol>
         </nav>
-        <p className="eyebrow mt-10 lg:mt-14">{singleWeave ? singleWeave.region : "The collection"}</p>
-        <h1 className="serif mt-4 text-[clamp(3rem,8vw,7rem)] font-light leading-[0.9]">{singleWeave ? singleWeave.name : q ? "Search" : "Shop All Sarees"}</h1>
-        <p className="lede mt-6 max-w-[52ch]!">
+        <p className="eyebrow mt-6 md:mt-10 lg:mt-14">{singleWeave ? singleWeave.region : "The collection"}</p>
+        <h1 className="serif mt-3 text-[clamp(2.5rem,8vw,7rem)] font-light leading-[0.9] md:mt-4">{singleWeave ? singleWeave.name : q ? "Search" : "Shop All Sarees"}</h1>
+        <p className="lede mt-6 max-w-[52ch]! max-md:hidden">
           {singleWeave
             ? singleWeave.story[0]
             : "Every saree in the boutique, from heirloom silks to everyday handlooms. Filter by weave, colour, occasion or price."}
@@ -120,7 +128,8 @@ export function ShopView() {
       </header>
 
       <div className="wrap grid gap-10 pb-24 lg:grid-cols-[240px_1fr]">
-        <div className="hidden lg:block">
+        {/* Desktop: the filters stay in view beside the sarees and scroll on their own. */}
+        <div className="filter-rail hidden lg:sticky lg:top-24 lg:block lg:max-h-[calc(100vh-7rem)] lg:self-start lg:overflow-y-auto lg:overscroll-contain lg:pb-6 lg:pr-3">
           <CollectionFilters selected={selected} onToggle={toggle} onClear={() => router.replace(pathname, { scroll: false })} hasAny={chips.length > 0} />
         </div>
 
@@ -160,10 +169,11 @@ export function ShopView() {
         </dialog>
 
         <div>
-          <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-sand pb-4">
+          {/* Phones and tablets: Filter and Sort stay pinned under the header while browsing. */}
+          <div className="mb-8 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-sand pb-4 max-lg:sticky max-lg:top-14 max-lg:z-20 max-lg:-mx-(--wrap-pad) max-lg:bg-paper/95 max-lg:px-(--wrap-pad) max-lg:pt-3 max-lg:backdrop-blur sm:max-lg:top-16">
             <button
               type="button"
-              className="inline-flex min-h-11 items-center gap-2 border border-ink px-4 text-[13px] tracking-[0.06em] lg:hidden"
+              className="inline-flex min-h-11 items-center gap-2 border border-ink px-4 text-[13px] tracking-[0.06em] max-sm:flex-1 max-sm:justify-center lg:hidden"
               onClick={() => sheet.current?.showModal()}
               aria-haspopup="dialog"
             >
@@ -182,7 +192,7 @@ export function ShopView() {
                 <li key={`${c.k}-${c.v}`}>
                   <button
                     type="button"
-                    className="inline-flex items-center gap-2 border border-ink px-3 py-1.5 text-[13px] hover:bg-ink hover:text-paper"
+                    className="inline-flex min-h-11 items-center gap-2 border border-ink px-3 text-[13px] hover:bg-ink hover:text-paper"
                     onClick={() => (c.k === "q" ? update({ q: null }) : toggle(c.k as FilterKey, c.v))}
                     aria-label={`Remove filter ${c.label}`}
                   >
@@ -206,11 +216,26 @@ export function ShopView() {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-x-5 gap-y-12 md:grid-cols-3">
-              {results.map((p, i) => (
-                <ProductCard key={p.slug} product={p} priority={i < 3} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-2 gap-x-5 gap-y-12 md:grid-cols-3">
+                {results.slice(0, shown).map((p, i) => (
+                  <ProductCard key={p.slug} product={p} priority={i < 3} />
+                ))}
+              </div>
+              <div className="mt-16 flex flex-col items-center gap-4 text-center">
+                <p className="text-[13px] text-ink-soft">
+                  Showing {Math.min(shown, results.length)} of {results.length} sarees
+                </p>
+                <span className="block h-px w-48 bg-sand" aria-hidden>
+                  <span className="block h-px bg-ink transition-[width] duration-500" style={{ width: `${(Math.min(shown, results.length) / results.length) * 100}%` }} />
+                </span>
+                {shown < results.length && (
+                  <button type="button" className="btn btn-ghost mt-2 max-sm:w-full" onClick={() => setShown((n) => n + PAGE)}>
+                    Load {Math.min(PAGE, results.length - shown)} more
+                  </button>
+                )}
+              </div>
+            </>
           )}
         </div>
       </div>

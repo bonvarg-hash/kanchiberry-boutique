@@ -2,10 +2,17 @@
 
 import Link from "next/link";
 import { Heart } from "lucide-react";
-import { formatPrice, type Product } from "@/lib/products";
+import { formatPrice, getProduct, type Product } from "@/lib/products";
 import { useStore } from "@/lib/store";
 
-export function ProductCard({ product: p, priority = false }: { product: Product; priority?: boolean }) {
+/**
+ * Pass `product` from browser-side code. From the server, pass `slug` instead:
+ * the catalogue is already in the browser, so the page doesn't have to carry a
+ * copy of every saree's details (and drawings) in its data.
+ */
+export function ProductCard({ product, slug, priority = false }: { product?: Product; slug?: string; priority?: boolean }) {
+  const p = product ?? getProduct(slug ?? "");
+  if (!p) return null;
   const { isWished, toggleWish } = useStore();
   const wished = isWished(p.slug);
   return (
@@ -16,8 +23,8 @@ export function ProductCard({ product: p, priority = false }: { product: Product
         </span>
         <span className="mt-4 block">
           <span className="eyebrow block">{p.weaveName}</span>
-          <span className="mt-1 block text-[26px] leading-tight" style={{ fontFamily: "var(--font-title)" }}>{p.name}</span>
-          <span className="mt-1 block text-[18px]">
+          <span className="mt-1 block text-[19px] leading-tight sm:text-[22px] lg:text-[26px]" style={{ fontFamily: "var(--font-title)" }}>{p.name}</span>
+          <span className="mt-1 block text-[16px] sm:text-[18px]">
             {formatPrice(p.price)}{" "}
             {p.compareAtPrice && p.compareAtPrice > p.price && (
               <s className="text-[15px] text-ink-soft">

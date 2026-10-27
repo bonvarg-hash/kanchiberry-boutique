@@ -6,9 +6,11 @@ import { weaves } from "@/lib/weaves";
 export type FilterKey = "weave" | "color" | "occasion" | "price";
 
 export const PRICE_BANDS = [
-  { id: "under-4000", label: "Under ₹4000", min: 0, max: 4000 },
-  { id: "4000-6000", label: "₹4000 – ₹6000", min: 4000, max: 6000 },
-  { id: "6000-8000", label: "₹6000 – ₹8000", min: 6000, max: 8000 },
+  { id: "under-5000", label: "Under ₹5000", min: 0, max: 5000 },
+  { id: "5000-10000", label: "₹5000 – ₹10000", min: 5000, max: 10000 },
+  { id: "10000-20000", label: "₹10000 – ₹20000", min: 10000, max: 20000 },
+  { id: "20000-30000", label: "₹20000 – ₹30000", min: 20000, max: 30000 },
+  { id: "over-30000", label: "Over ₹30000", min: 30000, max: Infinity },
 ];
 
 const uniq = (xs: string[]) => [...new Set(xs)].sort();

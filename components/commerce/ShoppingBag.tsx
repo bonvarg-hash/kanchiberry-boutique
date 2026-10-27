@@ -35,7 +35,7 @@ export function ShoppingBag() {
             </Link>
             <div>
               <p className="eyebrow">{p.weaveName}</p>
-              <Link href={`/sarees/${p.slug}`} className="mt-1 block font-sans text-[28px] leading-tight underline-offset-4 hover:text-berry hover:underline">
+              <Link href={`/sarees/${p.slug}`} className="mt-1 block font-sans text-[21px] leading-tight underline-offset-4 sm:text-[28px] hover:text-berry hover:underline">
                 {p.name}
               </Link>
               <p className="mt-1 text-[13px] text-ink-soft">
@@ -74,7 +74,7 @@ export function ShoppingBag() {
         <p className="mt-4 text-[12px] text-ink-soft">Prices are sample values. Your bag is saved on this device.</p>
       </aside>
       {/* Phones and tablets: subtotal and checkout stay in reach, above the bottom safe area */}
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-sand bg-paper/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur lg:hidden">
+      <div className="fixed inset-x-0 bottom-(--tabbar-h) z-30 border-t border-sand bg-paper/95 px-4 pt-3 pb-3 backdrop-blur md:pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden">
         <div className="mx-auto flex max-w-xl items-center gap-4">
           <div className="flex-1">
             <p className="text-[12px] uppercase tracking-[0.14em] text-ink-soft">Subtotal</p>

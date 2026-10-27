@@ -15,7 +15,7 @@ export function NewsletterSignup() {
   };
 
   return (
-    <section aria-labelledby="letters-title" className="theme-dark bg-ivory py-24 lg:py-32">
+    <section aria-labelledby="letters-title" className="theme-dark bg-ivory py-16 md:py-24 lg:py-32">
       <div className="wrap grid gap-10 md:grid-cols-2 md:items-end">
         <div>
           <h2 id="letters-title" className="section-title text-white">

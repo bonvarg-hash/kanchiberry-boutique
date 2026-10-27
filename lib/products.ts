@@ -1,4 +1,5 @@
 import { foldedUri, textileUri, type Textile } from "./textile";
+import { generateCatalogue } from "./catalogue";
 
 /**
  * Single source of truth for the catalog.
@@ -88,7 +89,7 @@ export interface Product {
   hangingViewImage: string;
 }
 
-type Seed = Omit<
+export type Seed = Omit<
   Product,
   "id" | "variants" | "currency" | "availability" | "images" | "frontViewImage" | "hangingViewImage" | "weaveName" | "careInstructions" | "length"
 > & { length?: string };
@@ -430,30 +431,48 @@ const FABRIC: Record<string, FabricMap> = {
   "violet-rose-kanjivaram": { body: "/fabric/violet-rose-kanjivaram-body.jpg" },
 };
 
-export const products: Product[] = seeds.map((s, i) => {
-  const front = textileUri(s.textile, "full");
-  const onHanger = s.photos?.hanging ?? foldedUri(s.textile);
-  return {
+// The hand-written sarees first (real photography leads the shop), then the
+// generated sample catalogue that brings the shop to 300.
+const generated = generateCatalogue(new Set(seeds.map((s) => s.slug)));
+for (const g of generated) COMMERCE[g.slug] = { compareAtPrice: g.compareAtPrice, stock: g.stock };
+
+export const products: Product[] = [...seeds, ...generated].map((s, i) => {
+  const base = {
     ...s,
     id: `kb-${String(i + 1).padStart(3, "0")}`,
     fabric: FABRIC[s.slug],
     variants: VARIANTS[s.slug] ?? [{ name: s.color, hex: s.textile.base, accent: s.textile.zari }],
     ...COMMERCE[s.slug],
-    currency: "INR",
-    availability: "sample",
+    currency: "INR" as const,
+    availability: "sample" as const,
     weaveName: WEAVE_NAMES[s.weave],
     length: s.length ?? "5.5 m saree + 0.8 m blouse piece (illustrative)",
     careInstructions: CARE[s.textile.finish],
-    // The rack folds this same image into pleats, so resting and focused views always match.
-    frontViewImage: onHanger,
-    hangingViewImage: onHanger,
-    images: s.photos?.gallery ?? [
-      { src: onHanger, label: "On the hanger", alt: `${s.name}: illustrative render of the saree folded over a wooden saree hanger` },
-      { src: front, label: "Full length", alt: `${s.name}: full-length illustrative render of the ${s.color.toLowerCase()} saree` },
-      { src: textileUri(s.textile, "texture"), label: "Fabric", alt: `${s.name}: close-up render of the body motif and weave texture` },
-      { src: textileUri(s.textile, "border"), label: "Border & pallu", alt: `${s.name}: render of the border meeting the pallu` },
-    ],
   };
+  // Sarees without photography are drawn from their textile description. The
+  // drawings are only made when a saree is first shown, so 300 of them don't
+  // all have to be rendered up front.
+  let drawn: Pick<Product, "images" | "frontViewImage" | "hangingViewImage"> | undefined;
+  const draw = () =>
+    (drawn ??= (() => {
+      const onHanger = s.photos?.hanging ?? foldedUri(s.textile);
+      return {
+        // The rack folds this same image into pleats, so resting and focused views always match.
+        frontViewImage: onHanger,
+        hangingViewImage: onHanger,
+        images: s.photos?.gallery ?? [
+          { src: onHanger, label: "On the hanger", alt: `${s.name}: illustrative render of the saree folded over a wooden saree hanger` },
+          { src: textileUri(s.textile, "full"), label: "Full length", alt: `${s.name}: full-length illustrative render of the ${s.color.toLowerCase()} saree` },
+          { src: textileUri(s.textile, "texture"), label: "Fabric", alt: `${s.name}: close-up render of the body motif and weave texture` },
+          { src: textileUri(s.textile, "border"), label: "Border & pallu", alt: `${s.name}: render of the border meeting the pallu` },
+        ],
+      };
+    })());
+  return Object.defineProperties(base, {
+    images: { get: () => draw().images, enumerable: true },
+    frontViewImage: { get: () => draw().frontViewImage, enumerable: true },
+    hangingViewImage: { get: () => draw().hangingViewImage, enumerable: true },
+  }) as Product;
 });
 
 export const getProduct = (slug: string) => products.find((p) => p.slug === slug);

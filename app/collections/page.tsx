@@ -28,13 +28,15 @@ export default function CollectionsPage() {
             <li key={c.name}>
               <Link href={`/shop?q=${encodeURIComponent(c.name)}`} className="group block">
                 <span className="flex h-72 gap-1 overflow-hidden bg-sand-soft p-4">
-                  {c.items.map((p) => (
+                  {/* A taste of each edit: its first five sarees. */}
+                  {c.items.slice(0, 5).map((p) => (
                     <img key={p.slug} src={p.frontViewImage} alt="" className="h-full min-w-0 flex-1 object-cover transition-[flex] duration-700 group-hover:first:flex-[1.6]" />
                   ))}
                 </span>
                 <span className="serif mt-4 block text-3xl">{c.name}</span>
                 <span className="text-[13px] text-ink-soft">
-                  {c.items.length} sarees · {c.items.map((p) => p.name).join(", ")}
+                  {c.items.length} sarees · {c.items.slice(0, 3).map((p) => p.name).join(", ")}
+                  {c.items.length > 3 && ` and ${c.items.length - 3} more`}
                 </span>
               </Link>
             </li>

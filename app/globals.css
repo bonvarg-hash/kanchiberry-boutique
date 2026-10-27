@@ -83,10 +83,11 @@ img {
 }
 
 .wrap {
+  --wrap-pad: clamp(16px, 4vw, 64px);
   width: 100%;
   max-width: 1440px;
   margin-inline: auto;
-  padding-inline: clamp(16px, 4vw, 64px);
+  padding-inline: var(--wrap-pad);
 }
 .serif {
   font-family: var(--font-serif);
@@ -270,6 +271,7 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 0.6em;
+  min-height: 44px; /* comfortable tap target */
   font-size: 14px;
   letter-spacing: 0.04em;
   padding-block: 6px;
@@ -1227,91 +1229,95 @@ img {
     animation: none;
   }
 }
-/* Header music button: a soft ring pulses around it while the track plays. */
-.music-btn[data-playing] {
-  position: relative;
+/* Shop filter column: its own slim scrollbar, quiet until hovered. */
+.filter-rail {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
 }
-.music-btn[data-playing]::after {
-  content: "";
-  position: absolute;
-  inset: 6px;
-  border-radius: 999px;
-  border: 1px solid #87264d;
-  animation: music-ring 2.4s ease-out infinite;
-  pointer-events: none;
+.filter-rail:hover,
+.filter-rail:focus-within {
+  scrollbar-color: var(--color-sand) transparent;
 }
-@keyframes music-ring {
-  from {
-    transform: scale(0.85);
-    opacity: 0.8;
+/* Phone tab bar: Home, Shop, Search, Wishlist and Bag along the bottom edge,
+   where thumbs reach. --tabbar-h lets other bottom bars sit just above it. */
+:root {
+  --tabbar-h: 0px;
+}
+@media (max-width: 767px) {
+  :root {
+    --tabbar-h: calc(60px + env(safe-area-inset-bottom));
   }
-  to {
-    transform: scale(1.35);
-    opacity: 0;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .music-btn[data-playing]::after {
-    animation: none;
-    opacity: 0.6;
+  body {
+    padding-bottom: var(--tabbar-h);
   }
 }
-/* "Tap for festive music" prompt under the header play button, shown while the
-   browser is waiting for a first click or tap before it allows sound. */
-.music-hint {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: -8px;
+.tab-bar {
+  position: fixed;
+  inset: auto 0 0;
   z-index: 40;
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  padding: 4px 4px 4px 14px;
-  border-radius: 999px;
-  background: #190e14;
-  color: #eee9e0;
-  font-size: 13px;
-  white-space: nowrap;
-  box-shadow: 0 12px 28px -14px rgb(25 14 20 / 0.6);
-  animation: music-hint-in 0.45s var(--ease-cloth) both;
-}
-.music-hint::before {
-  content: "";
-  position: absolute;
-  top: -5px;
-  right: 22px;
-  width: 10px;
-  height: 10px;
-  background: #190e14;
-  transform: rotate(45deg);
-}
-.music-hint-play {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 6px 4px 0;
-}
-.music-hint-close {
   display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
+  grid-template-columns: repeat(5, 1fr);
+  height: var(--tabbar-h);
+  padding-bottom: env(safe-area-inset-bottom);
+  border-top: 1px solid var(--color-sand);
+  background: rgb(238 233 224 / 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.tab-bar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 60px;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-soft);
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.2s;
+}
+.tab-bar-item[aria-current="page"] {
+  color: var(--color-ink);
+  font-weight: 500;
+}
+.tab-bar-item[aria-current="page"] svg {
+  stroke-width: 2;
+}
+.tab-bar-item:active {
+  background: color-mix(in srgb, var(--color-sand) 40%, transparent);
+}
+.tab-bar-count {
+  position: absolute;
+  top: -6px;
+  right: -9px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
   border-radius: 999px;
-  color: rgb(238 233 224 / 0.7);
+  background: var(--color-berry);
+  color: var(--color-paper);
+  font-size: 9.5px;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
 }
-.music-hint-close:hover {
-  color: #eee9e0;
-  background: rgb(238 233 224 / 0.12);
-}
-@keyframes music-hint-in {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
+.tab-bar-count[data-bump="true"] {
+  animation: bump 0.45s var(--ease-cloth);
 }
 /* Shop sort menu: a quiet bordered button and a paper panel of options. */
 .sort-menu {
   position: relative;
+}
+/* Phones: Filter and Sort share the row as two equal, thumb-sized buttons. */
+@media (max-width: 639px) {
+  .sort-menu {
+    flex: 1;
+  }
+  .sort-menu-button {
+    width: 100%;
+    justify-content: center;
+  }
 }
 .sort-menu-button {
   display: inline-flex;

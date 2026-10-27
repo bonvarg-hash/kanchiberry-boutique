@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { Product, ProductImage } from "@/lib/products";
+import { getProduct, type ProductImage } from "@/lib/products";
 import { tintFilter } from "@/lib/colour";
 import { ProductGallery } from "./ProductGallery";
 import { ProductInformation } from "./ProductInformation";
@@ -12,7 +12,9 @@ import { ProductInformation } from "./ProductInformation";
  * tinted to that colour (model shots are left out, since tinting would
  * recolour skin too), captioned as colour previews.
  */
-export function ProductView({ product: p }: { product: Product }) {
+/** Takes the saree's slug, not the saree, so server pages don't copy its details into their data. */
+export function ProductView({ slug }: { slug: string }) {
+  const p = getProduct(slug)!;
   const [variant, setVariant] = useState(0);
   // Direction of the last change: +1 picked a colour to the right, -1 to the left.
   const [dir, setDir] = useState(0);

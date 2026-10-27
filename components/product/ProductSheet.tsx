@@ -6,7 +6,6 @@ import Link from "next/link";
 import { X } from "lucide-react";
 import { getProduct } from "@/lib/products";
 import { ProductDetails } from "./ProductDetails";
-import { MusicToggle } from "@/components/MusicToggle";
 
 /**
  * Product details as a layer that slides up over the current page, so opening a
@@ -190,14 +189,10 @@ export function ProductSheetProvider({ children }: { children: ReactNode }) {
                     </li>
                   </ol>
                 </nav>
-                {/* The sheet covers the header, so it carries its own music control. */}
-                <div className="flex shrink-0 items-center gap-1">
-                  <MusicToggle />
-                  <button type="button" onClick={close} className="pdp-sheet-close" aria-label="Close and return to the rail">
-                    <span className="hidden sm:inline">Close</span>
-                    <X size={20} strokeWidth={1.5} aria-hidden />
-                  </button>
-                </div>
+                <button type="button" onClick={close} className="pdp-sheet-close" aria-label="Close and return to the rail">
+                  <span className="hidden sm:inline">Close</span>
+                  <X size={20} strokeWidth={1.5} aria-hidden />
+                </button>
               </div>
               <div key={p.slug} className="pdp-sheet-body">
                 <ProductDetails product={p} />
