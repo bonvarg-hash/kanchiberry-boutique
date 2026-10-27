@@ -114,12 +114,33 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
   const buyRow = useRef<HTMLDivElement>(null);
   const [showBar, setShowBar] = useState(false);
   useEffect(() => {
-    const el = buyRow.current;
-    if (!el || !("IntersectionObserver" in window)) return;
-    const io = new IntersectionObserver(([e]) => setShowBar(!e.isIntersecting && e.boundingClientRect.top < 0));
-    io.observe(el);
-    return () => io.disconnect();
+    // Checked on every scroll (the page's, or the slide-up layer's), so a fast fling
+    // never leaves the bar stuck hidden.
+    let frame = 0;
+    const check = () => {
+      frame = 0;
+      const el = buyRow.current;
+      if (el) setShowBar(el.getBoundingClientRect().bottom < 0);
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(check);
+    };
+    document.addEventListener("scroll", onScroll, { capture: true, passive: true });
+    check();
+    return () => {
+      document.removeEventListener("scroll", onScroll, { capture: true });
+      cancelAnimationFrame(frame);
+    };
   }, []);
+  // While the buy bar shows, it takes the phone tab bar's place at the bottom edge
+  // rather than stacking on top of it.
+  useEffect(() => {
+    if (!showBar) return;
+    document.documentElement.dataset.buybar = "";
+    return () => {
+      delete document.documentElement.dataset.buybar;
+    };
+  }, [showBar]);
 
   useEffect(() => {
     if (!added) return;
@@ -272,7 +293,7 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
 
       {/* Sticky buy bar (phones), above the bottom safe area */}
       <div
-        className={`fixed inset-x-0 bottom-(--tabbar-h) z-30 border-t border-sand bg-paper/95 px-4 py-3 backdrop-blur transition-transform duration-300 md:hidden ${
+        className={`fixed inset-x-0 bottom-0 z-50 border-t border-sand bg-paper/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur transition-transform duration-300 md:hidden ${
           showBar ? "translate-y-0" : "pointer-events-none invisible translate-y-full opacity-0"
         }`}
         aria-hidden={!showBar}
