@@ -12,7 +12,7 @@ export function ShoppingBag() {
   if (bag.length === 0)
     return (
       <div className="border border-sand bg-paper p-12 text-center">
-        <p className="serif text-4xl">Your bag is empty.</p>
+        <p className="font-sans text-4xl">Your bag is empty.</p>
         <p className="mt-3 text-ink-soft">Start at the rail and let a saree find you.</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Link href="/#curated" className="btn btn-primary">
@@ -35,7 +35,7 @@ export function ShoppingBag() {
             </Link>
             <div>
               <p className="eyebrow">{p.weaveName}</p>
-              <Link href={`/sarees/${p.slug}`} className="serif mt-1 block text-[28px] leading-tight underline-offset-4 hover:text-berry hover:underline">
+              <Link href={`/sarees/${p.slug}`} className="mt-1 block font-sans text-[28px] leading-tight underline-offset-4 hover:text-berry hover:underline">
                 {p.name}
               </Link>
               <p className="mt-1 text-[13px] text-ink-soft">
@@ -55,7 +55,7 @@ export function ShoppingBag() {
       </ul>
 
       <aside aria-labelledby="summary-title" className="self-start border border-sand bg-paper p-8">
-        <h2 id="summary-title" className="serif text-3xl">
+        <h2 id="summary-title" className="font-sans text-3xl">
           Summary
         </h2>
         <dl className="mt-6 space-y-3 text-[15px]">

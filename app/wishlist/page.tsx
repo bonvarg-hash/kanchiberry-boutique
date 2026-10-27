@@ -15,13 +15,13 @@ export default function WishlistPage() {
   return (
     <div className="wrap pb-24 pt-14 lg:pt-20">
       <title>Wishlist · Kanchiberry</title>
-      <h1 className="serif text-[clamp(3rem,7vw,6rem)] font-light leading-[0.9]">Wishlist</h1>
+      <h1 className="font-sans text-[clamp(3rem,7vw,6rem)] font-normal leading-[0.9]">Wishlist</h1>
       <p className="lede mt-4 mb-12">Saved on this device. Sign-in to sync across devices is not yet available.</p>
       {!ready ? (
         <div className="min-h-[30vh]" aria-busy="true" />
       ) : items.length === 0 ? (
         <div className="border border-sand bg-paper p-12 text-center">
-          <p className="serif text-4xl">Nothing saved yet.</p>
+          <p className="font-sans text-4xl">Nothing saved yet.</p>
           <p className="mt-3 text-ink-soft">Tap the heart on any saree to keep it here.</p>
           <Link href="/shop" className="btn btn-primary mt-8">
             Shop All Sarees

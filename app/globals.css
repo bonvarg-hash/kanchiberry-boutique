@@ -1627,8 +1627,7 @@ html:has(dialog[open]) {
   white-space: nowrap;
 }
 .offer-bar:hover .offer-track,
-.offer-bar:focus-within .offer-track,
-.offer-bar[data-paused="true"] .offer-track {
+.offer-bar:focus-within .offer-track {
   animation-play-state: paused;
 }
 @keyframes marquee-full {
