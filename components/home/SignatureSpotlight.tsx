@@ -56,7 +56,7 @@ export function SignatureSpotlight() {
           </span>
         </div>
 
-        <div className="relative -mt-[clamp(2rem,6vw,5.5rem)] grid items-end gap-10 md:grid-cols-[1fr_minmax(240px,34%)_1fr]">
+        <div className="relative -mt-[clamp(2rem,6vw,5.5rem)] grid items-end gap-10 max-sm:-mt-[calc(max(2rem,6vw)-10px)] md:grid-cols-[1fr_minmax(240px,34%)_1fr] lg:grid-cols-[1fr_minmax(240px,38%)_1fr]">
           {/* left copy + CTA */}
           <div className="order-2 md:order-1 md:pb-6">
             <p className="max-w-[30ch] text-[16px] leading-relaxed text-ink-soft">
@@ -69,7 +69,7 @@ export function SignatureSpotlight() {
           </div>
 
           {/* arched photo, rising over the title */}
-          <figure className="order-1 mx-auto w-full max-w-[380px] md:order-2">
+          <figure className="order-1 mx-auto w-full max-w-[380px] md:order-2 lg:max-w-[460px]">
             <div className="spotlight-arch relative overflow-hidden rounded-t-full bg-sand-soft shadow-[0_40px_60px_-30px_rgba(25,14,20,0.45)]">
               <img src="/photos/kb-6.jpg" alt={p.images[1]?.alt ?? p.name} className="aspect-[3/4] w-full object-cover object-[50%_30%]" loading="lazy" />
             </div>
