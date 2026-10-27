@@ -90,7 +90,12 @@ export function SignatureSpotlight() {
             <p className="mt-8 flex items-baseline gap-3">
               <span className="text-[12px] uppercase tracking-[0.16em] text-ink-soft">Price</span>
               <span className="font-sans text-[28px]">{formatPrice(p.price)}</span>
-              <span className="tag-sample">Sample</span>
+              {p.compareAtPrice && p.compareAtPrice > p.price && (
+                <s className="font-sans text-[18px] text-ink-soft">
+                  <span className="sr-only">Was </span>
+                  {formatPrice(p.compareAtPrice)}
+                </s>
+              )}
             </p>
           </div>
         </div>

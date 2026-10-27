@@ -16,9 +16,15 @@ export function ProductCard({ product: p, priority = false }: { product: Product
         </span>
         <span className="mt-4 block">
           <span className="eyebrow block">{p.weaveName}</span>
-          <span className="mt-1 block font-sans text-[26px] leading-tight">{p.name}</span>
-          <span className="mt-1 block text-[18px] text-ink-soft">
-            {formatPrice(p.price)} <span className="text-[15px]">(sample)</span>
+          <span className="mt-1 block text-[26px] leading-tight" style={{ fontFamily: "var(--font-title)" }}>{p.name}</span>
+          <span className="mt-1 block text-[18px]">
+            {formatPrice(p.price)}{" "}
+            {p.compareAtPrice && p.compareAtPrice > p.price && (
+              <s className="text-[15px] text-ink-soft">
+                <span className="sr-only">Was </span>
+                {formatPrice(p.compareAtPrice)}
+              </s>
+            )}
           </span>
         </span>
       </Link>
