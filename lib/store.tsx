@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { getProduct, type Product } from "./products";
+import { packagingPrice, type GiftDetails } from "./gifting";
 
 /**
  * Guest bag and wishlist, persisted in localStorage. There is no account
@@ -13,6 +14,8 @@ export interface BagLine {
   /** Chosen colourway, when the saree offers more than one. */
   variant?: string;
   qty: number;
+  /** Set when this saree is being sent as a gift (packaging, note, recipient). */
+  gift?: GiftDetails;
 }
 
 interface StoreValue {
@@ -22,6 +25,10 @@ interface StoreValue {
   subtotal: number;
   wishlist: string[];
   addToBag: (slug: string, qty?: number, variant?: string) => void;
+  /** Adds the saree as a gift, or updates the gift details if it is already in the bag. */
+  addGift: (slug: string, gift: GiftDetails) => void;
+  /** Gift packaging charges across the bag (included in `subtotal`). */
+  giftTotal: number;
   /** `key` identifies a bag line (saree + colourway). */
   setQty: (key: string, qty: number) => void;
   removeFromBag: (key: string) => void;
@@ -94,6 +101,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setLastAdded({ slug, at: Date.now() });
   }, []);
 
+  const addGift = useCallback((slug: string, gift: GiftDetails) => {
+    setLines((prev) =>
+      prev.some((l) => l.slug === slug) ? prev.map((l) => (l.slug === slug ? { ...l, gift } : l)) : [...prev, { slug, qty: 1, gift }],
+    );
+    setLastAdded({ slug, at: Date.now() });
+  }, []);
+
   const setQty = useCallback((key: string, qty: number) => {
     setLines((prev) =>
       qty <= 0 ? prev.filter((l) => lineKey(l) !== key) : prev.map((l) => (lineKey(l) === key ? { ...l, qty: Math.min(MAX_QTY, qty) } : l)),
@@ -112,11 +126,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       const product = getProduct(l.slug);
       return product ? [{ ...l, key: lineKey(l), product }] : [];
     });
+    const giftTotal = bag.reduce((n, l) => n + packagingPrice(l.gift), 0);
     return {
       ready,
       bag,
       bagCount: bag.reduce((n, l) => n + l.qty, 0),
-      subtotal: bag.reduce((n, l) => n + l.qty * l.product.price, 0),
+      subtotal: bag.reduce((n, l) => n + l.qty * l.product.price, 0) + giftTotal,
+      giftTotal,
+      addGift,
       wishlist,
       addToBag,
       setQty,
@@ -127,7 +144,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       toggleWish,
       lastAdded,
     };
-  }, [lines, wishlist, ready, addToBag, setQty, removeFromBag, clearBag, toggleWish, lastAdded]);
+  }, [lines, wishlist, ready, addToBag, addGift, setQty, removeFromBag, clearBag, toggleWish, lastAdded]);
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }

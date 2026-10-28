@@ -175,8 +175,9 @@ function WeavingPanel() {
 }
 
 export const MEGA_PANELS: Record<string, () => React.JSX.Element> = {
-  "/shop": ShopPanel,
-  "/collections": CollectionsPanel,
+  // Swapped by request: Shop Sarees shows the collections panel, Collections shows the sarees panel.
+  "/shop": CollectionsPanel,
+  "/collections": ShopPanel,
   "/our-story": StoryPanel,
   "/art-of-weaving": WeavingPanel,
 };

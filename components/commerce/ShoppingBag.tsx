@@ -32,7 +32,7 @@ export function ShoppingBag() {
   return (
     <div className="grid gap-12 max-md:gap-8 md:pb-28 lg:grid-cols-[1fr_380px] lg:pb-0">
       <ul className="divide-y divide-sand border-y border-sand">
-        {bag.map(({ product: p, qty, key, variant }) => (
+        {bag.map(({ product: p, qty, key, variant, gift }) => (
           <li key={key} className="grid grid-cols-[96px_1fr] gap-5 py-6 sm:grid-cols-[120px_1fr_auto]">
             <Link href={`/sarees/${p.slug}`} className="block bg-sand-soft">
               <img src={p.images[0].src} alt={p.name} className="aspect-[600/880] w-full object-cover" />
@@ -45,6 +45,15 @@ export function ShoppingBag() {
               <p className="mt-1 text-[13px] text-ink-soft">
                 {variant ?? p.color} · {formatPrice(p.price)} <span className="text-[11px]">(sample)</span>
               </p>
+              {gift && (
+                <p className="mt-3 inline-flex flex-wrap items-center gap-x-2 bg-[#F3F4EF] px-3 py-1.5 text-[13px]">
+                  <span aria-hidden>🎁</span> Gift for {gift.recipient.name || "her"} ·{" "}
+                  {gift.packaging === "signature" ? "Signature Gift Box" : "Classic packaging"}
+                  <Link href={`/sarees/${p.slug}?gift=1`} className="underline underline-offset-4">
+                    Edit
+                  </Link>
+                </p>
+              )}
               <div className="mt-5 flex items-center gap-5">
                 {/* One of each saree per order, so there's no quantity to change. */}
                 <p className="text-[13px] text-ink-soft">Qty 1 · One per order</p>

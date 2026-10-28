@@ -6,6 +6,7 @@ import Link from "next/link";
 import { X } from "lucide-react";
 import { getProduct } from "@/lib/products";
 import { ProductDetails } from "./ProductDetails";
+import { GiftCustomizer } from "@/components/gifting/GiftCustomizer";
 
 /**
  * Product details as a layer that slides up over the current page, so opening a
@@ -19,6 +20,15 @@ const OpenContext = createContext<(href: string) => boolean>(() => false);
 /** Opens a product link in the sheet. Returns false when the link isn't a saree, so the caller can navigate normally. */
 export const useOpenProduct = () => useContext(OpenContext);
 
+/** Links from the gift finder carry ?gift=1: the sheet then shows gift options instead of the regular details. */
+const isGiftHref = (href: string) => {
+  try {
+    return new URL(href, window.location.href).searchParams.has("gift");
+  } catch {
+    return false;
+  }
+};
+
 const slugOf = (href: string) => {
   try {
     return new URL(href, window.location.href).pathname.match(/\/sarees\/([^/]+)\/?$/)?.[1] ?? null;
@@ -31,6 +41,7 @@ type Phase = "entering" | "open" | "closing";
 
 export function ProductSheetProvider({ children }: { children: ReactNode }) {
   const [slug, setSlug] = useState<string | null>(null);
+  const [giftMode, setGiftMode] = useState(false);
   const [phase, setPhase] = useState<Phase>("entering");
   const [drag, setDrag] = useState(0);
   const slugRef = useRef<string | null>(null);
@@ -44,6 +55,7 @@ export function ProductSheetProvider({ children }: { children: ReactNode }) {
     if (!s || !getProduct(s)) return false;
     returnFocus.current = document.activeElement as HTMLElement | null;
     setSlug(s);
+    setGiftMode(isGiftHref(href));
     setPhase("entering");
     setDrag(0);
     window.history.pushState({ kbSheet: s }, "", href);
@@ -83,6 +95,7 @@ export function ProductSheetProvider({ children }: { children: ReactNode }) {
       const s = e.state?.kbSheet as string | undefined;
       if (s && getProduct(s)) {
         setSlug(s);
+        setGiftMode(isGiftHref(window.location.href));
         setPhase("entering");
       } else if (slugRef.current) {
         setPhase("closing");
@@ -138,6 +151,7 @@ export function ProductSheetProvider({ children }: { children: ReactNode }) {
       e.preventDefault();
       if (s === slug) return;
       setSlug(s);
+      setGiftMode(isGiftHref(a.href));
       window.history.replaceState({ ...window.history.state, kbSheet: s }, "", a.href);
     } else {
       setSlug(null);
@@ -214,8 +228,8 @@ export function ProductSheetProvider({ children }: { children: ReactNode }) {
                   <X size={20} strokeWidth={1.5} aria-hidden />
                 </button>
               </div>
-              <div key={p.slug} className="pdp-sheet-body">
-                <ProductDetails product={p} />
+              <div key={`${p.slug}${giftMode ? "-gift" : ""}`} className="pdp-sheet-body">
+                {giftMode ? <GiftCustomizer product={p} onDone={() => setSlug(null)} /> : <ProductDetails product={p} />}
               </div>
             </div>
           </div>,
