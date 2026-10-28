@@ -191,7 +191,7 @@ export function SiteHeader() {
       >
         <div className="flex h-full flex-col px-6 pb-[max(2rem,env(safe-area-inset-bottom))] pt-[env(safe-area-inset-top)]">
           <div className="flex h-14 items-center justify-between">
-            <Wordmark height={28} />
+            <Wordmark height={28} onNavigate={() => menuRef.current?.close()} />
             <button type="button" className="icon-btn -mr-2" aria-label="Close menu" autoFocus onClick={() => menuRef.current?.close()}>
               <X size={22} strokeWidth={1.5} />
             </button>
