@@ -1238,10 +1238,9 @@ img {
 .filter-rail:focus-within {
   scrollbar-color: var(--color-sand) transparent;
 }
-/* Phone tab bar: a black capsule floating above the bottom edge, with a clear glass
-   lens (taller than the bar, so it overhangs top and bottom) that springs across to
-   the current tab. Inside the lens the icon turns white with its label beneath; the
-   other tabs show grey icons only. --tabbar-h is the space it takes, so other bottom
+/* Phone tab bar: a black rounded bar floating above the bottom edge. The current
+   tab's icon turns light (#EEE9E0) and lifts to show its label; the other tabs show
+   grey icons only. --tabbar-h is the space it takes, so other bottom
    bars and floating buttons sit just above it. */
 :root {
   --tabbar-h: 0px;
@@ -1258,7 +1257,6 @@ html[data-buybar] .tab-bar {
   transform: translateY(calc(100% + 40px)); /* a saree's buy bar takes its place */
 }
 .tab-bar {
-  --i: 0;
   position: fixed;
   left: 16px;
   right: 16px;
@@ -1274,55 +1272,6 @@ html[data-buybar] .tab-bar {
     0 18px 36px -14px rgb(0 0 0 / 0.55),
     0 4px 10px rgb(0 0 0 / 0.18);
   transition: transform 0.35s var(--ease-cloth);
-}
-/* The lens rides a track one tab wide, moved a whole tab at a time. */
-.tab-lens-track {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 6px;
-  width: calc((100% - 12px) / 5);
-  transform: translateX(calc(var(--i) * 100%));
-  transition: transform 0.6s cubic-bezier(0.3, 1.45, 0.45, 1); /* springy, with overshoot */
-  pointer-events: none;
-}
-.tab-bar:not([data-lens]) .tab-lens-track {
-  opacity: 0;
-}
-.tab-lens {
-  position: absolute;
-  inset: -9px -3px;
-  border-radius: 22px;
-  /* Clear glass: almost no fill, a bright rim, a faint inner sheen, and a shadow. */
-  background:
-    radial-gradient(120% 90% at 50% 50%, rgb(255 255 255 / 0) 55%, rgb(255 255 255 / 0.08) 100%),
-    rgb(20 20 22 / 0.35);
-  border: 1.5px solid rgb(255 255 255 / 0.55);
-  box-shadow:
-    inset 0 0 0 1px rgb(255 255 255 / 0.06),
-    inset 0 0 18px rgb(255 255 255 / 0.08),
-    0 12px 24px -8px rgb(0 0 0 / 0.6);
-  backdrop-filter: blur(1.5px) saturate(1.4);
-  -webkit-backdrop-filter: blur(1.5px) saturate(1.4);
-}
-/* Light caught along the top and bottom edges of the glass. */
-.tab-lens::before,
-.tab-lens::after {
-  content: "";
-  position: absolute;
-  left: 18%;
-  right: 18%;
-  height: 9px;
-  border-radius: 999px;
-  filter: blur(0.4px);
-}
-.tab-lens::before {
-  top: 2px;
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.85), rgb(255 255 255 / 0.15));
-}
-.tab-lens::after {
-  bottom: 2px;
-  background: linear-gradient(0deg, rgb(205 225 255 / 0.75), rgb(205 225 255 / 0.1));
 }
 .tab-bar-item {
   position: relative;
@@ -1359,9 +1308,9 @@ html[data-buybar] .tab-bar {
     opacity 0.25s,
     transform 0.35s var(--ease-cloth);
 }
-/* Inside the lens: white icon, lifted to make room for its label. */
+/* Current tab: light icon, lifted to make room for its label. */
 .tab-bar-item[data-active] {
-  color: #fff;
+  color: #eee9e0;
 }
 .tab-bar-item[data-active] .tab-bar-icon {
   transform: translateY(-8px);
@@ -1397,7 +1346,6 @@ html[data-buybar] .tab-bar {
   animation: bump 0.45s var(--ease-cloth);
 }
 @media (prefers-reduced-motion: reduce) {
-  .tab-lens-track,
   .tab-bar-icon,
   .tab-bar-label {
     transition: none;

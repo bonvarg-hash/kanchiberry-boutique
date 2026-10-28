@@ -77,7 +77,7 @@ export function SiteHeader() {
 
   const isCurrent = (href: string) => (pathname === href || pathname.startsWith(href + "/") ? "page" : undefined);
 
-  // Phone tab bar: which tab the glass lens sits on. A tap moves it straight away
+  // Phone tab bar: which tab is highlighted. A tap highlights it straight away
   // (pendingTab) rather than waiting for the next page; Search holds it while open.
   const [pendingTab, setPendingTab] = useState<number | null>(null);
   useEffect(() => setPendingTab(null), [pathname]);
@@ -224,11 +224,8 @@ export function SiteHeader() {
         </div>
       </dialog>
 
-      {/* Phones: a black capsule with a glass lens that slides to the current tab (styles: .tab-bar). */}
-      <nav aria-label="Shortcuts" className="tab-bar md:hidden" style={{ "--i": tabIndex } as React.CSSProperties} data-lens={tabIndex >= 0 || undefined}>
-        <span className="tab-lens-track" aria-hidden>
-          <span className="tab-lens" />
-        </span>
+      {/* Phones: a black bar of tabs; the current one is light, with its label (styles: .tab-bar). */}
+      <nav aria-label="Shortcuts" className="tab-bar md:hidden">
         <Link href="/" className="tab-bar-item" data-active={tabIndex === 0 || undefined} aria-current={pathname === "/" ? "page" : undefined} onClick={() => setPendingTab(0)}>
           <span className="tab-bar-icon">
             <TabHome />
