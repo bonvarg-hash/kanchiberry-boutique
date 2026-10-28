@@ -45,7 +45,7 @@ export default function GiftingPage() {
           <p className="mt-6 text-[13px] text-ink-soft">Five quick questions. About a minute.</p>
         </div>
         <figure className="relative max-md:-mx-(--wrap-pad)">
-          <img src="/photos/kb-11.jpg" alt="A woman in a violet and rose silk saree, smiling at a brass hand mirror" className="aspect-[4/5] w-full object-cover md:max-h-[78vh]" fetchPriority="high" />
+          <img src="/photos/gift-box.jpg" alt="A folded gold silk saree in a black Kanchiberry gift box, with a berry ribbon and a handwritten note card" width={1800} height={900} className="aspect-[2/1] w-full object-cover" fetchPriority="high" />
         </figure>
       </section>
 
