@@ -66,7 +66,7 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
             <div className="flex flex-wrap items-center gap-2">
               <span className="eyebrow mr-2">Try</span>
               {SUGGESTIONS.map((s) => (
-                <button key={s} type="button" onClick={() => setQ(s)} className="border border-sand px-3 py-1.5 text-sm hover:border-ink">
+                <button key={s} type="button" onClick={() => setQ(s)} className="search-tag">
                   {s}
                 </button>
               ))}

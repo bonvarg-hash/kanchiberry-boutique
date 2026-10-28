@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Check, ChevronDown, CircleAlert, CircleCheck, Heart, Truck } from "lucide-react";
 import { formatPrice, type Product } from "@/lib/products";
 import { useStore } from "@/lib/store";
+import { GiftPanel } from "@/components/gifting/GiftPanel";
 
 type Tab = { id: string; label: string; content: React.ReactNode };
 
@@ -16,7 +17,7 @@ type Tab = { id: string; label: string; content: React.ReactNode };
 function InfoTabs({ tabs }: { tabs: Tab[] }) {
   return (
     <>
-      <div className="mt-10 border-t border-sand max-md:order-8 max-md:mt-6 md:hidden">
+      <div className="mt-10 border-t border-sand max-md:order-9 max-md:mt-6 md:hidden">
         {tabs.map((t, i) => (
           <details key={t.id} className="info-acc group border-b border-sand" open={i === 0}>
             <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 text-[15px] [&::-webkit-details-marker]:hidden">
@@ -255,6 +256,9 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
           </div>
         );
       })()}
+
+      {/* Gifting: a question that expands into the gift options (packaging, note, delivery). */}
+      <GiftPanel product={p} />
 
       <InfoTabs
         tabs={[

@@ -11,7 +11,7 @@ export type Who = "wife" | "mother" | "sister" | "friend" | "someone";
 export type Occasion = "birthday" | "anniversary" | "wedding" | "festival" | "thanks" | "just-because";
 export type Look = "graceful" | "bright" | "classic" | "bold" | "simple";
 export type Colour = "red" | "pink" | "green" | "blue" | "purple" | "gold" | "ivory" | "black" | "any";
-export type Budget = "under-5000" | "5000-10000" | "10000-20000" | "over-20000" | "any";
+export type Budget = "under-2000" | "2000-5000" | "5000-10000" | "10000-20000" | "over-20000" | "any";
 
 export interface Answers {
   who: Who | null;
@@ -61,7 +61,8 @@ export const COLOURS: { id: Colour; label: string; swatch: string; families: str
 ];
 
 export const BUDGETS: { id: Budget; label: string; min: number; max: number }[] = [
-  { id: "under-5000", label: "Under ₹5,000", min: 0, max: 5000 },
+  { id: "under-2000", label: "Under ₹2,000", min: 0, max: 2000 },
+  { id: "2000-5000", label: "₹2,000 – ₹5,000", min: 2000, max: 5000 },
   { id: "5000-10000", label: "₹5,000 – ₹10,000", min: 5000, max: 10000 },
   { id: "10000-20000", label: "₹10,000 – ₹20,000", min: 10000, max: 20000 },
   { id: "over-20000", label: "Over ₹20,000", min: 20000, max: Infinity },

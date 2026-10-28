@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Check, RotateCcw } from "lucide-react";
-import { formatPrice } from "@/lib/products";
+import { SareeTile } from "@/components/shop/SareeTile";
 import {
   ANSWERS_KEY,
   BUDGETS,
@@ -14,9 +14,7 @@ import {
   WHO,
   budgetCount,
   lookImage,
-  plainDescription,
   recommend,
-  suitableFor,
   type Answers,
   type Result,
 } from "@/lib/gifting";
@@ -118,7 +116,7 @@ export default function GiftFinderPage() {
         </section>
       )}
 
-      {/* Back / Skip / Continue: a sticky bar above the tab bar on phones, inline below on desktop. */}
+      {/* Back and Skip (choosing an answer moves on by itself): a sticky bar above the tab bar on phones, inline below on desktop. */}
       {!showResults && (
         <div className="gift-nav">
           <button type="button" className="btn btn-ghost min-h-12!" onClick={back} disabled={step === 0}>
@@ -127,9 +125,6 @@ export default function GiftFinderPage() {
           <div className="flex items-center gap-2">
             <button type="button" className="min-h-12 px-4 text-[14px] text-ink-soft underline-offset-4 hover:text-ink hover:underline" onClick={skip}>
               Skip
-            </button>
-            <button type="button" className="btn btn-primary min-h-12!" onClick={skip} disabled={!answers[current.key]}>
-              {step === STEPS.length - 1 ? "See Her Gifts" : "Continue"}
             </button>
           </div>
         </div>
@@ -201,12 +196,12 @@ function Options({ stepKey, value, onChoose }: { stepKey: Key; value: string | n
       </div>
     );
   return (
-    <div role="radiogroup" aria-labelledby="q-title" className="grid gap-3 md:grid-cols-5 md:gap-4">
+    <div role="radiogroup" aria-labelledby="q-title" className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-6">
       {BUDGETS.map((b) =>
         card(
           b.id,
           <>
-            <span className="font-sans text-[19px] leading-tight md:text-[clamp(16px,1.65vw,20px)] lg:whitespace-nowrap">{b.label}</span>
+            <span className="font-sans text-[19px] leading-tight md:text-[19px] lg:text-[clamp(15px,1.4vw,19px)] lg:whitespace-nowrap">{b.label}</span>
             <span className="mt-1 block text-[13px] text-ink-soft">{budgetCount(b.id)} sarees</span>
           </>,
           "min-h-24 md:min-h-32",
@@ -328,36 +323,13 @@ function Results({
           <p className="sr-only" aria-live="polite">
             {result.picks.length} sarees chosen for {her}.
           </p>
-          <ul className="mt-10 grid gap-x-6 gap-y-14 max-md:mt-8 sm:grid-cols-2 lg:grid-cols-3">
-            {result.picks.map(({ product: p, badge, why }, i) => (
-              <li key={p.slug} className="flex flex-col">
-                <Link href={`/sarees/${p.slug}?gift=1`} className="group relative block overflow-hidden bg-sand-soft" aria-label={`${p.name}: choose this gift`}>
-                  <img src={p.images[0].src} alt={p.images[0].alt} loading={i < 3 ? "eager" : "lazy"} className="aspect-[4/5] w-full object-cover transition-transform duration-[1200ms] ease-[var(--ease-cloth)] group-hover:scale-[1.03]" />
-                  <span className="absolute left-3 top-3 bg-[#F3F4EF]/95 px-3 py-1.5 text-[11px] uppercase tracking-[0.12em] text-ink">{badge}</span>
-                </Link>
-                <div className="mt-4 flex items-baseline justify-between gap-3">
-                  <h2 className="text-[20px] leading-tight">{p.name}</h2>
-                  <p className="shrink-0 text-[16px] tabular-nums">
-                    {formatPrice(p.price)}
-                    {p.compareAtPrice && p.compareAtPrice > p.price && (
-                      <s className="ml-2 text-[13px] text-ink-soft">
-                        <span className="sr-only">Was </span>
-                        {formatPrice(p.compareAtPrice)}
-                      </s>
-                    )}
-                  </p>
-                </div>
-                <p className="mt-2 text-[14px] leading-relaxed text-ink-soft">{plainDescription(p)}</p>
-                <p className="mt-2 text-[13px] text-ink-soft">
-                  <span className="text-ink">Lovely for:</span> {suitableFor(p)}
-                </p>
-                <p className="mt-3 border-l-2 border-[#87264D]/40 pl-3 text-[14px] leading-relaxed">{why}</p>
-                <Link href={`/sarees/${p.slug}?gift=1`} className="btn btn-primary mt-5 w-full">
-                  Choose This Gift
-                </Link>
-              </li>
+          {/* The same tiles as All Collections; each opens the saree with gift options.
+              No filter rail here, so one extra column keeps the tiles the size they are on All Collections. */}
+          <div className="mt-10 grid grid-cols-2 gap-x-2 gap-y-8 max-md:mt-8 sm:gap-x-3 md:grid-cols-3 md:gap-y-12 lg:grid-cols-4 2xl:grid-cols-5">
+            {result.picks.map(({ product: p }, i) => (
+              <SareeTile key={p.slug} p={p} priority={i < 3} href={`/sarees/${p.slug}?gift=1`} />
             ))}
-          </ul>
+          </div>
           <div className="mt-16 text-center">
             <p className="text-[15px] text-ink-soft">Not quite right?</p>
             <div className="mt-3 flex flex-wrap justify-center gap-x-6 gap-y-2">

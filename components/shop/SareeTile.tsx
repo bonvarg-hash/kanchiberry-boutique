@@ -11,7 +11,8 @@ import { useOpenProduct } from "@/components/product/ProductSheet";
  * caption beneath. On desktop a quiet "View details" appears on hover; a click or
  * tap opens the saree as a layer that slides up from the bottom.
  */
-export function SareeTile({ p, priority = false }: { p: Product; priority?: boolean }) {
+/** `href` overrides the link, e.g. the gift finder opens the saree in gift mode. */
+export function SareeTile({ p, priority = false, href }: { p: Product; priority?: boolean; href?: string }) {
   const openProduct = useOpenProduct();
   const { isWished, toggleWish } = useStore();
   const wished = isWished(p.slug);
@@ -19,7 +20,7 @@ export function SareeTile({ p, priority = false }: { p: Product; priority?: bool
   return (
     <article className="saree-tile group relative">
       <Link
-        href={`/sarees/${p.slug}`}
+        href={href ?? `/sarees/${p.slug}`}
         className="block"
         onClick={(e) => {
           if (e.metaKey || e.ctrlKey || e.shiftKey) return;

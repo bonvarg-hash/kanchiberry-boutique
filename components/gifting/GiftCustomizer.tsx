@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { Check, Truck } from "lucide-react";
 import { formatPrice, type Product } from "@/lib/products";
 import { useStore } from "@/lib/store";
@@ -51,11 +51,11 @@ function readAnswers(): { occasion: Occasion | null; who: Who | null } {
 }
 
 /**
- * Gift options for a saree, shown in the slide-up layer when it is opened from
- * the gift finder: packaging, a personal note with a card preview, and delivery
- * to the recipient. "Continue to Checkout" adds it to the bag as a gift.
+ * The gift options themselves: packaging, a personal note with a card preview, and
+ * delivery to the recipient. "Continue to Checkout" adds the saree to the bag as a
+ * gift. Used in the gift layer and, expanded on request, on every saree page.
  */
-export function GiftCustomizer({ product: p, onDone }: { product: Product; onDone?: () => void }) {
+export function GiftForm({ product: p, onDone, compact = false }: { product: Product; onDone?: () => void; compact?: boolean }) {
   const { bag, addGift } = useStore();
   const router = useRouter();
   const existing = bag.find((l) => l.slug === p.slug)?.gift;
@@ -81,6 +81,7 @@ export function GiftCustomizer({ product: p, onDone }: { product: Product; onDon
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Boolean(existing)]);
 
+  const uid = useId();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const set = <K extends keyof GiftDetails>(k: K, v: GiftDetails[K]) => setGift((g) => ({ ...g, [k]: v }));
   const setR = (k: keyof GiftDetails["recipient"], v: string) => setGift((g) => ({ ...g, recipient: { ...g.recipient, [k]: v } }));
@@ -105,7 +106,7 @@ export function GiftCustomizer({ product: p, onDone }: { product: Product; onDon
 
   const submit = () => {
     if (!validate()) {
-      document.getElementById("gift-delivery")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById(`${uid}-delivery`)?.scrollIntoView({ behavior: "smooth", block: "start" });
       return;
     }
     addGift(p.slug, { ...gift, message: gift.message.trim(), from: gift.from.trim() });
@@ -116,9 +117,9 @@ export function GiftCustomizer({ product: p, onDone }: { product: Product; onDon
   const field = (id: keyof GiftDetails["recipient"], label: string, props: React.InputHTMLAttributes<HTMLInputElement> = {}) => (
     <label className="gift-field">
       <span>{label}</span>
-      <input value={gift.recipient[id]} onChange={(e) => setR(id, e.target.value)} aria-invalid={!!errors[id]} aria-describedby={errors[id] ? `err-${id}` : undefined} {...props} />
+      <input value={gift.recipient[id]} onChange={(e) => setR(id, e.target.value)} aria-invalid={!!errors[id]} aria-describedby={errors[id] ? `${uid}-err-${id}` : undefined} {...props} />
       {errors[id] && (
-        <span id={`err-${id}`} className="gift-field-error">
+        <span id={`${uid}-err-${id}`} className="gift-field-error">
           {errors[id]}
         </span>
       )}
@@ -126,34 +127,16 @@ export function GiftCustomizer({ product: p, onDone }: { product: Product; onDon
   );
 
   return (
-    <div className="wrap grid gap-10 pb-6 pt-4 md:pt-6 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
-      <div className="min-w-0 lg:sticky lg:top-6 lg:self-start">
-        <ProductGallery images={p.images} name={p.name} />
-      </div>
-
-      <div className="min-w-0">
-        <p className="eyebrow">Your gift</p>
-        <h2 className="mt-3 text-[clamp(2rem,3.6vw,3rem)] leading-[1.05]" style={{ fontFamily: "var(--font-title)" }}>
-          {p.name}
-        </h2>
-        <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">{plainDescription(p)}</p>
-        <p className="mt-2 text-[13px] text-ink-soft">
-          <span className="text-ink">Lovely for:</span> {suitableFor(p)}
-        </p>
-        <p className="mt-4 text-[22px] tabular-nums">{formatPrice(p.price)}</p>
-        <Link href={`/sarees/${p.slug}`} data-full-page className="mt-2 inline-block text-[13px] text-ink-soft underline underline-offset-4 hover:text-ink">
-          See full saree details
-        </Link>
-
+    <div>
         {/* 1. Packaging */}
-        <fieldset className="mt-10">
+        <fieldset className={compact ? "mt-6" : "mt-10"}>
           <legend className="gift-legend">
             <span>1</span> Gift packaging
           </legend>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {PACKAGING.map((o) => (
               <label key={o.id} className="gift-choice">
-                <input type="radio" name="packaging" className="sr-only" checked={gift.packaging === o.id} onChange={() => set("packaging", o.id)} />
+                <input type="radio" name={`${uid}-packaging`} className="sr-only" checked={gift.packaging === o.id} onChange={() => set("packaging", o.id)} />
                 <span className="block h-20 bg-[#F3F4EF] p-2">
                   <PackagingArt kind={o.id} />
                 </span>
@@ -178,7 +161,15 @@ export function GiftCustomizer({ product: p, onDone }: { product: Product; onDon
           <legend className="gift-legend">
             <span>2</span> A personal note
           </legend>
-          <p className="mt-2 text-[13px] text-ink-soft">{occasionLabel ? `Ideas for ${occasionLabel.toLowerCase()}:` : "A few ideas:"}</p>
+          <p className="mt-3 text-[13px] text-ink-soft">What&rsquo;s the occasion?</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {OCCASIONS.map((o) => (
+              <button key={o.id} type="button" className="search-tag" aria-pressed={gift.occasion === o.id} onClick={() => set("occasion", o.id)}>
+                {o.label}
+              </button>
+            ))}
+          </div>
+          <p className="mt-4 text-[13px] text-ink-soft">{occasionLabel ? `Ideas for ${occasionLabel.toLowerCase()}:` : "A few ideas:"}</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {suggestions.map((m) => (
               <button key={m} type="button" className="search-tag text-left" aria-pressed={gift.message === m} onClick={() => set("message", m)}>
@@ -209,7 +200,7 @@ export function GiftCustomizer({ product: p, onDone }: { product: Product; onDon
         </fieldset>
 
         {/* 3. Delivery */}
-        <fieldset id="gift-delivery" className="mt-10 scroll-mt-24">
+        <fieldset id={`${uid}-delivery`} className="mt-10 scroll-mt-24">
           <legend className="gift-legend">
             <span>3</span> Delivery
           </legend>
@@ -243,7 +234,7 @@ export function GiftCustomizer({ product: p, onDone }: { product: Product; onDon
         </fieldset>
 
         {/* Total and continue: sticky at the bottom of the layer */}
-        <div className="gift-total">
+        <div className={compact ? "gift-total gift-total-inline" : "gift-total"}>
           <div className="leading-tight">
             <p className="text-[12px] text-ink-soft">
               Saree {formatPrice(p.price)} {pack.price ? `+ box ${formatPrice(pack.price)}` : ""}
@@ -254,6 +245,36 @@ export function GiftCustomizer({ product: p, onDone }: { product: Product; onDon
             {existing ? "Update Gift & Checkout" : "Continue to Checkout"}
           </button>
         </div>
+    </div>
+  );
+}
+
+/**
+ * Gift options for a saree, shown in the slide-up layer when it is opened from
+ * the gift finder: the saree, then the gift form.
+ */
+export function GiftCustomizer({ product: p, onDone }: { product: Product; onDone?: () => void }) {
+  return (
+    <div className="wrap grid gap-10 pb-6 pt-4 md:pt-6 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
+      <div className="min-w-0 lg:sticky lg:top-6 lg:self-start">
+        <ProductGallery images={p.images} name={p.name} />
+      </div>
+
+      <div className="min-w-0">
+        <p className="eyebrow">Your gift</p>
+        <h2 className="mt-3 text-[clamp(2rem,3.6vw,3rem)] leading-[1.05]" style={{ fontFamily: "var(--font-title)" }}>
+          {p.name}
+        </h2>
+        <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">{plainDescription(p)}</p>
+        <p className="mt-2 text-[13px] text-ink-soft">
+          <span className="text-ink">Lovely for:</span> {suitableFor(p)}
+        </p>
+        <p className="mt-4 text-[22px] tabular-nums">{formatPrice(p.price)}</p>
+        <Link href={`/sarees/${p.slug}`} data-full-page className="mt-2 inline-block text-[13px] text-ink-soft underline underline-offset-4 hover:text-ink">
+          See full saree details
+        </Link>
+
+        <GiftForm product={p} onDone={onDone} />
       </div>
     </div>
   );

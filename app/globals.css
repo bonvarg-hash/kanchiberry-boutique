@@ -2365,9 +2365,35 @@ details.acc[open] .acc-icon {
   background: var(--color-paper);
   font-size: 14px;
   color: var(--color-ink);
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s var(--ease-cloth);
+}
+/* Tags across the site (search suggestions, gift answers, note ideas, weave links):
+   hover darkens the outline and lifts the fill; pressing gives a small squeeze. */
+.search-tag:hover {
+  border-color: var(--color-ink);
+  background: #f3f4ef;
 }
 .search-tag:active {
+  transform: scale(0.97);
+}
+.search-tag:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+.search-tag[aria-pressed="true"] {
   border-color: var(--color-ink);
+  background: #190e14;
+  color: #f3f4ef;
+}
+@media (prefers-reduced-motion: reduce) {
+  .search-tag {
+    transition: none;
+  }
 }
 
 /* Page header description (Shop, Search, Wishlist, Shopping Bag): set close under
@@ -2796,6 +2822,48 @@ details.acc[open] .acc-icon {
 @media (prefers-reduced-motion: reduce) {
   .gift-step,
   .gift-skeleton {
+    animation: none;
+  }
+}
+
+/* "Sending this as a gift?" on saree pages: a quiet card that expands into the gift options. */
+.gift-panel {
+  border: 1px solid var(--color-sand);
+  background: #f3f4ef;
+}
+.gift-panel-toggle {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 64px;
+  padding: 12px 16px;
+  text-align: left;
+}
+.gift-panel-toggle:hover .gift-panel-toggle-title {
+  text-decoration: underline;
+}
+.gift-panel-body[data-open] {
+  border-top: 1px solid var(--color-sand);
+  animation: gift-panel-in 0.4s var(--ease-cloth);
+}
+@keyframes gift-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+/* Inside the panel the total and button sit inline, not pinned. */
+.gift-total.gift-total-inline {
+  position: static;
+  margin: 24px 0 0;
+  padding: 16px 0 0;
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gift-panel-body[data-open] {
     animation: none;
   }
 }

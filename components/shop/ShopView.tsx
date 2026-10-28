@@ -262,7 +262,7 @@ export function ShopView() {
               <p className="mt-3 text-ink-soft">Try removing a filter, or browse a weave:</p>
               <div className="mt-6 flex flex-wrap justify-center gap-2">
                 {weaves.map((w) => (
-                  <Link key={w.slug} href={`/shop?weave=${w.slug}`} className="border border-sand px-3 py-1.5 text-sm hover:border-ink">
+                  <Link key={w.slug} href={`/shop?weave=${w.slug}`} className="search-tag">
                     {w.name}
                   </Link>
                 ))}
