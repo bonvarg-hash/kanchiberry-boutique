@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { getProduct } from "@/lib/products";
+import { Heart } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { ProductCard } from "@/components/product/ProductCard";
 
@@ -15,15 +16,20 @@ export default function WishlistPage() {
   return (
     <div className="wrap pb-24 pt-14 lg:pt-20">
       <title>Wishlist · Kanchiberry</title>
-      <h1 className="font-sans text-[clamp(3rem,7vw,6rem)] font-normal leading-[0.9]">Wishlist</h1>
+      <h1 className="font-sans text-[clamp(3rem,7vw,6rem)] font-normal leading-[0.9] max-md:text-[46px]">Wishlist</h1>
       <p className="lede mt-4 mb-12">Saved on this device. Sign-in to sync across devices is not yet available.</p>
       {!ready ? (
         <div className="min-h-[30vh]" aria-busy="true" />
       ) : items.length === 0 ? (
-        <div className="border border-sand bg-paper p-12 text-center">
-          <p className="font-sans text-4xl">Nothing saved yet.</p>
-          <p className="mt-3 text-ink-soft">Tap the heart on any saree to keep it here.</p>
-          <Link href="/shop" className="btn btn-primary mt-8">
+        // Empty state: a quiet box under the page title, with a smaller heading so the
+        // title stays the largest thing on the page.
+        <div className="empty-state">
+          <span className="empty-state-icon">
+            <Heart size={22} strokeWidth={1.5} aria-hidden />
+          </span>
+          <p className="empty-state-title">Nothing saved yet</p>
+          <p className="empty-state-text">Tap the heart on any saree to keep it here.</p>
+          <Link href="/shop" className="btn btn-primary mt-7">
             Shop All Sarees
           </Link>
         </div>

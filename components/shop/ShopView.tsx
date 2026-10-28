@@ -113,13 +113,16 @@ export function ShopView() {
               </>
             ) : (
               <li aria-current="page" className="text-ink">
-                Shop All Sarees
+                All Collections
               </li>
             )}
           </ol>
         </nav>
-        <p className="eyebrow mt-6 md:mt-10 lg:mt-14">{singleWeave ? singleWeave.region : "The collection"}</p>
-        <h1 className="serif mt-3 text-[clamp(2.5rem,8vw,7rem)] font-light leading-[0.9] md:mt-4">{singleWeave ? singleWeave.name : q ? "Search" : "Shop All Sarees"}</h1>
+        {singleWeave && <p className="eyebrow mt-6 md:mt-10 lg:mt-14">{singleWeave.region}</p>}
+        {/* Same type as the Wishlist and Shopping Bag titles. */}
+        <h1 className={`font-sans text-[clamp(3rem,7vw,6rem)] font-normal leading-[0.9] max-md:text-[46px] ${singleWeave ? "mt-3 md:mt-4" : "mt-6 md:mt-10 lg:mt-14"}`}>
+          {singleWeave ? singleWeave.name : q ? "Search" : "All Collections"}
+        </h1>
         <p className="lede mt-6 max-w-[52ch]! max-md:hidden">
           {singleWeave
             ? singleWeave.story[0]

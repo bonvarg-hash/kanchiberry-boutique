@@ -2105,11 +2105,6 @@ details.acc[open] .acc-icon {
 .note strong {
   font-weight: 500;
 }
-.note-info {
-  background: #f6eef1;
-  border-color: rgba(135, 38, 77, 0.22);
-  color: #5e1d38;
-}
 .note-success {
   background: #edf5ee;
   border-color: rgba(46, 110, 58, 0.28);
@@ -2124,4 +2119,51 @@ details.acc[open] .acc-icon {
   background: var(--color-sand-soft, #f3eee6);
   border-color: var(--color-sand, #e3dacb);
   color: var(--color-ink-soft, #575757);
+}
+/* Room on the right for the free delivery stamp. */
+.note-stamped {
+  position: relative;
+  align-items: center;
+  min-height: 100px;
+  padding-right: 108px;
+}
+
+/* Empty wishlist and bag: icon, a modest heading and one line of help, centred in
+   a soft box, so the page title above stays the largest type on the page. */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid var(--color-sand);
+  border-radius: 14px;
+  background: var(--color-paper);
+  padding: 44px 24px 40px;
+  text-align: center;
+}
+@media (min-width: 640px) {
+  .empty-state {
+    padding: 64px 40px 56px;
+  }
+}
+.empty-state-icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: var(--color-sand-soft);
+  color: #87264d;
+}
+.empty-state-title {
+  margin-top: 20px;
+  font-size: 22px;
+  line-height: 1.2;
+  color: var(--color-ink);
+}
+.empty-state-text {
+  margin-top: 8px;
+  max-width: 30ch;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--color-ink-soft);
 }

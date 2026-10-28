@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ShoppingBag as BagIcon } from "lucide-react";
 import { formatPrice } from "@/lib/products";
 import { useStore } from "@/lib/store";
 
@@ -11,10 +12,13 @@ export function ShoppingBag() {
 
   if (bag.length === 0)
     return (
-      <div className="border border-sand bg-paper p-12 text-center">
-        <p className="font-sans text-4xl">Your bag is empty.</p>
-        <p className="mt-3 text-ink-soft">Start at the rail and let a saree find you.</p>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
+      <div className="empty-state">
+        <span className="empty-state-icon">
+          <BagIcon size={22} strokeWidth={1.5} aria-hidden />
+        </span>
+        <p className="empty-state-title">Your bag is empty</p>
+        <p className="empty-state-text">Start at the rail and let a saree find you.</p>
+        <div className="mt-7 flex flex-wrap justify-center gap-3">
           <Link href="/#curated" className="btn btn-primary">
             Curated Picks
           </Link>
@@ -26,7 +30,7 @@ export function ShoppingBag() {
     );
 
   return (
-    <div className="grid gap-12 pb-28 lg:grid-cols-[1fr_380px] lg:pb-0">
+    <div className="grid gap-12 md:pb-28 lg:grid-cols-[1fr_380px] lg:pb-0">
       <ul className="divide-y divide-sand border-y border-sand">
         {bag.map(({ product: p, qty, key, variant }) => (
           <li key={key} className="grid grid-cols-[96px_1fr] gap-5 py-6 sm:grid-cols-[120px_1fr_auto]">
@@ -73,8 +77,9 @@ export function ShoppingBag() {
         </Link>
         <p className="mt-4 text-[12px] text-ink-soft">Prices are sample values. Your bag is saved on this device.</p>
       </aside>
-      {/* Phones and tablets: subtotal and checkout stay in reach, above the bottom safe area */}
-      <div className="fixed inset-x-0 bottom-(--tabbar-h) z-30 border-t border-sand bg-paper/95 px-4 pt-3 pb-3 backdrop-blur md:pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden">
+      {/* Tablets: subtotal and checkout stay in reach, above the bottom safe area. Phones
+          leave it out: the summary's own checkout button sits just below the list. */}
+      <div className="fixed inset-x-0 bottom-(--tabbar-h) z-30 hidden border-t border-sand bg-paper/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur md:block lg:hidden">
         <div className="mx-auto flex max-w-xl items-center gap-4">
           <div className="flex-1">
             <p className="text-[12px] uppercase tracking-[0.14em] text-ink-soft">Subtotal</p>

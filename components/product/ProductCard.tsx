@@ -23,7 +23,7 @@ export function ProductCard({ product, slug, priority = false }: { product?: Pro
         </span>
         <span className="mt-4 block">
           <span className="eyebrow block">{p.weaveName}</span>
-          <span className="mt-1 block text-[19px] leading-tight sm:text-[22px] lg:text-[26px]" style={{ fontFamily: "var(--font-title)" }}>{p.name}</span>
+          <span className="mt-1 block font-sans text-[18px] leading-tight sm:text-[20px] lg:text-[22px]">{p.name}</span>
           <span className="mt-1 block text-[16px] sm:text-[18px]">
             {formatPrice(p.price)}{" "}
             {p.compareAtPrice && p.compareAtPrice > p.price && (

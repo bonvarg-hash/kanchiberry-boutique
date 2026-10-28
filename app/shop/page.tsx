@@ -3,7 +3,7 @@ import { Suspense, ViewTransition } from "react";
 import { ShopView } from "@/components/shop/ShopView";
 
 export const metadata: Metadata = {
-  title: "Shop All Sarees",
+  title: "All Collections",
   description: "Browse Kanjivaram, Banarasi, Paithani, Chanderi, Patola and handloom sarees. Filter by weave, colour, occasion and price.",
   alternates: { canonical: "/shop" },
 };

@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { Check, ChevronDown, CircleAlert, CircleCheck, Heart, Sparkles, Truck } from "lucide-react";
+import { Check, ChevronDown, CircleAlert, CircleCheck, Heart, Truck } from "lucide-react";
 import { formatPrice, type Product } from "@/lib/products";
 import { useStore } from "@/lib/store";
+import { FreeDeliveryStamp } from "./FreeDeliveryStamp";
 
 type Tab = { id: string; label: string; content: React.ReactNode };
 
@@ -224,33 +225,37 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
           <Heart size={18} strokeWidth={1.5} />
         </button>
       </div>
-      {/* Notes: a small box each, with an icon and a bold lead-in. The first one is a live
-          region, so it turns green when the saree is added and amber if the bag already
-          holds it in another colour. */}
+      <div className="note note-plain note-stamped mt-4 max-md:order-6 max-md:mt-6">
+        <Truck size={17} strokeWidth={1.6} aria-hidden className="self-start" />
+        <p>
+          <strong>Free delivery.</strong> Estimates and PIN code checks will appear once a shipping service is connected.
+        </p>
+        <FreeDeliveryStamp className="absolute right-3 top-1/2 size-[84px] -translate-y-1/2 -rotate-12 text-[#87264D] opacity-85" />
+      </div>
+      {/* Bag messages appear here in a note box: green once added, amber if the bag
+          already holds this saree in another colour. The wrapper stays as a live region. */}
       {(() => {
         const conflict = isInBag && inBagLine?.variant && variantName && inBagLine.variant !== variantName;
-        const tone = added ? "note-success" : conflict ? "note-warn" : "note-info";
         return (
-          <div role="status" className={`note ${tone} mt-4 max-md:order-6 max-md:mt-6`}>
-            {added ? <CircleCheck size={17} strokeWidth={1.6} aria-hidden /> : conflict ? <CircleAlert size={17} strokeWidth={1.6} aria-hidden /> : <Sparkles size={17} strokeWidth={1.6} aria-hidden />}
-            <p>
-              {added ? (
-                <><strong>Added to your bag.</strong> One of a kind, now set aside for you.</>
-              ) : conflict ? (
-                <><strong>Already in your bag in {inBagLine!.variant}.</strong> To choose {variantName} instead, remove it from your bag first.</>
-              ) : (
-                <><strong>One per order.</strong> Each saree is handwoven, so every piece is one of a kind.</>
-              )}
-            </p>
+          <div role="status" className="max-md:order-7">
+            {added ? (
+              <div className="note note-success mt-2">
+                <CircleCheck size={17} strokeWidth={1.6} aria-hidden />
+                <p>
+                  <strong>Added to your bag.</strong> One of a kind, now set aside for you.
+                </p>
+              </div>
+            ) : conflict ? (
+              <div className="note note-warn mt-2">
+                <CircleAlert size={17} strokeWidth={1.6} aria-hidden />
+                <p>
+                  <strong>Already in your bag in {inBagLine!.variant}.</strong> To choose {variantName} instead, remove it from your bag first.
+                </p>
+              </div>
+            ) : null}
           </div>
         );
       })()}
-      <div className="note note-plain mt-2 max-md:order-7">
-        <Truck size={17} strokeWidth={1.6} aria-hidden />
-        <p>
-          <strong>Delivery.</strong> Estimates and PIN code checks will appear once a shipping service is connected.
-        </p>
-      </div>
 
       <InfoTabs
         tabs={[
