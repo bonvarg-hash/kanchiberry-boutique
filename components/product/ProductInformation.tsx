@@ -16,7 +16,7 @@ type Tab = { id: string; label: string; content: React.ReactNode };
 function InfoTabs({ tabs }: { tabs: Tab[] }) {
   return (
     <>
-      <div className="mt-10 border-t border-sand max-md:order-9 md:hidden">
+      <div className="mt-10 border-t border-sand max-md:order-10 md:hidden">
         {tabs.map((t, i) => (
           <details key={t.id} className="info-acc group border-b border-sand" open={i === 0}>
             <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 text-[15px] [&::-webkit-details-marker]:hidden">
@@ -137,9 +137,9 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
       <h1 id="pdp-title" className="serif mt-3 text-[clamp(2.5rem,6vw,5rem)] font-light leading-[0.92] max-md:order-2">
         {p.name}
       </h1>
-      <p className="mt-5 max-w-[52ch] text-[16px] leading-relaxed text-ink-soft max-md:order-8 max-md:mt-6">{p.description}</p>
+      <p className="mt-5 max-w-[52ch] text-[16px] leading-relaxed text-ink-soft max-md:order-9 max-md:mt-6">{p.description}</p>
       {p.variants.length > 1 && (
-        <fieldset className="mt-10 max-md:order-5 max-md:mt-6">
+        <fieldset className="mt-10 max-md:order-6 max-md:mt-6">
           <legend className="text-[13px] text-ink-soft">
             Colour: <span className="ml-1 inline-flex items-center rounded-md border border-sand px-2 py-0.5 text-[13px] text-ink" aria-live="polite">{colour.name}</span>
           </legend>
@@ -162,7 +162,7 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
         </fieldset>
       )}
       <div className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-3 max-md:order-3 max-md:mt-3">
-        <p className="flex items-baseline gap-3 leading-none">
+        <p className="flex items-baseline gap-3 leading-none max-md:hidden">
           <span className="text-[30px]">{formatPrice(p.price)}</span>
           {p.compareAtPrice && p.compareAtPrice > p.price && (
             <s className="text-[20px] text-ink-soft/70">
@@ -178,19 +178,45 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
           </span>
         )}
       </div>
-      <div className="mt-5 flex flex-wrap items-stretch gap-3 max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:z-50 max-md:mt-0 max-md:flex-nowrap max-md:border-t max-md:border-sand max-md:bg-paper/95 max-md:px-4 max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))] max-md:pt-3 max-md:backdrop-blur">
+      {/* Phones: save to wishlist sits just below the photos. */}
+      <div className="flex justify-end max-md:order-5 max-md:mt-3 md:hidden">
+        <button
+          type="button"
+          className="btn btn-ghost wish-btn min-h-11 gap-2 px-4 text-[12px]"
+          aria-pressed={wished}
+          onClick={() => toggleWish(p.slug)}
+        >
+          <Heart size={17} strokeWidth={1.5} aria-hidden /> {wished ? "Saved to wishlist" : "Save to wishlist"}
+        </button>
+      </div>
+      {/* Phones: a bottom bar with the price on the left (the earlier price small and
+          struck through above it) and the bag button on the right. */}
+      <div className="mt-5 flex flex-wrap items-stretch gap-3 max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:z-50 max-md:mt-0 max-md:flex-nowrap max-md:items-center max-md:gap-4 max-md:border-t max-md:border-sand max-md:bg-paper/95 max-md:px-4 max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))] max-md:pt-3 max-md:backdrop-blur">
+        <p className="flex shrink-0 flex-col leading-none md:hidden">
+          {p.compareAtPrice && p.compareAtPrice > p.price && (
+            <s className="text-[14px] text-ink-soft">
+              <span className="sr-only">Was </span>
+              {formatPrice(p.compareAtPrice)}
+            </s>
+          )}
+          <span className="mt-1.5 text-[24px] font-medium">
+            <span className="sr-only">Now </span>
+            {formatPrice(p.price)}
+          </span>
+        </p>
         {isInBag ? (
-          <Link href="/bag" className="btn btn-primary min-w-0 flex-1 basis-40">
-            <Check size={16} aria-hidden /> In Your Bag · View Bag
+          <Link href="/bag" className="btn btn-primary min-w-0 flex-1 basis-40 max-md:basis-auto">
+            <Check size={16} aria-hidden /> <span className="md:hidden">View Bag</span>
+            <span className="max-md:hidden">In Your Bag · View Bag</span>
           </Link>
         ) : (
-          <button type="button" className="btn btn-primary min-w-0 flex-1 basis-40" onClick={add}>
+          <button type="button" className="btn btn-primary min-w-0 flex-1 basis-40 max-md:basis-auto" onClick={add}>
             Add to Bag
           </button>
         )}
         <button
           type="button"
-          className="btn btn-ghost wish-btn px-4"
+          className="btn btn-ghost wish-btn px-4 max-md:hidden"
           aria-pressed={wished}
           aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
           onClick={() => toggleWish(p.slug)}
@@ -198,7 +224,7 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
           <Heart size={18} strokeWidth={1.5} />
         </button>
       </div>
-      <p role="status" className="mt-3 min-h-5 text-[13px] max-md:order-6 max-md:mt-4">
+      <p role="status" className="mt-3 min-h-5 text-[13px] max-md:order-7 max-md:mt-4">
         {added ? (
           <>Added to your bag.</>
         ) : isInBag && inBagLine?.variant && variantName && inBagLine.variant !== variantName ? (
@@ -209,7 +235,7 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
           <span className="text-ink-soft">One per order. Each saree is handwoven, so every piece is one of a kind.</span>
         )}
       </p>
-      <p className="text-[12px] text-ink-soft max-md:order-7">Delivery estimates and PIN code checks will appear once a shipping service is connected.</p>
+      <p className="text-[12px] text-ink-soft max-md:order-8">Delivery estimates and PIN code checks will appear once a shipping service is connected.</p>
 
       <InfoTabs
         tabs={[
