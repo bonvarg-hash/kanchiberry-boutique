@@ -369,10 +369,11 @@ img {
   transition: background 0.35s, box-shadow 0.35s, backdrop-filter 0.35s;
 }
 .site-header[data-solid="true"] {
-  /* frosted glass: translucent white over a strong blur keeps text and icons crisp */
-  background: rgb(232 234 226 / 0.72);
-  -webkit-backdrop-filter: blur(18px) saturate(1.6);
-  backdrop-filter: blur(18px) saturate(1.6);
+  /* the same light frosting as the sticky filter bar on All Collections:
+     the page colour at 95% over a gentle 8px blur, so photos don't tint it */
+  background: rgb(232 234 226 / 0.95);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   box-shadow:
     0 1px 0 rgba(36, 23, 15, 0.08),
     0 8px 24px -16px rgba(36, 23, 15, 0.25);
