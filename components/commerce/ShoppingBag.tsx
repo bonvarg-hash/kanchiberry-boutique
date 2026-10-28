@@ -63,9 +63,9 @@ export function ShoppingBag() {
           Summary
         </h2>
         <dl className="mt-6 space-y-3 text-[15px]">
-          <div className="flex justify-between">
+          <div className="flex items-baseline justify-between">
             <dt>Subtotal</dt>
-            <dd className="tabular-nums">{formatPrice(subtotal)}</dd>
+            <dd className="text-[23px] tabular-nums">{formatPrice(subtotal)}</dd>
           </div>
           <div className="flex justify-between text-ink-soft">
             <dt>Shipping</dt>
