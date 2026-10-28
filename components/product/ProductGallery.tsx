@@ -23,7 +23,7 @@ export function ProductGallery({ images, name, filter }: { images: ProductImage[
   return (
     <section aria-label={`${name} images`} className="min-w-0 lg:sticky lg:top-24 lg:self-start">
       {/* Phones */}
-      <div className="-mx-[clamp(16px,4vw,64px)] md:hidden">
+      <div className="relative -mx-[clamp(16px,4vw,64px)] md:hidden">
         <div
           ref={swipe}
           className="flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain bg-sand-soft [scrollbar-width:none]"
@@ -46,7 +46,8 @@ export function ProductGallery({ images, name, filter }: { images: ProductImage[
           ))}
         </div>
         {images.length > 1 && (
-          <div className="mt-2 flex justify-center" role="tablist" aria-label="Choose image">
+          // Dots sit on the photo's lower edge, so the photo and the name below it both fit the first screen.
+          <div className="absolute inset-x-0 bottom-1 flex justify-center" role="tablist" aria-label="Choose image">
             {images.map((img, i) => (
               <button
                 key={img.label}
@@ -57,7 +58,7 @@ export function ProductGallery({ images, name, filter }: { images: ProductImage[
                 onClick={() => show(i)}
                 className="grid size-11 place-items-center"
               >
-                <span className={`block h-1.5 rounded-full transition-all ${active === i ? "w-6 bg-ink" : "w-1.5 bg-ink/30"}`} />
+                <span className={`block h-1.5 rounded-full shadow-[0_0_4px_rgba(0,0,0,0.35)] transition-all ${active === i ? "w-6 bg-white" : "w-1.5 bg-white/60"}`} />
               </button>
             ))}
           </div>

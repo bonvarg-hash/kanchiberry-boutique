@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { Check, ChevronDown, Heart } from "lucide-react";
+import { Check, ChevronDown, CircleAlert, CircleCheck, Heart, Sparkles, Truck } from "lucide-react";
 import { formatPrice, type Product } from "@/lib/products";
 import { useStore } from "@/lib/store";
 
@@ -16,7 +16,7 @@ type Tab = { id: string; label: string; content: React.ReactNode };
 function InfoTabs({ tabs }: { tabs: Tab[] }) {
   return (
     <>
-      <div className="mt-10 border-t border-sand max-md:order-10 md:hidden">
+      <div className="mt-10 border-t border-sand max-md:order-8 max-md:mt-6 md:hidden">
         {tabs.map((t, i) => (
           <details key={t.id} className="info-acc group border-b border-sand" open={i === 0}>
             <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 text-[15px] [&::-webkit-details-marker]:hidden">
@@ -128,18 +128,29 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
   return (
     <section aria-labelledby="pdp-title" className="min-w-0 max-md:contents lg:pt-6">
       {/* Phones: this column's pieces join the photos in one stack (display: contents) and
-          are reordered: name and price above the photos, then colour, description and
-          details below, with Add to Bag pinned to the bottom edge. Wider screens keep the
-          written order beside the photos. */}
-      <p className="eyebrow max-md:order-1">
-        {p.weaveName} · {p.collection}
-      </p>
-      <h1 id="pdp-title" className="serif mt-3 text-[clamp(2.5rem,6vw,5rem)] font-light leading-[0.92] max-md:order-2">
-        {p.name}
-      </h1>
-      <p className="mt-5 max-w-[52ch] text-[16px] leading-relaxed text-ink-soft max-md:order-9 max-md:mt-6">{p.description}</p>
+          are reordered: photos first, then the name (with the wishlist heart beside it),
+          stock, colour, description and details, with the price and Add to Bag pinned to
+          the bottom edge. Wider screens keep the written order beside the photos. */}
+      <div className="relative max-md:order-2 max-md:mt-5">
+        <p className="eyebrow max-md:pr-14">
+          {p.weaveName} · {p.collection}
+        </p>
+        <h1 id="pdp-title" className="serif mt-3 text-[clamp(2.5rem,6vw,5rem)] font-light leading-[0.92] max-md:mt-2 max-md:pr-14 max-md:text-[34px] max-md:leading-[1.05]">
+          {p.name}
+        </h1>
+        <button
+          type="button"
+          className="wish-btn absolute right-0 top-0 grid size-11 place-items-center rounded-full border border-sand bg-paper md:hidden"
+          aria-pressed={wished}
+          aria-label={wished ? "Remove from wishlist" : "Save to wishlist"}
+          onClick={() => toggleWish(p.slug)}
+        >
+          <Heart size={19} strokeWidth={1.5} aria-hidden />
+        </button>
+      </div>
+      <p className="mt-5 max-w-[52ch] text-[16px] leading-relaxed text-ink-soft max-md:order-5 max-md:mt-6 max-md:text-[15px]">{p.description}</p>
       {p.variants.length > 1 && (
-        <fieldset className="mt-10 max-md:order-6 max-md:mt-6">
+        <fieldset className="mt-10 max-md:order-4 max-md:mt-6">
           <legend className="text-[13px] text-ink-soft">
             Colour: <span className="ml-1 inline-flex items-center rounded-md border border-sand px-2 py-0.5 text-[13px] text-ink" aria-live="polite">{colour.name}</span>
           </legend>
@@ -178,17 +189,6 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
           </span>
         )}
       </div>
-      {/* Phones: save to wishlist sits just below the photos. */}
-      <div className="flex justify-end max-md:order-5 max-md:mt-3 md:hidden">
-        <button
-          type="button"
-          className="btn btn-ghost wish-btn min-h-11 gap-2 px-4 text-[12px]"
-          aria-pressed={wished}
-          onClick={() => toggleWish(p.slug)}
-        >
-          <Heart size={17} strokeWidth={1.5} aria-hidden /> {wished ? "Saved to wishlist" : "Save to wishlist"}
-        </button>
-      </div>
       {/* Phones: a bottom bar with the price on the left (the earlier price small and
           struck through above it) and the bag button on the right. */}
       <div className="mt-5 flex flex-wrap items-stretch gap-3 max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:z-50 max-md:mt-0 max-md:flex-nowrap max-md:items-center max-md:gap-4 max-md:border-t max-md:border-sand max-md:bg-paper/95 max-md:px-4 max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))] max-md:pt-3 max-md:backdrop-blur">
@@ -224,18 +224,33 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
           <Heart size={18} strokeWidth={1.5} />
         </button>
       </div>
-      <p role="status" className="mt-3 min-h-5 text-[13px] max-md:order-7 max-md:mt-4">
-        {added ? (
-          <>Added to your bag.</>
-        ) : isInBag && inBagLine?.variant && variantName && inBagLine.variant !== variantName ? (
-          <span className="text-ink-soft">
-            Already in your bag in {inBagLine.variant}. To choose {variantName} instead, remove it from your bag first.
-          </span>
-        ) : (
-          <span className="text-ink-soft">One per order. Each saree is handwoven, so every piece is one of a kind.</span>
-        )}
-      </p>
-      <p className="text-[12px] text-ink-soft max-md:order-8">Delivery estimates and PIN code checks will appear once a shipping service is connected.</p>
+      {/* Notes: a small box each, with an icon and a bold lead-in. The first one is a live
+          region, so it turns green when the saree is added and amber if the bag already
+          holds it in another colour. */}
+      {(() => {
+        const conflict = isInBag && inBagLine?.variant && variantName && inBagLine.variant !== variantName;
+        const tone = added ? "note-success" : conflict ? "note-warn" : "note-info";
+        return (
+          <div role="status" className={`note ${tone} mt-4 max-md:order-6 max-md:mt-6`}>
+            {added ? <CircleCheck size={17} strokeWidth={1.6} aria-hidden /> : conflict ? <CircleAlert size={17} strokeWidth={1.6} aria-hidden /> : <Sparkles size={17} strokeWidth={1.6} aria-hidden />}
+            <p>
+              {added ? (
+                <><strong>Added to your bag.</strong> One of a kind, now set aside for you.</>
+              ) : conflict ? (
+                <><strong>Already in your bag in {inBagLine!.variant}.</strong> To choose {variantName} instead, remove it from your bag first.</>
+              ) : (
+                <><strong>One per order.</strong> Each saree is handwoven, so every piece is one of a kind.</>
+              )}
+            </p>
+          </div>
+        );
+      })()}
+      <div className="note note-plain mt-2 max-md:order-7">
+        <Truck size={17} strokeWidth={1.6} aria-hidden />
+        <p>
+          <strong>Delivery.</strong> Estimates and PIN code checks will appear once a shipping service is connected.
+        </p>
+      </div>
 
       <InfoTabs
         tabs={[

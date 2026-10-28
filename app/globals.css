@@ -2086,3 +2086,42 @@ details.acc[open] .acc-icon {
     animation: none;
   }
 }
+
+/* Saree page notes: a soft tinted box with an icon and a bold lead-in. */
+.note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid;
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.note > svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.note strong {
+  font-weight: 500;
+}
+.note-info {
+  background: #f6eef1;
+  border-color: rgba(135, 38, 77, 0.22);
+  color: #5e1d38;
+}
+.note-success {
+  background: #edf5ee;
+  border-color: rgba(46, 110, 58, 0.28);
+  color: #24532a;
+}
+.note-warn {
+  background: #fbf6ec;
+  border-color: rgba(198, 154, 60, 0.6);
+  color: #7a4f10;
+}
+.note-plain {
+  background: var(--color-sand-soft, #f3eee6);
+  border-color: var(--color-sand, #e3dacb);
+  color: var(--color-ink-soft, #575757);
+}
