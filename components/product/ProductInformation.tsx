@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import { Check, ChevronDown, CircleAlert, CircleCheck, Heart, Truck } from "lucide-react";
 import { formatPrice, type Product } from "@/lib/products";
 import { useStore } from "@/lib/store";
-import { FreeDeliveryStamp } from "./FreeDeliveryStamp";
 
 type Tab = { id: string; label: string; content: React.ReactNode };
 
@@ -225,12 +224,12 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
           <Heart size={18} strokeWidth={1.5} />
         </button>
       </div>
-      <div className="note note-plain note-stamped mt-4 max-md:order-6 max-md:mt-6">
-        <Truck size={17} strokeWidth={1.6} aria-hidden className="self-start" />
-        <p>
-          <strong>Free delivery.</strong> Estimates and PIN code checks will appear once a shipping service is connected.
-        </p>
-        <FreeDeliveryStamp className="absolute right-3 top-1/2 size-[84px] -translate-y-1/2 -rotate-12 text-[#87264D] opacity-85" />
+      <div className="note note-plain items-start max-md:order-6 mt-4 max-md:mt-6">
+        <Truck size={18} strokeWidth={1.6} aria-hidden className="mt-0.5 text-ink" />
+        <div>
+          <p className="text-[14px] font-medium text-ink">Free delivery</p>
+          <p className="mt-0.5">Estimates and PIN code checks will appear once a shipping service is connected.</p>
+        </div>
       </div>
       {/* Bag messages appear here in a note box: green once added, amber if the bag
           already holds this saree in another colour. The wrapper stays as a live region. */}
