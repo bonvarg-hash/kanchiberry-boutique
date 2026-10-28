@@ -57,6 +57,26 @@ export function ProductSheetProvider({ children }: { children: ReactNode }) {
     else setPhase("closing");
   }, []);
 
+  // Every saree link on the site opens here, so details always slide up the same way
+  // as from the curated rail. Caught early (window, capture phase) before the link's own
+  // navigation. Links inside the sheet are left to it; new-tab clicks and links marked
+  // data-full-page navigate normally. An open dialog (search, menu) is closed first.
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = (e.target as Element | null)?.closest?.("a[href]") as HTMLAnchorElement | null;
+      if (!a || a.target === "_blank" || a.hasAttribute("download") || a.closest("[data-sheet-root], [data-full-page]")) return;
+      const s = slugOf(a.href);
+      if (!s || !getProduct(s)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      a.closest("dialog")?.close();
+      open(a.href);
+    };
+    window.addEventListener("click", onClick, true);
+    return () => window.removeEventListener("click", onClick, true);
+  }, [open]);
+
   // Back and Forward open and close the sheet.
   useEffect(() => {
     const onPop = (e: PopStateEvent) => {

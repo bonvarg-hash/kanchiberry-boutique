@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { BookOpen, Compass, Heart, House, LayoutGrid, LifeBuoy, MapPin, Menu, Scroll, Search, ShoppingBag, Sparkles, Tag, UserRound, X } from "lucide-react";
-import { TabBag, TabGrid, TabHeart, TabHome, TabSearch } from "./TabIcons";
+import { TabBag, TabGift, TabGrid, TabHeart, TabHome, TabSearch } from "./TabIcons";
 import { useStore } from "@/lib/store";
 import { SearchDialog } from "./SearchDialog";
 import { Wordmark } from "./Wordmark";
@@ -14,6 +14,7 @@ import { MEGA_PANELS } from "./MegaMenu";
 export const NAV = [
   { href: "/shop", label: "Shop Sarees" },
   { href: "/collections", label: "Collections" },
+  { href: "/gifting", label: "Gifting" },
   { href: "/our-story", label: "Our Story" },
   { href: "/art-of-weaving", label: "The Art of Weaving" },
 ];
@@ -63,7 +64,7 @@ export function SiteHeader() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Phone tab bar: shrinks to 70% while the page is scrolled down (reading) and
+  // Phone tab bar: shrinks to 80% while the page is scrolled down (reading) and
   // returns to full size on scrolling back up or near the top.
   const [compactBar, setCompactBar] = useState(false);
   useEffect(() => {
@@ -100,8 +101,8 @@ export function SiteHeader() {
   const [pendingTab, setPendingTab] = useState<number | null>(null);
   useEffect(() => setPendingTab(null), [pathname]);
   const routeTab =
-    pathname === "/" ? 0 : isCurrent("/shop") || isCurrent("/sarees") ? 1 : isCurrent("/search") ? 2 : isCurrent("/wishlist") ? 3 : isCurrent("/bag") ? 4 : -1;
-  const tabIndex = searchOpen ? 2 : (pendingTab ?? routeTab);
+    pathname === "/" ? 0 : isCurrent("/shop") || isCurrent("/sarees") ? 1 : isCurrent("/gifting") ? 2 : isCurrent("/search") ? 3 : isCurrent("/wishlist") ? 4 : isCurrent("/bag") ? 5 : -1;
+  const tabIndex = searchOpen ? 3 : (pendingTab ?? routeTab);
 
   return (
     <>
@@ -126,14 +127,14 @@ export function SiteHeader() {
           <nav aria-label="Primary" className="hidden lg:block">
             <ul className="flex items-center gap-8">
               {NAV.map((n) => (
-                <li key={n.href} onMouseEnter={() => openMega(n.href)}>
+                <li key={n.href} onMouseEnter={() => (MEGA_PANELS[n.href] ? openMega(n.href) : closeMega(0))}>
                   <Link
                     href={n.href}
                     className="nav-link flex h-[76px] items-center text-[15px]"
                     aria-current={isCurrent(n.href)}
                     aria-expanded={mega === n.href}
                     aria-controls="mega-panel"
-                    onFocus={() => openMega(n.href, 0)}
+                    onFocus={() => (MEGA_PANELS[n.href] ? openMega(n.href, 0) : closeMega(0))}
                     onClick={() => setMega(null)}
                   >
                     {n.label}
@@ -253,13 +254,19 @@ export function SiteHeader() {
           </span>
           <span className="tab-bar-label">Shop</span>
         </Link>
-        <Link href="/search" className="tab-bar-item" data-active={tabIndex === 2 || undefined} aria-current={isCurrent("/search")} onClick={() => setPendingTab(2)}>
+        <Link href="/gifting" className="tab-bar-item" data-active={tabIndex === 2 || undefined} aria-current={isCurrent("/gifting")} onClick={() => setPendingTab(2)}>
+          <span className="tab-bar-icon">
+            <TabGift />
+          </span>
+          <span className="tab-bar-label">Gifting</span>
+        </Link>
+        <Link href="/search" className="tab-bar-item" data-active={tabIndex === 3 || undefined} aria-current={isCurrent("/search")} onClick={() => setPendingTab(3)}>
           <span className="tab-bar-icon">
             <TabSearch />
           </span>
           <span className="tab-bar-label">Search</span>
         </Link>
-        <Link href="/wishlist" className="tab-bar-item" data-active={tabIndex === 3 || undefined} aria-current={isCurrent("/wishlist")} aria-label={`Wishlist, ${wishlist.length} saved`} onClick={() => setPendingTab(3)}>
+        <Link href="/wishlist" className="tab-bar-item" data-active={tabIndex === 4 || undefined} aria-current={isCurrent("/wishlist")} aria-label={`Wishlist, ${wishlist.length} saved`} onClick={() => setPendingTab(4)}>
           <span className="tab-bar-icon">
             <TabHeart />
             {ready && wishlist.length > 0 && <span className="tab-bar-count">{wishlist.length}</span>}
@@ -268,11 +275,11 @@ export function SiteHeader() {
             Wishlist
           </span>
         </Link>
-        <Link href="/bag" className="tab-bar-item" data-active={tabIndex === 4 || undefined} aria-current={isCurrent("/bag")} aria-label={`Bag, ${bagCount} ${bagCount === 1 ? "item" : "items"}`} onClick={() => setPendingTab(4)}>
+        <Link href="/bag" className="tab-bar-item" data-active={tabIndex === 5 || undefined} aria-current={isCurrent("/bag")} aria-label={`Bag, ${bagCount} ${bagCount === 1 ? "item" : "items"}`} onClick={() => setPendingTab(5)}>
           <span className="tab-bar-icon">
-            <TabBag />
+            <TabBag shine={ready && bagCount > 0} />
             {ready && bagCount > 0 && (
-              <span className="tab-bar-count" data-bump={bump}>
+              <span className="tab-bar-count tab-bar-count-bag" data-bump={bump}>
                 {bagCount}
               </span>
             )}

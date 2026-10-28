@@ -4,9 +4,9 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SlidersHorizontal, X } from "lucide-react";
-import { products, searchProducts } from "@/lib/products";
+import { products, searchProducts, type Product } from "@/lib/products";
 import { weaves } from "@/lib/weaves";
-import { ProductCard } from "@/components/product/ProductCard";
+import { SareeTile } from "./SareeTile";
 import { CollectionFilters, PRICE_BANDS, type FilterKey } from "./CollectionFilters";
 import { SortMenu } from "./SortMenu";
 
@@ -17,6 +17,36 @@ const SORTS = {
   name: "Name, A–Z",
 } as const;
 type SortKey = keyof typeof SORTS;
+
+/**
+ * Quick filters in the bar above the grid. Predefined ways in for saree shoppers;
+ * they combine with the panel filters. "New Arrivals" is illustrative until real
+ * arrival dates exist: the latest sarees added to the catalogue.
+ */
+const NEW_ARRIVALS = new Set(products.slice(-36).map((p) => p.slug));
+const sale = (p: Product) => !!p.compareAtPrice && p.compareAtPrice > p.price;
+const QUICK: { id: string; label: string; test: (p: Product) => boolean }[] = [
+  { id: "silk", label: "Silk", test: (p) => p.weave !== "linen-cotton" },
+  { id: "cotton", label: "Cotton", test: (p) => p.weave === "linen-cotton" || p.weave === "chanderi" },
+  { id: "festive", label: "Festive", test: (p) => p.occasion.includes("Festive") },
+  { id: "wedding", label: "Wedding", test: (p) => p.occasion.includes("Wedding") || p.collection === "Bridal Trousseau" },
+  { id: "everyday", label: "Everyday", test: (p) => p.occasion.some((o) => o === "Everyday" || o === "Day" || o === "Work") },
+  { id: "new", label: "New Arrivals", test: (p) => NEW_ARRIVALS.has(p.slug) },
+  { id: "under-2000", label: "Under ₹2,000", test: (p) => p.price < 2000 },
+  { id: "under-5000", label: "Under ₹5,000", test: (p) => p.price < 5000 },
+  { id: "under-10000", label: "Under ₹10,000", test: (p) => p.price < 10000 },
+  { id: "sale", label: "On Sale", test: sale },
+  { id: "bridal", label: "Bridal", test: (p) => p.collection === "Bridal Trousseau" },
+  { id: "office", label: "Office Wear", test: (p) => p.occasion.includes("Work") },
+  { id: "evening", label: "Evening", test: (p) => p.occasion.includes("Evening") },
+  { id: "light", label: "Lightweight", test: (p) => p.weave === "chanderi" || p.weave === "linen-cotton" },
+  { id: "kanjivaram", label: "Kanjivaram", test: (p) => p.weave === "kanjivaram" },
+  { id: "banarasi", label: "Banarasi", test: (p) => p.weave === "banarasi" },
+  { id: "paithani", label: "Paithani", test: (p) => p.weave === "paithani" },
+  { id: "chanderi", label: "Chanderi", test: (p) => p.weave === "chanderi" },
+  { id: "patola", label: "Patola", test: (p) => p.weave === "patola" },
+  { id: "last-few", label: "Last Few Left", test: (p) => p.stock !== undefined && p.stock > 0 && p.stock <= 2 },
+];
 
 /** Sarees shown at first, and added with each "Load more". */
 const PAGE = 24;
@@ -35,6 +65,7 @@ export function ShopView() {
     price: list("price"),
   };
   const q = params.get("q") ?? "";
+  const quick = QUICK.find((t) => t.id === params.get("tag"));
   const sort = (params.get("sort") as SortKey) in SORTS ? (params.get("sort") as SortKey) : "featured";
 
   const update = (next: Record<string, string | null>) => {
@@ -60,6 +91,7 @@ export function ShopView() {
 
   const results = useMemo(() => {
     let r = q.trim() ? searchProducts(q) : products;
+    if (quick) r = r.filter(quick.test);
     if (selected.weave.length) r = r.filter((p) => selected.weave.includes(p.weave));
     if (selected.color.length) r = r.filter((p) => selected.color.includes(p.colorFamily));
     if (selected.occasion.length) r = r.filter((p) => p.occasion.some((o) => selected.occasion.includes(o)));
@@ -90,48 +122,41 @@ export function ShopView() {
 
   return (
     <>
-      <header className="wrap pb-6 pt-6 md:pb-10 md:pt-8">
-        <nav aria-label="Breadcrumb" className="-my-3 text-[14px] text-ink-soft max-md:hidden">
-          <ol className="flex flex-wrap items-center gap-2">
-            <li>
-              <Link href="/" className="inline-flex min-h-11 items-center hover:text-ink">
-                Home
-              </Link>{" "}
-              /
-            </li>
-            {singleWeave || q ? (
-              <>
-                <li>
-                  <Link href="/shop" className="inline-flex min-h-11 items-center hover:text-ink">
-                    Shop
-                  </Link>{" "}
-                  /
-                </li>
-                <li aria-current="page" className="text-ink">
-                  {singleWeave ? singleWeave.name : "Search"}
-                </li>
-              </>
-            ) : (
-              <li aria-current="page" className="text-ink">
-                All Collections
+      {/* Editorial header: the title large on the left, a short note on the right (desktop). */}
+      <header className="wrap pb-6 pt-6 md:pb-12 md:pt-8">
+        {(singleWeave || q) && (
+          <nav aria-label="Breadcrumb" className="-my-3 text-[14px] text-ink-soft max-md:hidden">
+            <ol className="flex flex-wrap items-center gap-2">
+              <li>
+                <Link href="/shop" className="inline-flex min-h-11 items-center hover:text-ink">
+                  All Collections
+                </Link>{" "}
+                /
               </li>
-            )}
-          </ol>
-        </nav>
-        {singleWeave && <p className="eyebrow mt-6 max-md:mt-2 md:mt-10 lg:mt-14">{singleWeave.region}</p>}
-        {/* Phones: same type as the Wishlist and Shopping Bag titles. Desktop: the serif hero title used on The Art of Weaving. */}
-        <h1 className={`font-sans text-[clamp(3rem,7vw,6rem)] font-normal leading-[0.9] max-md:text-[42px] md:[font-family:var(--font-title)] md:text-[clamp(3.2rem,9vw,8.5rem)] md:font-normal md:leading-[0.88] md:tracking-[-0.015em] ${singleWeave ? "mt-3 md:mt-4" : "mt-6 max-md:mt-2 md:mt-10 lg:mt-14"}`}>
-          {singleWeave ? singleWeave.name : q ? "Search" : "All Collections"}
-        </h1>
-        {/* Phones: the standard one-line description under the title (see PageHeader). */}
-        <p className="page-header-desc md:hidden">
-          {singleWeave ? singleWeave.line : q ? `Sarees matching “${q}”.` : "Every saree in the boutique, in one place."}
-        </p>
-        <p className="lede mt-6 max-w-[52ch]! max-md:hidden">
-          {singleWeave
-            ? singleWeave.story[0]
-            : "Every saree in the boutique, from heirloom silks to everyday handlooms. Filter by weave, colour, occasion or price."}
-        </p>
+              <li aria-current="page" className="text-ink">
+                {singleWeave ? singleWeave.name : "Search"}
+              </li>
+            </ol>
+          </nav>
+        )}
+        <div className="md:mt-10 md:grid md:grid-cols-[1fr_minmax(220px,34ch)] md:items-end md:gap-12 lg:mt-14">
+          <div>
+            {singleWeave && <p className="eyebrow mb-3 max-md:mt-2 md:mb-4">{singleWeave.region}</p>}
+            {/* Phones: same type as the Wishlist and Shopping Bag titles. Desktop: the serif hero title used on The Art of Weaving. */}
+            <h1 className="font-sans text-[clamp(3rem,7vw,6rem)] font-normal leading-[0.9] max-md:mt-2 max-md:text-[42px] md:[font-family:var(--font-title)] md:text-[clamp(3.2rem,9vw,8.5rem)] md:font-normal md:leading-[0.88] md:tracking-[-0.015em]">
+              {singleWeave ? singleWeave.name : q ? "Search" : "All Collections"}
+            </h1>
+          </div>
+          {/* Phones: the standard one-line description under the title (see PageHeader). */}
+          <p className="page-header-desc md:hidden">
+            {singleWeave ? singleWeave.line : q ? `Sarees matching “${q}”.` : "Every saree in the boutique, in one place."}
+          </p>
+          <p className="text-[14px] leading-relaxed text-ink-soft max-md:hidden">
+            {singleWeave
+              ? singleWeave.story[0]
+              : "Every saree in the boutique, from heirloom silks to everyday handlooms, chosen one by one. Browse by weave, colour, occasion or price."}
+          </p>
+        </div>
       </header>
 
       <div className="wrap grid gap-10 pb-24 lg:grid-cols-[240px_1fr]">
@@ -175,22 +200,43 @@ export function ShopView() {
           </div>
         </dialog>
 
-        <div>
-          {/* Phones and tablets: Filter and Sort stay pinned under the header while browsing. */}
-          <div className="mb-8 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-sand pb-4 max-lg:sticky max-lg:top-14 max-lg:z-20 max-lg:-mx-(--wrap-pad) max-lg:bg-paper/95 max-lg:px-(--wrap-pad) max-lg:pt-3 max-lg:backdrop-blur sm:max-lg:top-16">
-            <button
-              type="button"
-              className="inline-flex min-h-11 items-center gap-2 border border-ink px-4 text-[13px] tracking-[0.06em] max-sm:flex-1 max-sm:justify-center lg:hidden"
-              onClick={() => sheet.current?.showModal()}
-              aria-haspopup="dialog"
-            >
-              <SlidersHorizontal size={15} strokeWidth={1.5} /> Filter
-              {chips.length > 0 && <span className="grid size-5 place-items-center rounded-full bg-ink text-[11px] text-paper">{chips.length}</span>}
-            </button>
-            <p className="order-last w-full text-[14px] sm:order-none sm:w-auto" aria-live="polite">
-              {results.length} {results.length === 1 ? "saree" : "sarees"}
-            </p>
-            <SortMenu value={sort} options={SORTS} onChange={(k) => update({ sort: k === "featured" ? null : k })} />
+        <div className="min-w-0">
+          {/* Count and sort, then the quick filters. Phones and tablets: this stays pinned under the header. */}
+          <div className="mb-8 max-lg:sticky max-lg:top-14 max-lg:z-20 max-lg:-mx-(--wrap-pad) max-lg:bg-paper/95 max-lg:px-(--wrap-pad) max-lg:pb-3 max-lg:pt-3 max-lg:backdrop-blur sm:max-lg:top-16">
+            <div className="shop-toolbar flex items-center justify-between gap-3">
+              {/* The count is still announced to screen readers as filters change. */}
+              <p className="sr-only" aria-live="polite">
+                {results.length} {results.length === 1 ? "saree" : "sarees"}
+              </p>
+              <div className="flex flex-1 items-center justify-between gap-2 lg:justify-end">
+                <button
+                  type="button"
+                  className="-ml-2 inline-flex min-h-11 items-center gap-2 px-2 text-[13px] tracking-[0.06em] lg:hidden"
+                  onClick={() => sheet.current?.showModal()}
+                  aria-haspopup="dialog"
+                >
+                  <SlidersHorizontal size={15} strokeWidth={1.5} /> Filter
+                  {chips.length > 0 && <span className="grid size-5 place-items-center rounded-full bg-ink text-[11px] text-paper">{chips.length}</span>}
+                </button>
+                <SortMenu value={sort} options={SORTS} onChange={(k) => update({ sort: k === "featured" ? null : k })} />
+              </div>
+            </div>
+            <nav aria-label="Quick filters" className="quick-filters mt-4 md:mt-6">
+              <ul>
+                <li>
+                  <button type="button" aria-pressed={!quick} onClick={() => update({ tag: null })}>
+                    All
+                  </button>
+                </li>
+                {QUICK.map((t) => (
+                  <li key={t.id}>
+                    <button type="button" aria-pressed={quick?.id === t.id} onClick={() => update({ tag: quick?.id === t.id ? null : t.id })}>
+                      {t.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
 
           {chips.length > 0 && (
@@ -211,7 +257,7 @@ export function ShopView() {
           )}
 
           {results.length === 0 ? (
-            <div className="border border-sand bg-paper p-10 text-center">
+            <div className="bg-sand-soft/60 p-10 text-center">
               <p className="serif text-3xl">No sarees match just yet.</p>
               <p className="mt-3 text-ink-soft">Try removing a filter, or browse a weave:</p>
               <div className="mt-6 flex flex-wrap justify-center gap-2">
@@ -224,9 +270,10 @@ export function ShopView() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 gap-x-5 gap-y-12 md:grid-cols-3">
+              {/* Image-led tiles, close together, with room to breathe between rows. */}
+              <div className="grid grid-cols-2 gap-x-2 gap-y-8 sm:gap-x-3 md:grid-cols-3 md:gap-y-12 2xl:grid-cols-4">
                 {results.slice(0, shown).map((p, i) => (
-                  <ProductCard key={p.slug} product={p} priority={i < 3} />
+                  <SareeTile key={p.slug} p={p} priority={i < 3} />
                 ))}
               </div>
               <div className="mt-16 flex flex-col items-center gap-4 text-center">
