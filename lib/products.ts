@@ -1,4 +1,5 @@
 import { foldedUri, textileUri, type Textile } from "./textile";
+import { STOCK_PHOTOS, type StockPhoto } from "./stockPhotos";
 import { generateCatalogue } from "./catalogue";
 
 /**
@@ -431,6 +432,46 @@ const FABRIC: Record<string, FabricMap> = {
   "violet-rose-kanjivaram": { body: "/fabric/violet-rose-kanjivaram-body.jpg" },
 };
 
+/**
+ * Representative photographs for a listing without its own: up to four openly
+ * licensed fabric photos (opened out, pallu, motif or border, folded), chosen by
+ * the closest weave and colour. Deterministic per saree, and varied so that
+ * neighbouring listings don't all lead with the same picture.
+ */
+const VIEW_ORDER: StockPhoto["view"][][] = [["opened"], ["pallu"], ["motif", "border"], ["folded", "detail"]];
+const SIMILAR_WEAVE: Record<string, string[]> = {
+  kanjivaram: ["paithani", "banarasi"],
+  banarasi: ["kanjivaram", "paithani"],
+  paithani: ["kanjivaram", "banarasi"],
+  chanderi: ["linen-cotton", "banarasi"],
+  patola: ["paithani", "kanjivaram"],
+  "linen-cotton": ["chanderi"],
+};
+function stockGallery(slug: string, weave: string, family: string, name: string, color: string): ProductImage[] {
+  let h = 0;
+  for (const c of slug) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  const score = (p: StockPhoto) =>
+    (p.weave === weave ? 4 : SIMILAR_WEAVE[weave]?.includes(p.weave) ? 2 : 0) + (p.family === family ? 3 : 0);
+  const used = new Set<string>();
+  const out: ProductImage[] = [];
+  VIEW_ORDER.forEach((views, slot) => {
+    const options = STOCK_PHOTOS.filter((p) => views.includes(p.view) && !used.has(p.src));
+    if (!options.length) return;
+    const best = Math.max(...options.map(score));
+    // Everything close to the best match, then a stable per-saree pick among them.
+    const near = options.filter((p) => score(p) >= best - 1);
+    const pick = near[(h + slot * 7) % near.length];
+    used.add(pick.src);
+    out.push({
+      src: pick.src,
+      label: pick.label,
+      alt: `${pick.label} view of a saree representative of ${name} (${color.toLowerCase()})`,
+      credit: pick.credit,
+    });
+  });
+  return out;
+}
+
 // The hand-written sarees first (real photography leads the shop), then the
 // generated sample catalogue that brings the shop to 300.
 const generated = generateCatalogue(new Set(seeds.map((s) => s.slug)));
@@ -460,12 +501,8 @@ export const products: Product[] = [...seeds, ...generated].map((s, i) => {
         // The rack folds this same image into pleats, so resting and focused views always match.
         frontViewImage: onHanger,
         hangingViewImage: onHanger,
-        images: s.photos?.gallery ?? [
-          { src: onHanger, label: "On the hanger", alt: `${s.name}: illustrative render of the saree folded over a wooden saree hanger` },
-          { src: textileUri(s.textile, "full"), label: "Full length", alt: `${s.name}: full-length illustrative render of the ${s.color.toLowerCase()} saree` },
-          { src: textileUri(s.textile, "texture"), label: "Fabric", alt: `${s.name}: close-up render of the body motif and weave texture` },
-          { src: textileUri(s.textile, "border"), label: "Border & pallu", alt: `${s.name}: render of the border meeting the pallu` },
-        ],
+        // Representative photographs (openly licensed, credited) for listings without their own.
+        images: s.photos?.gallery ?? stockGallery(s.slug, s.weave, s.colorFamily, s.name, s.color),
       };
     })());
   return Object.defineProperties(base, {

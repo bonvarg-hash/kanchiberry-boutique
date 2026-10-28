@@ -110,7 +110,8 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
     addToBag(p.slug, 1, variantName);
     setAdded(true);
   };
-  const photoCredit = p.images.find((i) => i.credit && i.credit !== "Kanchiberry")?.credit;
+  const photoCredits = [...new Set(p.images.map((i) => i.credit).filter((c): c is string => !!c && c !== "Kanchiberry"))];
+  const representative = p.images.some((i) => i.src.startsWith("/photos/commons/"));
   // Phones: the Add to Bag row is pinned to the bottom edge for the whole visit to a
   // saree, so the tab bar steps aside while a saree is open.
   useEffect(() => {
@@ -283,7 +284,8 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
                 </dl>
                 <p className="mt-4 text-[13px]">Product code {p.id.toUpperCase()}. Measurements are illustrative.</p>
                 {/* Openly licensed photos must stay credited; this is the only place it shows. */}
-                {photoCredit && <p className="mt-2 text-[13px]">Photos: {photoCredit}.</p>}
+                {representative && <p className="mt-2 text-[13px]">Photos are representative of this weave and colour, not of this exact saree.</p>}
+                {photoCredits.length > 0 && <p className="mt-2 text-[13px]">Photos: {photoCredits.join("; ")}.</p>}
               </>
             ),
           },
