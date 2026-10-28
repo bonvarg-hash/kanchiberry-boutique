@@ -30,7 +30,7 @@ export function ShoppingBag() {
     );
 
   return (
-    <div className="grid gap-12 md:pb-28 lg:grid-cols-[1fr_380px] lg:pb-0">
+    <div className="grid gap-12 max-md:gap-8 md:pb-28 lg:grid-cols-[1fr_380px] lg:pb-0">
       <ul className="divide-y divide-sand border-y border-sand">
         {bag.map(({ product: p, qty, key, variant }) => (
           <li key={key} className="grid grid-cols-[96px_1fr] gap-5 py-6 sm:grid-cols-[120px_1fr_auto]">
@@ -58,7 +58,7 @@ export function ShoppingBag() {
         ))}
       </ul>
 
-      <aside aria-labelledby="summary-title" className="self-start border border-sand bg-paper p-8">
+      <aside aria-labelledby="summary-title" className="self-start border border-sand bg-white p-8">
         <h2 id="summary-title" className="font-sans text-3xl">
           Summary
         </h2>

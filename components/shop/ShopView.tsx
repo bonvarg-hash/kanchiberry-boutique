@@ -91,7 +91,7 @@ export function ShopView() {
   return (
     <>
       <header className="wrap pb-6 pt-6 md:pb-10 md:pt-8">
-        <nav aria-label="Breadcrumb" className="-my-3 text-[14px] text-ink-soft">
+        <nav aria-label="Breadcrumb" className="-my-3 text-[14px] text-ink-soft max-md:hidden">
           <ol className="flex flex-wrap items-center gap-2">
             <li>
               <Link href="/" className="inline-flex min-h-11 items-center hover:text-ink">
@@ -118,11 +118,15 @@ export function ShopView() {
             )}
           </ol>
         </nav>
-        {singleWeave && <p className="eyebrow mt-6 md:mt-10 lg:mt-14">{singleWeave.region}</p>}
+        {singleWeave && <p className="eyebrow mt-6 max-md:mt-2 md:mt-10 lg:mt-14">{singleWeave.region}</p>}
         {/* Same type as the Wishlist and Shopping Bag titles. */}
-        <h1 className={`font-sans text-[clamp(3rem,7vw,6rem)] font-normal leading-[0.9] max-md:text-[46px] ${singleWeave ? "mt-3 md:mt-4" : "mt-6 md:mt-10 lg:mt-14"}`}>
+        <h1 className={`font-sans text-[clamp(3rem,7vw,6rem)] font-normal leading-[0.9] max-md:text-[42px] ${singleWeave ? "mt-3 md:mt-4" : "mt-6 max-md:mt-2 md:mt-10 lg:mt-14"}`}>
           {singleWeave ? singleWeave.name : q ? "Search" : "All Collections"}
         </h1>
+        {/* Phones: the standard one-line description under the title (see PageHeader). */}
+        <p className="page-header-desc md:hidden">
+          {singleWeave ? singleWeave.line : q ? `Sarees matching “${q}”.` : "Every saree in the boutique, in one place."}
+        </p>
         <p className="lede mt-6 max-w-[52ch]! max-md:hidden">
           {singleWeave
             ? singleWeave.story[0]

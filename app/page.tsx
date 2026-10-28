@@ -21,7 +21,7 @@ export default function HomePage() {
       <div>
         <HeroSection />
         <WeaveMarquee />
-        <section id="curated" aria-labelledby="curated-title" className="scroll-mt-16 bg-mist pb-12 pt-12 md:pb-16 md:pt-16 lg:pb-20 lg:pt-20">
+        <section id="curated" aria-labelledby="curated-title" className="scroll-mt-16 bg-mist pb-16 pt-16 md:pb-16 md:pt-16 lg:pb-20 lg:pt-20">
           <div className="wrap mb-6 flex flex-col items-center gap-5 text-center">
             <div>
               <RailEyebrow initial={featuredProducts().length} />

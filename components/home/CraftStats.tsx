@@ -10,10 +10,10 @@ export function CraftStats() {
       <h2 id="stats-title" className="section-title text-[#87264D]">
         Woven <em className="shimmer text-[#4E3F47]">With Care</em>, One Thread at a Time
       </h2>
-      <p className="lede mx-auto mt-5 max-w-[56ch]!">
+      <p className="lede mx-auto mt-5 max-w-[56ch]! max-md:mt-3">
         A boutique of weaves from across India, each chosen for its colour, its border and the way it falls.
       </p>
-      <div className="relative mt-16 flex flex-wrap items-center justify-center gap-8 sm:gap-14">
+      <div className="relative mt-16 max-md:mt-10 flex flex-wrap items-center justify-center gap-8 sm:gap-14">
         <span aria-hidden className="twinkle absolute left-1/2 top-[-34px] -translate-x-1/2 text-ink">
           ✦
         </span>

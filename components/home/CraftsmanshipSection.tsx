@@ -34,7 +34,7 @@ export function CraftsmanshipSection() {
       </figure>
       <div className="order-1 md:order-none md:col-span-5 md:self-end md:pl-6">
         <p className="eyebrow">The art behind the drape</p>
-        <h2 id="craft-title" className="section-title mt-5 text-[#87264D]">
+        <h2 id="craft-title" className="section-title mt-5 max-md:mt-3 text-[#87264D]">
           Not Just Worn.
           <br />
           <em className="shimmer text-[#4E3F47]">Cherished.</em>
@@ -47,10 +47,10 @@ export function CraftsmanshipSection() {
         <p className="mt-4 max-w-[44ch] text-[16px] leading-relaxed text-ink-soft">
           We choose each saree for its textile character: the hand of the silk, the rhythm of a border, the way a pallu falls.
         </p>
-        <Link href="/our-story" className="text-link mt-10">
+        <Link href="/our-story" className="text-link mt-10 max-md:mt-6">
           Discover Our Story <span aria-hidden>→</span>
         </Link>
-        <p className="mt-6 text-[11px] text-ink-soft">Proposed brand copy, subject to approval.</p>
+        <p className="mt-6 max-md:mt-3 text-[11px] text-ink-soft">Proposed brand copy, subject to approval.</p>
       </div>
     </section>
   );

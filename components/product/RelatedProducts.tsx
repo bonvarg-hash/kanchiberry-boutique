@@ -2,7 +2,7 @@ import { ProductCard } from "./ProductCard";
 
 export function RelatedProducts({ slugs }: { slugs: string[] }) {
   return (
-    <section aria-labelledby="related-title" className="wrap border-t border-sand py-14 max-md:pb-28 md:py-20">
+    <section aria-labelledby="related-title" className="wrap border-t border-sand py-14 max-md:pb-16 max-md:pt-10 md:py-20">
       <h2 id="related-title" className="section-title mb-6 font-sans! text-[clamp(1.6rem,2.8vw,2.2rem)]! md:mb-10">
         You May Also Love
       </h2>

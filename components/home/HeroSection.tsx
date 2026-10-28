@@ -3,8 +3,8 @@ import { CollectionsFab } from "./CollectionsFab";
 
 export function HeroSection() {
   return (
-    <section aria-labelledby="hero-title" className="wrap relative pb-16 pt-12 text-center sm:pt-20 lg:pb-24 lg:pt-24">
-      <p className="eyebrow hero-fade mb-8 sm:mb-12">A modern ode to Indian textiles</p>
+    <section aria-labelledby="hero-title" className="wrap relative pb-16 pt-12 text-center max-md:pb-12 max-md:pt-10 sm:pt-20 lg:pb-24 lg:pt-24">
+      <p className="eyebrow hero-fade mb-8 max-sm:mb-5 sm:mb-12">A modern ode to Indian textiles</p>
       <h1 id="hero-title" className="font-banner text-[clamp(3.4rem,11.2vw,11.5rem)] font-light leading-[0.88] tracking-[-0.025em]">
         <span className="hero-line" style={{ "--d": 0 } as React.CSSProperties}>
           <span>The finest fruit</span>

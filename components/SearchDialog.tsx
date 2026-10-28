@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, X } from "lucide-react";
 import { formatPrice, searchProducts } from "@/lib/products";
 
-const SUGGESTIONS = ["Kanjivaram", "Banarasi", "Wedding", "Green", "Linen", "Festive Edit"];
+export const SUGGESTIONS = ["Kanjivaram", "Banarasi", "Wedding", "Green", "Linen", "Festive Edit"];
 
 export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const ref = useRef<HTMLDialogElement>(null);

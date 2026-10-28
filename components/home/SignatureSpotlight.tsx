@@ -28,7 +28,7 @@ const FEATURES = [
 export function SignatureSpotlight() {
   const p = getProduct("emerald-magenta-kanjivaram")!;
   return (
-    <section aria-labelledby="spotlight-title" className="relative overflow-hidden py-14 md:py-20 lg:py-28">
+    <section aria-labelledby="spotlight-title" className="relative overflow-hidden py-16 md:py-20 lg:py-28">
       {/* vertical watermark */}
       <span
         aria-hidden
@@ -40,7 +40,7 @@ export function SignatureSpotlight() {
 
       <div className="wrap relative">
         <p className="eyebrow text-center">Signature drape of the week</p>
-        <div className="relative mt-4 flex justify-center">
+        <div className="relative mt-4 max-md:mt-3 flex justify-center">
           <span aria-hidden className="absolute left-[6%] top-2 text-2xl text-ink">
             ✦
           </span>

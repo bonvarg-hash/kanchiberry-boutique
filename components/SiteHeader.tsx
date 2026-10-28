@@ -19,14 +19,18 @@ export const NAV = [
 ];
 
 /** Mobile drawer: a flat list, no nested menus. */
+// The first five match the phone tab bar, named as their pages are titled.
 const DRAWER = [
-  { href: "/shop", label: "Shop Sarees" },
-  { href: "/collections", label: "Collections" },
+  { href: "/", label: "Home" },
+  { href: "/shop", label: "All Collections" },
+  { href: "/search", label: "Search" },
+  { href: "/wishlist", label: "Wishlist" },
+  { href: "/bag", label: "Shopping Bag" },
+  { href: "/collections", label: "Edits & Weaves" },
   { href: "/#curated", label: "Curated Picks" },
   { href: "/collections#by-weave", label: "Explore by Weave" },
   { href: "/our-story", label: "Our Story" },
   { href: "/art-of-weaving", label: "The Art of Weaving" },
-  { href: "/wishlist", label: "Wishlist" },
   { href: "/care-guide", label: "Customer Care" },
 ];
 
@@ -78,11 +82,11 @@ export function SiteHeader() {
   const isCurrent = (href: string) => (pathname === href || pathname.startsWith(href + "/") ? "page" : undefined);
 
   // Phone tab bar: which tab is highlighted. A tap highlights it straight away
-  // (pendingTab) rather than waiting for the next page; Search holds it while open.
+  // (pendingTab) rather than waiting for the next page. Search opens its own page here.
   const [pendingTab, setPendingTab] = useState<number | null>(null);
   useEffect(() => setPendingTab(null), [pathname]);
   const routeTab =
-    pathname === "/" ? 0 : isCurrent("/shop") || isCurrent("/sarees") ? 1 : isCurrent("/wishlist") ? 3 : isCurrent("/bag") ? 4 : -1;
+    pathname === "/" ? 0 : isCurrent("/shop") || isCurrent("/sarees") ? 1 : isCurrent("/search") ? 2 : isCurrent("/wishlist") ? 3 : isCurrent("/bag") ? 4 : -1;
   const tabIndex = searchOpen ? 2 : (pendingTab ?? routeTab);
 
   return (
@@ -103,7 +107,7 @@ export function SiteHeader() {
             </button>
           </div>
           <span className="justify-self-center lg:justify-self-auto">
-            <Wordmark height={36} className="h-[28px]! w-auto sm:h-[32px]! lg:h-[36px]!" />
+            <Wordmark height={36} className="h-[30px]! w-auto sm:h-[32px]! lg:h-[36px]!" />
           </span>
           <nav aria-label="Primary" className="hidden lg:block">
             <ul className="flex items-center gap-8">
@@ -185,14 +189,15 @@ export function SiteHeader() {
                   <Link
                     href={n.href}
                     onClick={() => menuRef.current?.close()}
-                    className="flex min-h-14 items-center font-sans text-[21px] leading-tight aria-[current=page]:font-medium aria-[current=page]:text-[#87264D]"
-                    aria-current={isCurrent(n.href)}
+                    className="flex min-h-13 items-center font-sans text-[17px] leading-tight aria-[current=page]:font-medium aria-[current=page]:text-[#87264D]"
+                    aria-current={n.href === "/" ? (pathname === "/" ? "page" : undefined) : isCurrent(n.href)}
                   >
                     {n.label}
+                    {n.href === "/bag" && ready && bagCount > 0 && <span className="ml-1.5 text-ink-soft">({bagCount})</span>}
                   </Link>
                 </li>
               ))}
-              <li className="flex min-h-14 items-center gap-2 border-b border-sand font-sans text-[21px] text-ink-soft/70">
+              <li className="flex min-h-13 items-center gap-2 border-b border-sand font-sans text-[17px] text-ink-soft/70">
                 New Arrivals
                 <span className="text-[10px] uppercase tracking-[0.14em]">Pending</span>
               </li>
@@ -205,11 +210,6 @@ export function SiteHeader() {
                 Account
               </h2>
               <ul className="font-sans text-[16px]">
-                <li>
-                  <Link href="/bag" onClick={() => menuRef.current?.close()} className="flex min-h-12 items-center gap-3">
-                    <ShoppingBag size={19} strokeWidth={1.5} aria-hidden /> Shopping bag {ready && bagCount > 0 && `(${bagCount})`}
-                  </Link>
-                </li>
                 <li className="flex min-h-12 items-center gap-3 text-ink-soft/80" aria-disabled="true">
                   <MapPin size={19} strokeWidth={1.5} aria-hidden /> Delivery address
                   <span className="ml-auto text-[10px] uppercase tracking-[0.14em]">Coming soon</span>
@@ -238,12 +238,12 @@ export function SiteHeader() {
           </span>
           <span className="tab-bar-label">Shop</span>
         </Link>
-        <button type="button" className="tab-bar-item" data-active={tabIndex === 2 || undefined} onClick={() => setSearchOpen(true)} aria-haspopup="dialog">
+        <Link href="/search" className="tab-bar-item" data-active={tabIndex === 2 || undefined} aria-current={isCurrent("/search")} onClick={() => setPendingTab(2)}>
           <span className="tab-bar-icon">
             <TabSearch />
           </span>
           <span className="tab-bar-label">Search</span>
-        </button>
+        </Link>
         <Link href="/wishlist" className="tab-bar-item" data-active={tabIndex === 3 || undefined} aria-current={isCurrent("/wishlist")} aria-label={`Wishlist, ${wishlist.length} saved`} onClick={() => setPendingTab(3)}>
           <span className="tab-bar-icon">
             <TabHeart />

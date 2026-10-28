@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { ShoppingBag } from "@/components/commerce/ShoppingBag";
+import { PageHeader } from "@/components/PageHeader";
 
 export const metadata: Metadata = { title: "Shopping Bag", robots: { index: false } };
 
 export default function BagPage() {
   return (
-    <div className="wrap pb-24 pt-14 lg:pt-20">
-      <h1 className="mb-12 font-sans text-[clamp(3rem,7vw,6rem)] font-normal leading-[0.9] max-md:text-[46px]">Shopping Bag</h1>
+    <div className="wrap pb-24 pt-14 max-md:pb-16 max-md:pt-8 lg:pt-20">
+      <PageHeader title="Shopping Bag" description="Your picks, ready when you are." className="mb-12 max-md:mb-8" />
       <ShoppingBag />
     </div>
   );

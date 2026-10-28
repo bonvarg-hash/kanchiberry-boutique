@@ -16,14 +16,14 @@ export function NewsletterSignup() {
 
   return (
     <section aria-labelledby="letters-title" className="theme-dark bg-ivory py-16 md:py-24 lg:py-32">
-      <div className="wrap grid gap-10 md:grid-cols-2 md:items-end">
+      <div className="wrap grid gap-10 max-md:gap-8 md:grid-cols-2 md:items-end">
         <div>
           <h2 id="letters-title" className="section-title text-white">
             Letters From
             <br />
             Kanchiberry
           </h2>
-          <p className="lede mt-5 text-[#4E3F47]!">Discover new collections, beautiful weaves, and stories from the world of Indian textiles.</p>
+          <p className="lede mt-5 max-md:mt-3 text-[#4E3F47]!">Discover new collections, beautiful weaves, and stories from the world of Indian textiles.</p>
         </div>
         <form onSubmit={submit} noValidate className="w-full max-w-lg md:justify-self-end">
           <label htmlFor="nl-email" className="eyebrow mb-3 block">

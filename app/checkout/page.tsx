@@ -7,10 +7,10 @@ import { useStore } from "@/lib/store";
 export default function CheckoutPage() {
   const { bag, subtotal, ready } = useStore();
   return (
-    <div className="wrap max-w-4xl! pb-24 pt-14 lg:pt-20">
+    <div className="wrap max-w-4xl! pb-24 pt-14 max-md:pb-16 max-md:pt-8 lg:pt-20">
       <title>Checkout · Kanchiberry</title>
       <h1 className="serif text-[clamp(3rem,7vw,6rem)] font-light leading-[0.9]">Checkout</h1>
-      <div className="notice mt-8" role="note">
+      <div className="notice mt-8 max-md:mt-6" role="note">
         <strong>Payment is not integrated in this prototype.</strong> No order can be placed and no payment will be taken. Connect a payment
         provider (for example Razorpay or Stripe) and a shipping service before launch.
       </div>
@@ -20,7 +20,7 @@ export default function CheckoutPage() {
           Your bag is empty. <Link href="/shop" className="underline">Browse the collection</Link>.
         </p>
       ) : (
-        <div className="mt-12 grid gap-12 md:grid-cols-[1fr_320px]">
+        <div className="mt-12 grid gap-12 max-md:mt-8 max-md:gap-8 md:grid-cols-[1fr_320px]">
           <section aria-labelledby="steps" className="space-y-4">
             <h2 id="steps" className="eyebrow">
               Steps to come

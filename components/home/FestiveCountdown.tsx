@@ -87,7 +87,7 @@ export function FestiveCountdown() {
 
   return (
     <section aria-labelledby="festive-title" className="bg-mist">
-      <div className="wrap grid gap-14 pt-16 lg:grid-cols-2 lg:gap-20 lg:pt-0">
+      <div className="wrap grid gap-14 max-md:gap-10 pt-16 lg:grid-cols-2 lg:gap-20 lg:pt-0">
         <div className="photo-loop relative h-[clamp(440px,110vw,640px)] lg:h-auto">
           <div className="photo-loop-grid grid grid-cols-2 gap-4 sm:gap-5">
             {COLUMNS.map((col, c) => (
@@ -147,14 +147,14 @@ export function FestiveCountdown() {
           </div>
         </div>
 
-        <div className="self-center pb-24 text-center lg:py-[188px]">
+        <div className="self-center pb-24 max-md:pb-16 text-center lg:py-[188px]">
           <h2 id="festive-title" className="section-title text-[#87264D]">
             Up to <em className="shimmer text-[#4E3F47]">25% Off</em>
             <br />
             the Festive Silk Edit
           </h2>
           {ended ? (
-            <p className="lede mx-auto mt-8">
+            <p className="lede mx-auto mt-8 max-md:mt-3">
               The festive offer has ended. Thank you for shopping the edit.
             </p>
           ) : (

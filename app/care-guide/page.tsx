@@ -28,16 +28,16 @@ const SECTIONS = [
 
 export default function CareGuidePage() {
   return (
-    <div className="wrap max-w-4xl! pb-24 pt-14 lg:pt-20">
+    <div className="wrap max-w-4xl! pb-24 pt-14 max-md:pb-16 max-md:pt-8 lg:pt-20">
       <p className="eyebrow">Customer care</p>
-      <h1 className="serif mt-4 text-[clamp(3rem,7vw,6rem)] font-light leading-[0.9]">Saree Care Guide</h1>
-      <p className="lede mt-6 max-w-[56ch]!">
+      <h1 className="serif mt-4 max-md:mt-3 text-[clamp(3rem,7vw,6rem)] font-light leading-[0.9]">Saree Care Guide</h1>
+      <p className="lede mt-6 max-w-[56ch]! max-md:mt-3">
         General guidance for keeping your sarees beautiful. Always follow the care label on the individual saree where one is provided.
       </p>
       {SECTIONS.map((s) => (
-        <section key={s.t} className="mt-14 border-t border-sand pt-8">
+        <section key={s.t} className="mt-14 border-t border-sand pt-8 max-md:mt-10 max-md:pt-6">
           <h2 className="serif text-3xl">{s.t}</h2>
-          <ul className="mt-5 list-disc space-y-2 pl-5 text-ink-soft">
+          <ul className="mt-5 max-md:mt-3 list-disc space-y-2 pl-5 text-ink-soft">
             {s.items.map((i) => (
               <li key={i}>{i}</li>
             ))}

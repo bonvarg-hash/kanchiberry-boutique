@@ -1238,7 +1238,7 @@ img {
 .filter-rail:focus-within {
   scrollbar-color: var(--color-sand) transparent;
 }
-/* Phone tab bar: a black rounded bar floating above the bottom edge. The current
+/* Phone tab bar: a black sharp-edged bar floating above the bottom edge. The current
    tab's icon turns light (#EEE9E0) and lifts to show its label; the other tabs show
    grey icons only. --tabbar-h is the space it takes, so other bottom
    bars and floating buttons sit just above it. */
@@ -1266,7 +1266,7 @@ html[data-buybar] .tab-bar {
   grid-template-columns: repeat(5, 1fr);
   height: 64px;
   padding: 0 6px;
-  border-radius: 22px; /* rounded rectangle */
+  border-radius: 0; /* sharp-edged rectangle */
   background: #0b0a0b;
   box-shadow:
     0 18px 36px -14px rgb(0 0 0 / 0.55),
@@ -1383,7 +1383,7 @@ html[data-buybar] .tab-bar {
 .collections-fab-panel {
   display: flex;
   flex-direction: column;
-  width: min(80vw, 310px);
+  width: min(84vw, 330px);
   border: 1px solid var(--color-sand);
   background: var(--color-paper);
   /* Layered shadow so the menu lifts clearly off the page behind it. */
@@ -1397,7 +1397,7 @@ html[data-buybar] .tab-bar {
 .collections-fab-title {
   padding: 14px 16px 12px;
   border-bottom: 1px solid var(--color-sand);
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 500;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -1418,7 +1418,7 @@ html[data-buybar] .tab-bar {
   z-index: 1;
   padding: 12px 16px 6px;
   background: var(--color-paper);
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -1429,9 +1429,9 @@ html[data-buybar] .tab-bar {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  min-height: 48px;
+  min-height: 50px;
   padding: 0 16px;
-  font-size: 15px;
+  font-size: 17px;
 }
 .collections-fab-link:active {
   background: var(--color-sand-soft);
@@ -2166,4 +2166,84 @@ details.acc[open] .acc-icon {
   font-size: 15px;
   line-height: 1.55;
   color: var(--color-ink-soft);
+}
+
+/* Search page: the search bar (active state while typing) and suggestion tags. */
+.search-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 0 8px 0 16px;
+  border: 1px solid var(--color-sand);
+  border-radius: 12px;
+  background: var(--color-paper);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.search-field:focus-within {
+  border-color: var(--color-ink);
+  box-shadow: 0 0 0 3px rgba(135, 38, 77, 0.12);
+}
+.search-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--color-sand);
+  border-radius: 999px;
+  background: var(--color-paper);
+  font-size: 14px;
+  color: var(--color-ink);
+}
+.search-tag:active {
+  border-color: var(--color-ink);
+}
+
+/* Page header description (Shop, Search, Wishlist, Shopping Bag): set close under
+   the title; one line on phones. */
+.page-header-desc {
+  margin-top: 16px;
+  max-width: 52ch;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-ink-soft);
+}
+@media (max-width: 767px) {
+  .page-header-desc {
+    margin-top: 8px;
+    max-width: none;
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Wishlist status button: Add to Cart, Already in Cart (outline) or Sold Out (disabled). */
+.wish-row-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  align-self: flex-start;
+  min-height: 40px;
+  margin-top: auto;
+  padding: 0 16px;
+  border: 1px solid #190e14;
+  background: #190e14;
+  color: #fff;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.wish-row-btn.is-in-cart {
+  background: transparent;
+  color: var(--color-ink);
+}
+.wish-row-btn:disabled {
+  border-color: var(--color-sand);
+  background: var(--color-sand-soft);
+  color: var(--color-ink-soft);
+  cursor: not-allowed;
 }

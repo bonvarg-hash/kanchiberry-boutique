@@ -13,7 +13,7 @@ export function RailEyebrow({ initial }: { initial: number }) {
     return () => window.removeEventListener(RAIL_COUNT_EVENT, on);
   }, []);
   return (
-    <p className="eyebrow mb-4">
+    <p className="eyebrow mb-4 max-md:mb-3">
       {count} sarees on the rail · this week
     </p>
   );

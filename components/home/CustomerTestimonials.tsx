@@ -162,9 +162,9 @@ export function CustomerTestimonials() {
           <h2 id="stories-title" className="section-title text-[#87264D]">
             Woven Into <em className="shimmer text-[#4E3F47]">Their Stories</em>
           </h2>
-          <p className="lede mt-5">A few kind words from those who found something special at Kanchiberry.</p>
+          <p className="lede mt-5 max-md:mt-3">A few kind words from those who found something special at Kanchiberry.</p>
           {/* One disclosure for the section while the reviews are samples; remove with them. */}
-          <p className="mt-3 text-[12px] text-ink-soft">Sample reviews shown for preview. Customer reviews will appear here after launch.</p>
+          <p className="mt-3 max-md:mt-2 text-[12px] text-ink-soft">Sample reviews shown for preview. Customer reviews will appear here after launch.</p>
         </div>
       </div>
       {/* Phones: one card at a time with the next peeking in; swipe or use the arrows. Nothing moves on its own. */}
