@@ -50,6 +50,22 @@ export function CollectionsFab() {
   const id = useId();
   const root = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
+  // Slides off to the right while the page is scrolled down, and back on scrolling up
+  // (or near the top), matching the tab bar shrinking.
+  const [tucked, setTucked] = useState(false);
+  useEffect(() => {
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (y < 40) setTucked(false);
+      else if (y - last > 6) setTucked(true);
+      else if (last - y > 6) setTucked(false);
+      else return;
+      last = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -71,7 +87,7 @@ export function CollectionsFab() {
   }, [open]);
 
   return (
-    <div ref={root} className="collections-fab md:hidden">
+    <div ref={root} className="collections-fab md:hidden" data-tucked={(tucked && !open) || undefined}>
       {open && (
         <nav id={id} aria-label="Collections" className="collections-fab-panel">
           <p className="collections-fab-title">Discover the collection</p>

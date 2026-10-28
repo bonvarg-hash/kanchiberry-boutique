@@ -1374,6 +1374,13 @@ html[data-buybar] .tab-bar {
   flex-direction: column;
   align-items: flex-end;
   gap: 12px;
+  transition: transform 0.4s var(--ease-cloth), opacity 0.3s ease;
+}
+/* Tucked away to the right while scrolling down the page. */
+.collections-fab[data-tucked] {
+  transform: translateX(calc(100% + 24px));
+  opacity: 0;
+  pointer-events: none;
 }
 .collections-fab-button {
   display: grid;
@@ -1388,6 +1395,39 @@ html[data-buybar] .tab-bar {
 }
 .collections-fab-button:active {
   transform: scale(0.94);
+}
+/* A soft light sweep across the button: first after 3s, then every ~4s
+   (a 1s sweep followed by a 3s pause). Stops while the menu is open. */
+.collections-fab-button {
+  position: relative;
+  overflow: hidden;
+}
+.collections-fab-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 35%, rgb(255 255 255 / 0.32) 50%, transparent 65%) no-repeat;
+  background-size: 250% 100%;
+  background-position: 130% 0;
+  pointer-events: none;
+  animation: fab-shimmer 4s ease-in-out 3s infinite;
+}
+.collections-fab-button[aria-expanded="true"]::after {
+  animation: none;
+}
+@keyframes fab-shimmer {
+  0% {
+    background-position: 130% 0;
+  }
+  25%,
+  100% {
+    background-position: -30% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .collections-fab-button::after {
+    animation: none;
+  }
 }
 .collections-fab-button[aria-expanded="true"] {
   background: #190e14;
