@@ -69,7 +69,7 @@ export function ShoppingBag() {
           </div>
           <div className="flex justify-between text-ink-soft">
             <dt>Shipping</dt>
-            <dd>Not yet configured</dd>
+            <dd>Free (In India)</dd>
           </div>
         </dl>
         <Link href="/checkout" className="btn btn-primary mt-8 w-full">

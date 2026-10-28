@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Heart, MapPin, Menu, Search, ShoppingBag, UserRound, X } from "lucide-react";
+import { BookOpen, Compass, Heart, House, LayoutGrid, LifeBuoy, MapPin, Menu, Scroll, Search, ShoppingBag, Sparkles, Tag, UserRound, X } from "lucide-react";
 import { TabBag, TabGrid, TabHeart, TabHome, TabSearch } from "./TabIcons";
 import { useStore } from "@/lib/store";
 import { SearchDialog } from "./SearchDialog";
@@ -19,19 +19,16 @@ export const NAV = [
 ];
 
 /** Mobile drawer: a flat list, no nested menus. */
-// The first five match the phone tab bar, named as their pages are titled.
+// Home, All Collections and Wishlist match the phone tab bar pages, named as their pages are titled.
 const DRAWER = [
-  { href: "/", label: "Home" },
-  { href: "/shop", label: "All Collections" },
-  { href: "/search", label: "Search" },
-  { href: "/wishlist", label: "Wishlist" },
-  { href: "/bag", label: "Shopping Bag" },
-  { href: "/collections", label: "Edits & Weaves" },
-  { href: "/#curated", label: "Curated Picks" },
-  { href: "/collections#by-weave", label: "Explore by Weave" },
-  { href: "/our-story", label: "Our Story" },
-  { href: "/art-of-weaving", label: "The Art of Weaving" },
-  { href: "/care-guide", label: "Customer Care" },
+  { href: "/", label: "Home", Icon: House },
+  { href: "/shop", label: "All Collections", Icon: LayoutGrid },
+  { href: "/wishlist", label: "Wishlist", Icon: Heart },
+  { href: "/#curated", label: "Curated Picks", Icon: Sparkles },
+  { href: "/collections#by-weave", label: "Explore by Weave", Icon: Compass },
+  { href: "/our-story", label: "Our Story", Icon: BookOpen },
+  { href: "/art-of-weaving", label: "The Art of Weaving", Icon: Scroll },
+  { href: "/care-guide", label: "Customer Care", Icon: LifeBuoy },
 ];
 
 export function SiteHeader() {
@@ -185,19 +182,20 @@ export function SiteHeader() {
           <nav aria-label="Mobile" className="-mx-6 mt-4 flex-1 overflow-y-auto overscroll-contain px-6">
             <ul>
               {DRAWER.map((n) => (
-                <li key={n.href} className="border-b border-sand">
+                <li key={n.href}>
                   <Link
                     href={n.href}
                     onClick={() => menuRef.current?.close()}
-                    className="flex min-h-13 items-center font-sans text-[17px] leading-tight aria-[current=page]:font-medium aria-[current=page]:text-[#87264D]"
+                    className="flex min-h-13 items-center gap-3.5 font-sans text-[17px] leading-tight aria-[current=page]:font-medium aria-[current=page]:text-[#87264D]"
                     aria-current={n.href === "/" ? (pathname === "/" ? "page" : undefined) : isCurrent(n.href)}
                   >
+                    <n.Icon size={19} strokeWidth={1.5} aria-hidden className="shrink-0" />
                     {n.label}
-                    {n.href === "/bag" && ready && bagCount > 0 && <span className="ml-1.5 text-ink-soft">({bagCount})</span>}
                   </Link>
                 </li>
               ))}
-              <li className="flex min-h-13 items-center gap-2 border-b border-sand font-sans text-[17px] text-ink-soft/70">
+              <li className="flex min-h-13 items-center gap-2 font-sans text-[17px] text-ink-soft/70">
+                <Tag size={19} strokeWidth={1.5} aria-hidden className="mr-1.5 shrink-0" />
                 New Arrivals
                 <span className="text-[10px] uppercase tracking-[0.14em]">Pending</span>
               </li>

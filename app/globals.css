@@ -1267,7 +1267,7 @@ html[data-buybar] .tab-bar {
   height: 64px;
   padding: 0 6px;
   border-radius: 0; /* sharp-edged rectangle */
-  background: #0b0a0b;
+  background: #190e14;
   box-shadow:
     0 18px 36px -14px rgb(0 0 0 / 0.55),
     0 4px 10px rgb(0 0 0 / 0.18);
@@ -1281,7 +1281,7 @@ html[data-buybar] .tab-bar {
   align-items: center;
   justify-content: center;
   min-height: 64px;
-  color: #6f6c6e;
+  color: #4e3f47;
   -webkit-tap-highlight-color: transparent;
   transition: color 0.3s;
 }
@@ -1340,7 +1340,7 @@ html[data-buybar] .tab-bar {
   font-weight: 600;
   line-height: 16px;
   text-align: center;
-  box-shadow: 0 0 0 1.5px #0b0a0b;
+  box-shadow: 0 0 0 1.5px #190e14;
 }
 .tab-bar-count[data-bump="true"] {
   animation: bump 0.45s var(--ease-cloth);
@@ -1379,6 +1379,29 @@ html[data-buybar] .tab-bar {
 }
 .collections-fab-button[aria-expanded="true"] {
   background: #190e14;
+}
+/* Arrow ↔ cross: the arrow spins a quarter turn and fades as the cross spins in. */
+.fab-icon {
+  grid-area: 1 / 1;
+  display: grid;
+  transition: transform 0.35s var(--ease-cloth), opacity 0.25s ease;
+}
+.fab-icon-close {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.6);
+}
+.collections-fab-button[aria-expanded="true"] .fab-icon-open {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.6);
+}
+.collections-fab-button[aria-expanded="true"] .fab-icon-close {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fab-icon {
+    transition: opacity 0.15s ease;
+  }
 }
 .collections-fab-panel {
   display: flex;

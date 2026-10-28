@@ -103,7 +103,13 @@ export function CollectionsFab() {
         aria-controls={id}
         onClick={() => setOpen((v) => !v)}
       >
-        {open ? <X size={22} strokeWidth={1.6} aria-hidden /> : <ArrowUpRight size={22} strokeWidth={1.6} aria-hidden />}
+        {/* Both icons stay mounted so the arrow can turn into the cross (and back). */}
+        <span className="fab-icon fab-icon-open" aria-hidden>
+          <ArrowUpRight size={22} strokeWidth={1.6} />
+        </span>
+        <span className="fab-icon fab-icon-close" aria-hidden>
+          <X size={22} strokeWidth={1.6} />
+        </span>
       </button>
     </div>
   );
