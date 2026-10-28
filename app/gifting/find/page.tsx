@@ -25,7 +25,7 @@ type Key = keyof Answers;
 const STEPS: { key: Key; title: string; hint: string }[] = [
   { key: "who", title: "Who are you celebrating?", hint: "This helps us choose the right feel." },
   { key: "occasion", title: "What’s the occasion?", hint: "So the saree suits the moment." },
-  { key: "look", title: "What kind of look would she love?", hint: "Go with your instinct about her style." },
+  { key: "look", title: "Which of these feels most like her?", hint: "Go with your instinct; we’ll match the saree to her." },
   { key: "colour", title: "What colour would she love?", hint: "Pick her favourite, or leave it to us." },
   { key: "budget", title: "What’s your budget?", hint: "Every range has beautiful options." },
 ];
@@ -154,7 +154,7 @@ function Options({ stepKey, value, onChoose }: { stepKey: Key; value: string | n
 
   if (stepKey === "who")
     return (
-      <div role="radiogroup" aria-labelledby="q-title" className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+      <div role="radiogroup" aria-labelledby="q-title" className="grid grid-cols-2 gap-3 md:grid-cols-5 md:gap-4 [&>*:last-child:nth-child(odd)]:max-md:col-span-2">
         {WHO.map((w) => card(w.id, <span className="text-[20px] md:text-[24px]" style={{ fontFamily: "var(--font-title)" }}>{w.label}</span>, "min-h-28 md:min-h-40"))}
       </div>
     );
@@ -172,11 +172,13 @@ function Options({ stepKey, value, onChoose }: { stepKey: Key; value: string | n
           return card(
             l.id,
             <>
-              <span className="block aspect-[4/5] w-full overflow-hidden bg-sand-soft">
+              {/* The title leads; even 12px spacing between title, picture and hint, and around the card.
+                  Title and hint each keep room for two lines, so every card is the same height and the pictures line up. */}
+              <span className="block min-h-[2.4em] text-left font-sans text-[19px] leading-[1.2] md:text-[21px]">{l.label}</span>
+              <span className="mt-3 block aspect-square w-full overflow-hidden bg-sand-soft">
                 <img src={img.src} alt="" className="size-full object-cover" loading="lazy" />
               </span>
-              <span className="mt-3 block px-1 text-left text-[16px] leading-tight">{l.label}</span>
-              <span className="mt-1 block px-1 pb-1 text-left text-[13px] leading-snug text-ink-soft">{l.line}</span>
+              <span className="mt-3 block min-h-[2.75em] text-left text-[12px] leading-snug text-ink-soft">{l.line}</span>
             </>,
             "gift-option-photo",
           );
@@ -204,7 +206,7 @@ function Options({ stepKey, value, onChoose }: { stepKey: Key; value: string | n
         card(
           b.id,
           <>
-            <span className="text-[20px]" style={{ fontFamily: "var(--font-title)" }}>{b.label}</span>
+            <span className="font-sans text-[19px] leading-tight md:text-[clamp(16px,1.65vw,20px)] lg:whitespace-nowrap">{b.label}</span>
             <span className="mt-1 block text-[13px] text-ink-soft">{budgetCount(b.id)} sarees</span>
           </>,
           "min-h-24 md:min-h-32",
@@ -360,7 +362,7 @@ function Results({
             <p className="text-[15px] text-ink-soft">Not quite right?</p>
             <div className="mt-3 flex flex-wrap justify-center gap-x-6 gap-y-2">
               <button type="button" className="text-link" onClick={() => onEdit(2)}>
-                Try a different look
+                Try a different style
               </button>
               <Link href="/shop" className="text-link">
                 Explore All Sarees <span aria-hidden>→</span>

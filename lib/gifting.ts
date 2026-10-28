@@ -7,9 +7,9 @@ import { products, type Product } from "./products";
  * a real saree from the catalogue.
  */
 
-export type Who = "wife" | "mother" | "sister" | "someone";
+export type Who = "wife" | "mother" | "sister" | "friend" | "someone";
 export type Occasion = "birthday" | "anniversary" | "wedding" | "festival" | "thanks" | "just-because";
-export type Look = "elegant" | "festive" | "classic" | "modern" | "bold";
+export type Look = "graceful" | "bright" | "classic" | "bold" | "simple";
 export type Colour = "red" | "pink" | "green" | "blue" | "purple" | "gold" | "ivory" | "black" | "any";
 export type Budget = "under-5000" | "5000-10000" | "10000-20000" | "over-20000" | "any";
 
@@ -26,6 +26,7 @@ export const WHO: { id: Who; label: string; her: string }[] = [
   { id: "wife", label: "Wife", her: "your wife" },
   { id: "mother", label: "Mother", her: "your mother" },
   { id: "sister", label: "Sister", her: "your sister" },
+  { id: "friend", label: "Friend", her: "your friend" },
   { id: "someone", label: "Someone Special", her: "her" },
 ];
 
@@ -38,13 +39,13 @@ export const OCCASIONS: { id: Occasion; label: string; fits: string[]; phrase: s
   { id: "just-because", label: "Just Because", fits: ["Everyday", "Day", "Evening"], phrase: "an everyday surprise" },
 ];
 
-/** Looks in plain words; each maps to weaves and collections behind the scenes. */
-export const LOOKS: { id: Look; label: string; line: string; weaves: string[]; collections: string[] }[] = [
-  { id: "elegant", label: "Elegant & Understated", line: "Soft, graceful and quietly beautiful", weaves: ["chanderi", "linen-cotton"], collections: ["Summer Sheers", "Everyday Weaves"] },
-  { id: "festive", label: "Rich & Festive", line: "Glowing silk with plenty of gold", weaves: ["banarasi", "kanjivaram"], collections: ["The Festive Edit"] },
-  { id: "classic", label: "Classic & Traditional", line: "A timeless saree she'll keep for years", weaves: ["kanjivaram", "paithani"], collections: ["Heirloom Silks", "Bridal Trousseau"] },
-  { id: "modern", label: "Modern & Minimal", line: "Clean lines, light and easy to wear", weaves: ["linen-cotton", "chanderi"], collections: ["Everyday Weaves"] },
-  { id: "bold", label: "Bold & Beautiful", line: "Vivid colour and striking patterns", weaves: ["patola", "paithani", "banarasi"], collections: [] },
+/** "Which of these feels most like her?" Personalities in plain words; each maps to weaves, collections and colours behind the scenes. */
+export const LOOKS: { id: Look; label: string; line: string; weaves: string[]; collections: string[]; colours: string[] }[] = [
+  { id: "graceful", label: "Graceful & Elegant", line: "Poised, refined, never overdone", weaves: ["chanderi", "banarasi"], collections: ["Summer Sheers", "Heirloom Silks"], colours: ["Ivory", "Pink", "Blue"] },
+  { id: "bright", label: "Bright & Cheerful", line: "Warm, lively and full of colour", weaves: ["paithani", "linen-cotton", "kanjivaram"], collections: ["The Festive Edit"], colours: ["Yellow", "Orange", "Pink", "Green"] },
+  { id: "classic", label: "Classic & Timeless", line: "Loves tradition and things that last", weaves: ["kanjivaram", "paithani"], collections: ["Heirloom Silks", "Bridal Trousseau"], colours: ["Red", "Green", "Purple"] },
+  { id: "bold", label: "Bold & Beautiful", line: "Confident, striking, loves to stand out", weaves: ["patola", "banarasi", "kanjivaram"], collections: ["The Festive Edit"], colours: ["Red", "Purple", "Black"] },
+  { id: "simple", label: "Simple & Subtle", line: "Understated, easy and effortless", weaves: ["linen-cotton", "chanderi"], collections: ["Everyday Weaves", "Summer Sheers"], colours: ["Ivory", "Blue", "Green"] },
 ];
 
 export const COLOURS: { id: Colour; label: string; swatch: string; families: string[] }[] = [
@@ -117,11 +118,11 @@ function score(p: Product, a: Answers) {
   if (look) {
     if (look.weaves.includes(p.weave)) s += 3;
     if (look.collections.includes(p.collection)) s += 1.5;
-    if (look.id === "bold" && ["Red", "Pink", "Orange", "Yellow"].includes(p.colorFamily)) s += 1;
+    if (look.colours.includes(p.colorFamily)) s += 1;
   }
   if (a.who === "mother" && (p.collection === "Heirloom Silks" || p.weave === "kanjivaram")) s += 1;
   if (a.who === "wife" && (p.occasion.includes("Wedding") || p.occasion.includes("Evening"))) s += 0.8;
-  if (a.who === "sister" && (p.occasion.includes("Festive") || p.occasion.includes("Day"))) s += 0.6;
+  if ((a.who === "sister" || a.who === "friend") && (p.occasion.includes("Festive") || p.occasion.includes("Day"))) s += 0.6;
   if (isPhotographed(p)) s += 0.75; // real photography reads better as a gift choice
   if (p.stock === 0) s -= 100;
   return s;
@@ -202,15 +203,24 @@ export function recommend(a: Answers, min = 6, max = 12): Result {
   return { picks: chosen.map((p, i) => ({ product: p, badge: badgeFor(p, a, i), why: whyFor(p, a) })), relaxed };
 }
 
-/** A representative saree for a look, for its picture card. */
-export function lookImage(look: Look) {
-  const l = LOOKS.find((x) => x.id === look)!;
-  const p =
-    products.find((p) => isPhotographed(p) && l.weaves.includes(p.weave)) ??
-    products.find((p) => l.weaves.includes(p.weave) && (l.collections.length === 0 || l.collections.includes(p.collection))) ??
-    products[0];
-  return p.images[0];
-}
+/** A representative saree for each look, for its picture card; no two looks share a picture. */
+const LOOK_IMAGES = (() => {
+  const used = new Set<string>();
+  const out = {} as Record<Look, Product["images"][number]>;
+  for (const l of LOOKS) {
+    const fits = (p: Product) => l.weaves.includes(p.weave) && !used.has(p.images[0].src);
+    const p =
+      products.find((p) => fits(p) && isPhotographed(p) && l.colours.includes(p.colorFamily)) ??
+      products.find((p) => fits(p) && isPhotographed(p)) ??
+      products.find((p) => fits(p) && l.colours.includes(p.colorFamily)) ??
+      products.find(fits) ??
+      products[0];
+    used.add(p.images[0].src);
+    out[l.id] = p.images[0];
+  }
+  return out;
+})();
+export const lookImage = (look: Look) => LOOK_IMAGES[look];
 
 /* ---------- Gift options ---------- */
 
