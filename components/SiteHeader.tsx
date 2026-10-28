@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Heart, Home, Menu, Search, ShoppingBag, Store, X } from "lucide-react";
+import { Heart, MapPin, Menu, Search, ShoppingBag, UserRound, X } from "lucide-react";
+import { TabBag, TabGrid, TabHeart, TabHome, TabSearch } from "./TabIcons";
 import { useStore } from "@/lib/store";
 import { SearchDialog } from "./SearchDialog";
 import { Wordmark } from "./Wordmark";
@@ -20,8 +21,9 @@ export const NAV = [
 /** Mobile drawer: a flat list, no nested menus. */
 const DRAWER = [
   { href: "/shop", label: "Shop Sarees" },
+  { href: "/collections", label: "Collections" },
   { href: "/#curated", label: "Curated Picks" },
-  { href: "/collections", label: "Explore by Weave" },
+  { href: "/collections#by-weave", label: "Explore by Weave" },
   { href: "/our-story", label: "Our Story" },
   { href: "/art-of-weaving", label: "The Art of Weaving" },
   { href: "/wishlist", label: "Wishlist" },
@@ -74,6 +76,14 @@ export function SiteHeader() {
   }, [pathname]);
 
   const isCurrent = (href: string) => (pathname === href || pathname.startsWith(href + "/") ? "page" : undefined);
+
+  // Phone tab bar: which tab the glass lens sits on. A tap moves it straight away
+  // (pendingTab) rather than waiting for the next page; Search holds it while open.
+  const [pendingTab, setPendingTab] = useState<number | null>(null);
+  useEffect(() => setPendingTab(null), [pathname]);
+  const routeTab =
+    pathname === "/" ? 0 : isCurrent("/shop") || isCurrent("/sarees") ? 1 : isCurrent("/wishlist") ? 3 : isCurrent("/bag") ? 4 : -1;
+  const tabIndex = searchOpen ? 2 : (pendingTab ?? routeTab);
 
   return (
     <>
@@ -164,70 +174,100 @@ export function SiteHeader() {
         <div className="flex h-full flex-col px-6 pb-[max(2rem,env(safe-area-inset-bottom))] pt-[env(safe-area-inset-top)]">
           <div className="flex h-14 items-center justify-between">
             <Wordmark height={28} />
-            <button type="button" className="icon-btn -mr-2" aria-label="Close menu" onClick={() => menuRef.current?.close()}>
+            <button type="button" className="icon-btn -mr-2" aria-label="Close menu" autoFocus onClick={() => menuRef.current?.close()}>
               <X size={22} strokeWidth={1.5} />
             </button>
           </div>
-          <nav aria-label="Mobile" className="mt-6 overflow-y-auto">
+          <nav aria-label="Mobile" className="-mx-6 mt-4 flex-1 overflow-y-auto overscroll-contain px-6">
             <ul>
               {DRAWER.map((n) => (
                 <li key={n.href} className="border-b border-sand">
                   <Link
                     href={n.href}
                     onClick={() => menuRef.current?.close()}
-                    className="serif flex min-h-14 items-center text-[28px] leading-tight aria-[current=page]:italic"
+                    className="flex min-h-14 items-center font-sans text-[21px] leading-tight aria-[current=page]:font-medium aria-[current=page]:text-[#87264D]"
                     aria-current={isCurrent(n.href)}
                   >
                     {n.label}
                   </Link>
                 </li>
               ))}
-              <li className="flex min-h-14 items-center gap-2 border-b border-sand text-[28px] text-ink-soft/70">
-                <span className="serif">New Arrivals</span>
+              <li className="flex min-h-14 items-center gap-2 border-b border-sand font-sans text-[21px] text-ink-soft/70">
+                New Arrivals
                 <span className="text-[10px] uppercase tracking-[0.14em]">Pending</span>
               </li>
             </ul>
+
+            {/* Account. Sign-in and saved delivery addresses need accounts and a shipping
+                service, which the prototype doesn't have yet. */}
+            <section aria-labelledby="drawer-account" className="mt-6">
+              <h2 id="drawer-account" className="sr-only">
+                Account
+              </h2>
+              <ul className="font-sans text-[16px]">
+                <li>
+                  <Link href="/bag" onClick={() => menuRef.current?.close()} className="flex min-h-12 items-center gap-3">
+                    <ShoppingBag size={19} strokeWidth={1.5} aria-hidden /> Shopping bag {ready && bagCount > 0 && `(${bagCount})`}
+                  </Link>
+                </li>
+                <li className="flex min-h-12 items-center gap-3 text-ink-soft/80" aria-disabled="true">
+                  <MapPin size={19} strokeWidth={1.5} aria-hidden /> Delivery address
+                  <span className="ml-auto text-[10px] uppercase tracking-[0.14em]">Coming soon</span>
+                </li>
+                <li className="flex min-h-12 items-center gap-3 text-ink-soft/80" aria-disabled="true">
+                  <UserRound size={19} strokeWidth={1.5} aria-hidden /> Sign in
+                  <span className="ml-auto text-[10px] uppercase tracking-[0.14em]">Coming soon</span>
+                </li>
+              </ul>
+            </section>
           </nav>
-          <div className="mt-auto pt-6 text-sm text-ink-soft">
-            <Link href="/bag" onClick={() => menuRef.current?.close()} className="flex min-h-11 items-center gap-3 text-ink">
-              <ShoppingBag size={17} strokeWidth={1.5} /> Shopping bag {ready && bagCount > 0 && `(${bagCount})`}
-            </Link>
-            <p className="mt-2">Account sign-in is not yet available in this prototype.</p>
-          </div>
         </div>
       </dialog>
 
-      {/* Phones: the main destinations as a bottom tab bar. */}
-      <nav aria-label="Shortcuts" className="tab-bar md:hidden">
-        <Link href="/" className="tab-bar-item" aria-current={pathname === "/" ? "page" : undefined}>
-          <Home size={20} strokeWidth={1.5} aria-hidden />
-          Home
-        </Link>
-        <Link href="/shop" className="tab-bar-item" aria-current={isCurrent("/shop") ?? isCurrent("/sarees")}>
-          <Store size={20} strokeWidth={1.5} aria-hidden />
-          Shop
-        </Link>
-        <button type="button" className="tab-bar-item" onClick={() => setSearchOpen(true)} aria-haspopup="dialog">
-          <Search size={20} strokeWidth={1.5} aria-hidden />
-          Search
-        </button>
-        <Link href="/wishlist" className="tab-bar-item" aria-current={isCurrent("/wishlist")} aria-label={`Wishlist, ${wishlist.length} saved`}>
-          <span className="relative">
-            <Heart size={20} strokeWidth={1.5} aria-hidden />
-            {ready && wishlist.length > 0 && <span className="tab-bar-count bg-ink!">{wishlist.length}</span>}
+      {/* Phones: a black capsule with a glass lens that slides to the current tab (styles: .tab-bar). */}
+      <nav aria-label="Shortcuts" className="tab-bar md:hidden" style={{ "--i": tabIndex } as React.CSSProperties} data-lens={tabIndex >= 0 || undefined}>
+        <span className="tab-lens-track" aria-hidden>
+          <span className="tab-lens" />
+        </span>
+        <Link href="/" className="tab-bar-item" data-active={tabIndex === 0 || undefined} aria-current={pathname === "/" ? "page" : undefined} onClick={() => setPendingTab(0)}>
+          <span className="tab-bar-icon">
+            <TabHome />
           </span>
-          <span aria-hidden>Wishlist</span>
+          <span className="tab-bar-label">Home</span>
         </Link>
-        <Link href="/bag" className="tab-bar-item" aria-current={isCurrent("/bag")} aria-label={`Bag, ${bagCount} ${bagCount === 1 ? "item" : "items"}`}>
-          <span className="relative">
-            <ShoppingBag size={20} strokeWidth={1.5} aria-hidden />
+        <Link href="/shop" className="tab-bar-item" data-active={tabIndex === 1 || undefined} aria-current={isCurrent("/shop") ?? isCurrent("/sarees")} onClick={() => setPendingTab(1)}>
+          <span className="tab-bar-icon">
+            <TabGrid />
+          </span>
+          <span className="tab-bar-label">Shop</span>
+        </Link>
+        <button type="button" className="tab-bar-item" data-active={tabIndex === 2 || undefined} onClick={() => setSearchOpen(true)} aria-haspopup="dialog">
+          <span className="tab-bar-icon">
+            <TabSearch />
+          </span>
+          <span className="tab-bar-label">Search</span>
+        </button>
+        <Link href="/wishlist" className="tab-bar-item" data-active={tabIndex === 3 || undefined} aria-current={isCurrent("/wishlist")} aria-label={`Wishlist, ${wishlist.length} saved`} onClick={() => setPendingTab(3)}>
+          <span className="tab-bar-icon">
+            <TabHeart />
+            {ready && wishlist.length > 0 && <span className="tab-bar-count">{wishlist.length}</span>}
+          </span>
+          <span className="tab-bar-label" aria-hidden>
+            Wishlist
+          </span>
+        </Link>
+        <Link href="/bag" className="tab-bar-item" data-active={tabIndex === 4 || undefined} aria-current={isCurrent("/bag")} aria-label={`Bag, ${bagCount} ${bagCount === 1 ? "item" : "items"}`} onClick={() => setPendingTab(4)}>
+          <span className="tab-bar-icon">
+            <TabBag />
             {ready && bagCount > 0 && (
               <span className="tab-bar-count" data-bump={bump}>
                 {bagCount}
               </span>
             )}
           </span>
-          <span aria-hidden>Bag</span>
+          <span className="tab-bar-label" aria-hidden>
+            Bag
+          </span>
         </Link>
       </nav>
       <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} />

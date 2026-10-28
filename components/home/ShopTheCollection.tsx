@@ -42,9 +42,16 @@ function Card({ p }: { p: Product }) {
           {inBag(p.slug) ? (
             <Link
               href="/bag"
+              aria-label={`${p.name} is in your bag. View bag`}
               className="inline-flex min-h-11 items-center gap-1.5 border border-[#190E14] px-4 text-[11px] uppercase tracking-[0.14em] text-[#190E14]"
             >
-              <Check size={13} aria-hidden /> {added ? "Added" : "In Bag"}
+              {added ? (
+                <>
+                  <Check size={13} aria-hidden /> Added
+                </>
+              ) : (
+                "View"
+              )}
             </Link>
           ) : (
             <button
@@ -76,7 +83,7 @@ export function ShopTheCollection({ products }: { products: Product[] }) {
         </h2>
         <p className="lede mx-auto mt-5 max-w-[56ch]!">Explore our edit of silk, brocade and handloom sarees, chosen for every kind of celebration.</p>
         {/* Phones: a swipeable row with the next card peeking in, instead of a long stack. */}
-        <div className="mt-14 grid gap-6 text-left max-sm:-mx-(--wrap-pad) max-sm:flex max-sm:snap-x max-sm:snap-mandatory max-sm:gap-4 max-sm:overflow-x-auto max-sm:scroll-px-(--wrap-pad) max-sm:px-(--wrap-pad) max-sm:pb-2 max-sm:[scrollbar-width:none] sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-14 grid gap-6 text-left max-sm:-mx-(--wrap-pad) max-sm:flex max-sm:snap-x max-sm:snap-mandatory max-sm:gap-4 max-sm:overflow-x-auto max-sm:overflow-y-hidden max-sm:overscroll-x-contain max-sm:[touch-action:pan-x_pan-y] max-sm:scroll-px-(--wrap-pad) max-sm:px-(--wrap-pad) max-sm:pb-2 max-sm:[scrollbar-width:none] sm:grid-cols-2 lg:grid-cols-3">
           {products.map((p, i) => (
             <Reveal key={p.slug} delay={i * 120} className="h-full max-sm:w-[82%] max-sm:shrink-0 max-sm:snap-start">
               <Card p={p} />

@@ -110,37 +110,14 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
     setAdded(true);
   };
   const photoCredit = p.images.find((i) => i.credit && i.credit !== "Kanchiberry")?.credit;
-  // Phones: show a sticky buy bar only while the main Add to Bag row is off screen.
-  const buyRow = useRef<HTMLDivElement>(null);
-  const [showBar, setShowBar] = useState(false);
+  // Phones: the Add to Bag row is pinned to the bottom edge for the whole visit to a
+  // saree, so the tab bar steps aside while a saree is open.
   useEffect(() => {
-    // Checked on every scroll (the page's, or the slide-up layer's), so a fast fling
-    // never leaves the bar stuck hidden.
-    let frame = 0;
-    const check = () => {
-      frame = 0;
-      const el = buyRow.current;
-      if (el) setShowBar(el.getBoundingClientRect().bottom < 0);
-    };
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(check);
-    };
-    document.addEventListener("scroll", onScroll, { capture: true, passive: true });
-    check();
-    return () => {
-      document.removeEventListener("scroll", onScroll, { capture: true });
-      cancelAnimationFrame(frame);
-    };
-  }, []);
-  // While the buy bar shows, it takes the phone tab bar's place at the bottom edge
-  // rather than stacking on top of it.
-  useEffect(() => {
-    if (!showBar) return;
     document.documentElement.dataset.buybar = "";
     return () => {
       delete document.documentElement.dataset.buybar;
     };
-  }, [showBar]);
+  }, []);
 
   useEffect(() => {
     if (!added) return;
@@ -149,18 +126,20 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
   }, [added]);
 
   return (
-    <section aria-labelledby="pdp-title" className="flex min-w-0 flex-col md:block lg:pt-6">
-      {/* Phones reorder this column so price, colour and Add to Bag sit right under the
-          photos; the description and details follow. Wider screens keep the written order. */}
+    <section aria-labelledby="pdp-title" className="min-w-0 max-md:contents lg:pt-6">
+      {/* Phones: this column's pieces join the photos in one stack (display: contents) and
+          are reordered: name and price above the photos, then colour, description and
+          details below, with Add to Bag pinned to the bottom edge. Wider screens keep the
+          written order beside the photos. */}
       <p className="eyebrow max-md:order-1">
         {p.weaveName} · {p.collection}
       </p>
       <h1 id="pdp-title" className="serif mt-3 text-[clamp(2.5rem,6vw,5rem)] font-light leading-[0.92] max-md:order-2">
         {p.name}
       </h1>
-      <p className="mt-5 max-w-[52ch] text-[16px] leading-relaxed text-ink-soft max-md:order-8 max-md:mt-8">{p.description}</p>
+      <p className="mt-5 max-w-[52ch] text-[16px] leading-relaxed text-ink-soft max-md:order-8 max-md:mt-6">{p.description}</p>
       {p.variants.length > 1 && (
-        <fieldset className="mt-10 max-md:order-4 max-md:mt-7">
+        <fieldset className="mt-10 max-md:order-5 max-md:mt-6">
           <legend className="text-[13px] text-ink-soft">
             Colour: <span className="ml-1 inline-flex items-center rounded-md border border-sand px-2 py-0.5 text-[13px] text-ink" aria-live="polite">{colour.name}</span>
           </legend>
@@ -182,7 +161,7 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
           </div>
         </fieldset>
       )}
-      <div className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-3 max-md:order-3 max-md:mt-5">
+      <div className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-3 max-md:order-3 max-md:mt-3">
         <p className="flex items-baseline gap-3 leading-none">
           <span className="text-[30px]">{formatPrice(p.price)}</span>
           {p.compareAtPrice && p.compareAtPrice > p.price && (
@@ -199,7 +178,7 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
           </span>
         )}
       </div>
-      <div ref={buyRow} className="mt-5 flex flex-wrap items-stretch gap-3 max-md:order-5 max-md:mt-7">
+      <div className="mt-5 flex flex-wrap items-stretch gap-3 max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:z-50 max-md:mt-0 max-md:flex-nowrap max-md:border-t max-md:border-sand max-md:bg-paper/95 max-md:px-4 max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))] max-md:pt-3 max-md:backdrop-blur">
         {isInBag ? (
           <Link href="/bag" className="btn btn-primary min-w-0 flex-1 basis-40">
             <Check size={16} aria-hidden /> In Your Bag · View Bag
@@ -219,7 +198,7 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
           <Heart size={18} strokeWidth={1.5} />
         </button>
       </div>
-      <p role="status" className="mt-3 min-h-5 text-[13px] max-md:order-6">
+      <p role="status" className="mt-3 min-h-5 text-[13px] max-md:order-6 max-md:mt-4">
         {added ? (
           <>Added to your bag.</>
         ) : isInBag && inBagLine?.variant && variantName && inBagLine.variant !== variantName ? (
@@ -291,39 +270,6 @@ export function ProductInformation({ product: p, variant = 0, onVariant }: { pro
       />
 
 
-      {/* Sticky buy bar (phones), above the bottom safe area */}
-      <div
-        className={`fixed inset-x-0 bottom-0 z-50 border-t border-sand bg-paper/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur transition-transform duration-300 md:hidden ${
-          showBar ? "translate-y-0" : "pointer-events-none invisible translate-y-full opacity-0"
-        }`}
-        aria-hidden={!showBar}
-      >
-        <div className="flex items-center gap-4">
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-[14px]" style={{ fontFamily: "var(--font-title)" }}>
-              {p.name}
-            </p>
-            <p className="text-[13px] text-ink-soft">
-              {formatPrice(p.price)}{" "}
-              {p.compareAtPrice && p.compareAtPrice > p.price && (
-                <s className="text-[12px]">
-                  <span className="sr-only">Was </span>
-                  {formatPrice(p.compareAtPrice)}
-                </s>
-              )}
-            </p>
-          </div>
-          {isInBag ? (
-            <Link href="/bag" tabIndex={showBar ? 0 : -1} className="btn btn-primary min-h-12 shrink-0 px-6">
-              <Check size={16} aria-hidden /> In Bag
-            </Link>
-          ) : (
-            <button type="button" tabIndex={showBar ? 0 : -1} className="btn btn-primary min-h-12 shrink-0 px-6" onClick={add}>
-              Add to Bag
-            </button>
-          )}
-        </div>
-      </div>
     </section>
   );
 }

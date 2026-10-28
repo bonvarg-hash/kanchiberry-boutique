@@ -39,7 +39,7 @@ export function ProductView({ slug }: { slug: string }) {
 
   return (
     <>
-      <div key={variant} className="min-w-0 lg:sticky lg:top-24 lg:self-start" data-swap={dir === 0 ? undefined : dir > 0 ? "right" : "left"}>
+      <div key={variant} className="min-w-0 max-md:order-4 max-md:mt-5 lg:sticky lg:top-24 lg:self-start" data-swap={dir === 0 ? undefined : dir > 0 ? "right" : "left"}>
         <ProductGallery images={images} name={p.name} filter={filter} />
       </div>
       <ProductInformation product={p} variant={variant} onVariant={choose} />

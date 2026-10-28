@@ -1,4 +1,5 @@
 import { CursorCta } from "./CursorCta";
+import { CollectionsFab } from "./CollectionsFab";
 
 export function HeroSection() {
   return (
@@ -15,9 +16,11 @@ export function HeroSection() {
         </span>
       </h1>
 
-      <div className="hero-fade mt-10 flex justify-center sm:mt-14">
+      {/* Tablet and desktop: the pill. Phones: a floating button listing the collections. */}
+      <div className="hero-fade mt-10 flex justify-center max-md:hidden sm:mt-14">
         <CursorCta href="/shop">Discover the Collection</CursorCta>
       </div>
+      <CollectionsFab />
     </section>
   );
 }

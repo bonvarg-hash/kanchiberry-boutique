@@ -1238,76 +1238,261 @@ img {
 .filter-rail:focus-within {
   scrollbar-color: var(--color-sand) transparent;
 }
-/* Phone tab bar: Home, Shop, Search, Wishlist and Bag along the bottom edge,
-   where thumbs reach. --tabbar-h lets other bottom bars sit just above it. */
+/* Phone tab bar: a black capsule floating above the bottom edge, with a clear glass
+   lens (taller than the bar, so it overhangs top and bottom) that springs across to
+   the current tab. Inside the lens the icon turns white with its label beneath; the
+   other tabs show grey icons only. --tabbar-h is the space it takes, so other bottom
+   bars and floating buttons sit just above it. */
 :root {
   --tabbar-h: 0px;
 }
 @media (max-width: 767px) {
   :root {
-    --tabbar-h: calc(60px + env(safe-area-inset-bottom));
+    --tabbar-h: calc(64px + 22px + env(safe-area-inset-bottom));
   }
   body {
     padding-bottom: var(--tabbar-h);
   }
 }
 html[data-buybar] .tab-bar {
-  transform: translateY(100%); /* a saree's buy bar takes its place while showing */
+  transform: translateY(calc(100% + 40px)); /* a saree's buy bar takes its place */
 }
 .tab-bar {
+  --i: 0;
   position: fixed;
-  inset: auto 0 0;
+  left: 16px;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
   z-index: 40;
-  transition: transform 0.3s var(--ease-cloth);
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  height: var(--tabbar-h);
-  padding-bottom: env(safe-area-inset-bottom);
-  border-top: 1px solid var(--color-sand);
-  background: rgb(238 233 224 / 0.94);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  height: 64px;
+  padding: 0 6px;
+  border-radius: 22px; /* rounded rectangle */
+  background: #0b0a0b;
+  box-shadow:
+    0 18px 36px -14px rgb(0 0 0 / 0.55),
+    0 4px 10px rgb(0 0 0 / 0.18);
+  transition: transform 0.35s var(--ease-cloth);
+}
+/* The lens rides a track one tab wide, moved a whole tab at a time. */
+.tab-lens-track {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 6px;
+  width: calc((100% - 12px) / 5);
+  transform: translateX(calc(var(--i) * 100%));
+  transition: transform 0.6s cubic-bezier(0.3, 1.45, 0.45, 1); /* springy, with overshoot */
+  pointer-events: none;
+}
+.tab-bar:not([data-lens]) .tab-lens-track {
+  opacity: 0;
+}
+.tab-lens {
+  position: absolute;
+  inset: -9px -3px;
+  border-radius: 22px;
+  /* Clear glass: almost no fill, a bright rim, a faint inner sheen, and a shadow. */
+  background:
+    radial-gradient(120% 90% at 50% 50%, rgb(255 255 255 / 0) 55%, rgb(255 255 255 / 0.08) 100%),
+    rgb(20 20 22 / 0.35);
+  border: 1.5px solid rgb(255 255 255 / 0.55);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.06),
+    inset 0 0 18px rgb(255 255 255 / 0.08),
+    0 12px 24px -8px rgb(0 0 0 / 0.6);
+  backdrop-filter: blur(1.5px) saturate(1.4);
+  -webkit-backdrop-filter: blur(1.5px) saturate(1.4);
+}
+/* Light caught along the top and bottom edges of the glass. */
+.tab-lens::before,
+.tab-lens::after {
+  content: "";
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  height: 9px;
+  border-radius: 999px;
+  filter: blur(0.4px);
+}
+.tab-lens::before {
+  top: 2px;
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.85), rgb(255 255 255 / 0.15));
+}
+.tab-lens::after {
+  bottom: 2px;
+  background: linear-gradient(0deg, rgb(205 225 255 / 0.75), rgb(205 225 255 / 0.1));
 }
 .tab-bar-item {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
-  min-height: 60px;
-  font-size: 10.5px;
-  letter-spacing: 0.04em;
-  color: var(--color-ink-soft);
+  min-height: 64px;
+  color: #6f6c6e;
   -webkit-tap-highlight-color: transparent;
-  transition: color 0.2s;
+  transition: color 0.3s;
 }
-.tab-bar-item[aria-current="page"] {
-  color: var(--color-ink);
+.tab-bar-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  transition: transform 0.45s cubic-bezier(0.3, 1.45, 0.45, 1);
+}
+.tab-bar-icon svg {
+  width: 24px;
+  height: 24px;
+}
+.tab-bar-label {
+  position: absolute;
+  bottom: 9px;
+  font-size: 11.5px;
   font-weight: 500;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 0.25s,
+    transform 0.35s var(--ease-cloth);
 }
-.tab-bar-item[aria-current="page"] svg {
-  stroke-width: 2;
+/* Inside the lens: white icon, lifted to make room for its label. */
+.tab-bar-item[data-active] {
+  color: #fff;
 }
-.tab-bar-item:active {
-  background: color-mix(in srgb, var(--color-sand) 40%, transparent);
+.tab-bar-item[data-active] .tab-bar-icon {
+  transform: translateY(-8px);
+}
+.tab-bar-item[data-active] .tab-bar-label {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.12s;
+}
+.tab-bar-item:active .tab-bar-icon {
+  transform: scale(0.9);
+}
+.tab-bar-item[data-active]:active .tab-bar-icon {
+  transform: translateY(-8px) scale(0.92);
 }
 .tab-bar-count {
   position: absolute;
   top: -6px;
-  right: -9px;
+  right: -10px;
   min-width: 16px;
   height: 16px;
   padding: 0 4px;
   border-radius: 999px;
-  background: var(--color-berry);
-  color: var(--color-paper);
+  background: #87264d;
+  color: #fff;
   font-size: 9.5px;
   font-weight: 600;
   line-height: 16px;
   text-align: center;
+  box-shadow: 0 0 0 1.5px #0b0a0b;
 }
 .tab-bar-count[data-bump="true"] {
   animation: bump 0.45s var(--ease-cloth);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tab-lens-track,
+  .tab-bar-icon,
+  .tab-bar-label {
+    transition: none;
+  }
+}
+/* Phones: floating "Discover the collection" button above the tab bar, opening a
+   short list of the collections. */
+.collections-fab {
+  position: fixed;
+  right: 16px;
+  bottom: calc(var(--tabbar-h) + 16px);
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+.collections-fab-button {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: #87264d;
+  color: #eee9e0;
+  box-shadow: 0 14px 28px -12px rgb(25 14 20 / 0.55);
+  transition: transform 0.25s var(--ease-cloth), background 0.2s;
+}
+.collections-fab-button:active {
+  transform: scale(0.94);
+}
+.collections-fab-button[aria-expanded="true"] {
+  background: #190e14;
+}
+.collections-fab-panel {
+  display: flex;
+  flex-direction: column;
+  width: min(80vw, 310px);
+  border: 1px solid var(--color-sand);
+  background: var(--color-paper);
+  /* Layered shadow so the menu lifts clearly off the page behind it. */
+  box-shadow:
+    0 2px 6px rgb(25 14 20 / 0.12),
+    0 14px 28px -6px rgb(25 14 20 / 0.32),
+    0 36px 70px -18px rgb(25 14 20 / 0.55);
+  transform-origin: bottom right;
+  animation: fab-panel-in 0.28s var(--ease-cloth);
+}
+.collections-fab-title {
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--color-sand);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+.collections-fab-scroll {
+  max-height: min(56vh, 460px);
+  overflow-y: auto;
+  overscroll-behavior: contain; /* scrolling the menu never scrolls the page */
+  padding-bottom: 22px; /* so the last row clears the fade when scrolled to the end */
+  scrollbar-width: thin;
+  /* a soft fade at the bottom hints there's more below */
+  mask-image: linear-gradient(180deg, #000 calc(100% - 28px), transparent);
+}
+.collections-fab-heading {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 12px 16px 6px;
+  background: var(--color-paper);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+.collections-fab-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  padding: 0 16px;
+  font-size: 15px;
+}
+.collections-fab-link:active {
+  background: var(--color-sand-soft);
+}
+@keyframes fab-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
 }
 /* Shop sort menu: a quiet bordered button and a paper panel of options. */
 .sort-menu {
