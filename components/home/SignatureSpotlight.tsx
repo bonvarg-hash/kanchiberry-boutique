@@ -63,7 +63,7 @@ export function SignatureSpotlight() {
               Deep bottle-green silk, scattered with gold buttas and finished with a magenta pallu banded in zari. A drape made for the
               moments you&rsquo;ll want to remember.
             </p>
-            <Link href={`/sarees/${p.slug}`} className="btn btn-primary mt-8">
+            <Link href={`/sarees/${p.slug}`} className="btn btn-primary btn-shimmer mt-8">
               Shop Now <span aria-hidden>→</span>
             </Link>
           </div>

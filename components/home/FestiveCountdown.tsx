@@ -167,7 +167,7 @@ export function FestiveCountdown() {
               {units.map((u) => (
                 <div
                   key={u.label}
-                  className="grid w-[76px] place-items-center bg-paper px-2 pb-4 pt-5 sm:w-[112px]"
+                  className="grid w-[76px] place-items-center bg-[#F3F4EF] px-2 pb-4 pt-5 sm:w-[112px]"
                 >
                   <span className="text-[clamp(2rem,4vw,3.4rem)] leading-none tabular-nums text-[#190E14]">
                     {left === null ? "--" : String(u.value).padStart(2, "0")}
@@ -182,7 +182,7 @@ export function FestiveCountdown() {
           <p className="mt-8 text-[15px] text-ink-soft">
             More exclusive offers for Kanchiberry members.
           </p>
-          <Link href="/shop" className="btn btn-primary mt-8">
+          <Link href="/shop" className="btn btn-primary btn-shimmer mt-8">
             Shop the Edit
           </Link>
         </div>

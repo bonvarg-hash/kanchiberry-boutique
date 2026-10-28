@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
 @theme {
-  /* Primary ground: warm off-white #EEE9E0; type and accents in dark walnut brown #24170f. */
-  --color-ivory: #EEE9E0;
-  --color-paper: #EEE9E0;
+  /* Primary ground: soft stone #E8EAE2; type and accents in dark walnut brown #24170f. */
+  --color-ivory: #e8eae2;
+  --color-paper: #e8eae2;
   --color-ink: #24170f;
   --color-ink-soft: #575757; /* body copy and secondary text: neutral grey, AA on both grounds */
   /* Tertiary #190E14: primary buttons and CTAs, plus hovers, focus rings and selection. */
   --color-berry: #190e14;
   --color-berry-deep: #190e14;
-  --color-sand: #dacbb6; /* hairlines and borders */
-  /* Secondary #E6DFD2: complementary bands, cards and image grounds. */
-  --color-sand-soft: #E6DFD2;
-  --color-mist: #E6DFD2; /* band behind the rail and the testimonials */
+  --color-sand: #c1c1b5; /* hairlines and borders */
+  /* Secondary #E1E1D5: complementary bands, cards and image grounds. */
+  --color-sand-soft: #e1e1d5;
+  --color-mist: #e1e1d5; /* band behind the rail and the testimonials */
   --color-sage: #8c7867;
   --color-danger: #9b2f3c;
   --font-serif: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
@@ -370,7 +370,7 @@ img {
 }
 .site-header[data-solid="true"] {
   /* frosted glass: translucent white over a strong blur keeps text and icons crisp */
-  background: rgb(238 233 224 / 0.72);
+  background: rgb(232 234 226 / 0.72);
   -webkit-backdrop-filter: blur(18px) saturate(1.6);
   backdrop-filter: blur(18px) saturate(1.6);
   box-shadow:
@@ -379,7 +379,7 @@ img {
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .site-header[data-solid="true"] {
-    background: rgb(238 233 224 / 0.96);
+    background: rgb(232 234 226 / 0.96);
   }
 }
 .nav-link {
@@ -508,9 +508,13 @@ img {
   padding: 26px 22px 0;
   height: calc(26px + var(--hanger-h) * 0.84 + var(--drape-h) * 1.05 + 96px);
 }
-/* Cream wall rail, squared off, with upturned end brackets (after a boutique wardrobe). */
+/* Cream wall rail, squared off, with upturned end brackets (after a boutique wardrobe).
+   It sits in front of the hangers, so each brass hook disappears behind it as it
+   loops over the rail. */
 .rack-rail {
   position: absolute;
+  z-index: 5;
+  pointer-events: none;
   left: 0;
   right: 0;
   top: 24px;
@@ -2183,7 +2187,7 @@ details.acc[open] .acc-icon {
   gap: 16px;
   min-height: 64px;
   padding: 12px max(clamp(16px, 4vw, 64px), calc((100% - 1440px) / 2 + 64px)) 10px;
-  background: rgb(238 233 224 / 0.9);
+  background: rgb(232 234 226 / 0.9);
   backdrop-filter: blur(14px) saturate(1.2);
   -webkit-backdrop-filter: blur(14px) saturate(1.2);
   cursor: grab;
@@ -2289,7 +2293,7 @@ details.acc[open] .acc-icon {
   color: #7a4f10;
 }
 .note-plain {
-  background: var(--color-sand-soft, #f3eee6);
+  background: var(--color-sand-soft, #e1e1d5);
   border-color: var(--color-sand, #e3dacb);
   color: var(--color-ink-soft, #575757);
 }
@@ -2541,4 +2545,57 @@ details.acc[open] .acc-icon {
   .shop-toolbar .sort-menu-button > span:first-child {
     display: none;
   }
+}
+
+/* A soft light sweeping across a dark button: first 3s after the page opens,
+   then every ~4s (a 1s sweep and a 3s pause). Used on Shop the Edit and Shop Now. */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 35%, rgb(255 255 255 / 0.22) 50%, transparent 65%) no-repeat;
+  background-size: 250% 100%;
+  background-position: 130% 0;
+  pointer-events: none;
+  animation: btn-shimmer 4s ease-in-out 3s infinite;
+}
+@keyframes btn-shimmer {
+  0% {
+    background-position: 130% 0;
+  }
+  25%,
+  100% {
+    background-position: -30% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-shimmer::after {
+    animation: none;
+  }
+}
+
+/* Hero over a photo: plum overlays (the logo colour) keep light type readable.
+   A vignette sits behind the headline; the top and bottom edges deepen. */
+.hero-photo-overlay {
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 48%, rgb(25 14 20 / 0.42), rgb(25 14 20 / 0) 72%),
+    linear-gradient(180deg, rgb(25 14 20 / 0.62) 0%, rgb(25 14 20 / 0.3) 38%, rgb(25 14 20 / 0.34) 62%, rgb(25 14 20 / 0.7) 100%);
+}
+/* The "Discover the Collection" pill in light outline on the photo. */
+.hero-photo .cursor-cta {
+  border-color: rgb(243 244 239 / 0.85);
+  color: #f3f4ef;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  background: rgb(25 14 20 / 0.18);
+}
+.hero-photo .cursor-cta::before {
+  background: radial-gradient(160px circle at var(--cta-x, 50%) var(--cta-y, 50%), rgb(243 244 239 / 0.14), transparent 70%);
+}
+.hero-photo .cursor-cta:focus-visible {
+  outline-color: #f3f4ef;
 }

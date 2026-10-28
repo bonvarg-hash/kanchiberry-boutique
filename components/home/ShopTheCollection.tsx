@@ -8,7 +8,7 @@ import { Reveal } from "@/components/Reveal";
 function Card({ p }: { p: Product }) {
   const off = p.compareAtPrice && p.compareAtPrice > p.price ? Math.round((1 - p.price / p.compareAtPrice) * 100) : 0;
   return (
-    <article className="shop-card group flex h-full flex-col border border-sand bg-paper p-4 transition-shadow duration-500 hover:shadow-[0_24px_40px_-24px_rgba(25,14,20,0.35)]">
+    <article className="shop-card group flex h-full flex-col border border-sand bg-[#F3F4EF] p-4 transition-shadow duration-500 hover:shadow-[0_24px_40px_-24px_rgba(25,14,20,0.35)]">
       <Link href={`/sarees/${p.slug}`} className="relative block overflow-hidden bg-sand-soft" tabIndex={-1} aria-hidden>
         {off > 0 && (
           <span className="absolute left-0 top-4 z-10 bg-[#190E14] px-3 py-1.5 text-[12px] font-medium uppercase tracking-[0.14em] text-[#EEE9E0]">
