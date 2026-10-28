@@ -18,7 +18,6 @@ import {
   type Occasion,
   type Who,
 } from "@/lib/gifting";
-import { ProductGallery } from "@/components/product/ProductGallery";
 
 const MAX_NOTE = 220;
 
@@ -137,9 +136,13 @@ export function GiftForm({ product: p, onDone, compact = false }: { product: Pro
             {PACKAGING.map((o) => (
               <label key={o.id} className="gift-choice">
                 <input type="radio" name={`${uid}-packaging`} className="sr-only" checked={gift.packaging === o.id} onChange={() => set("packaging", o.id)} />
-                <span className="block h-20 bg-[#F3F4EF] p-2">
-                  <PackagingArt kind={o.id} />
-                </span>
+                {o.id === "signature" ? (
+                  <img src="/photos/gift-box.jpg" alt="" className="block h-20 w-full object-cover object-[30%_45%]" loading="lazy" />
+                ) : (
+                  <span className="block h-20 bg-[#F3F4EF] p-2">
+                    <PackagingArt kind={o.id} />
+                  </span>
+                )}
                 <span className="mt-3 flex items-baseline justify-between gap-2">
                   <span className="text-[15px]">{o.label}</span>
                   <span className="shrink-0 text-[14px] tabular-nums">{o.price ? `+ ${formatPrice(o.price)}` : "Included"}</span>
@@ -153,7 +156,7 @@ export function GiftForm({ product: p, onDone, compact = false }: { product: Pro
               </label>
             ))}
           </div>
-          <p className="mt-2 text-[12px] text-ink-soft">Packaging shown as illustrations; photographs to follow.</p>
+          <p className="mt-2 text-[12px] text-ink-soft">Classic packaging shown as an illustration; photograph to follow.</p>
         </fieldset>
 
         {/* 2. Personal note */}
@@ -256,9 +259,14 @@ export function GiftForm({ product: p, onDone, compact = false }: { product: Pro
 export function GiftCustomizer({ product: p, onDone }: { product: Product; onDone?: () => void }) {
   return (
     <div className="wrap grid gap-10 pb-6 pt-4 md:pt-6 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
-      <div className="min-w-0 lg:sticky lg:top-6 lg:self-start">
-        <ProductGallery images={p.images} name={p.name} />
-      </div>
+      {/* The gift as it arrives: a saree in the Signature Gift Box with a printed card. */}
+      <figure className="min-w-0 max-md:-mx-(--wrap-pad) lg:sticky lg:top-6 lg:self-start">
+        <img
+          src="/photos/gift-box.jpg"
+          alt="A folded silk saree in a black Kanchiberry gift box tied with a wine-coloured ribbon and a printed message card"
+          className="aspect-[4/3] w-full object-cover object-[35%_50%] lg:aspect-[4/5]"
+        />
+      </figure>
 
       <div className="min-w-0">
         <p className="eyebrow">Your gift</p>

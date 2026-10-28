@@ -24,9 +24,9 @@ const PROMISES = [
 export default function GiftingPage() {
   return (
     <div className="pb-24 max-md:pb-16">
-      {/* Editorial hero: copy on the left, a large photograph on the right (stacked on phones). */}
+      {/* Editorial hero: copy on the left, a large photograph on the right (on phones the photo follows the buttons). */}
       <section aria-labelledby="gift-title" className="wrap grid items-center gap-10 pt-14 max-md:gap-8 max-md:pt-8 md:grid-cols-[1.05fr_1fr] lg:gap-20 lg:pt-20">
-        <div className="max-md:order-2">
+        <div>
           <p className="eyebrow">Gifting</p>
           <h1 id="gift-title" className="mt-4 text-[clamp(2.6rem,6.4vw,6rem)] leading-[0.95] tracking-[-0.015em] max-md:mt-3 max-md:text-[42px]" style={{ fontFamily: "var(--font-title)" }}>
             Make her day, <em className="shimmer text-[#87264D]">beautifully.</em>
@@ -44,7 +44,7 @@ export default function GiftingPage() {
           </div>
           <p className="mt-6 text-[13px] text-ink-soft">Five quick questions. About a minute.</p>
         </div>
-        <figure className="relative max-md:order-1 max-md:-mx-(--wrap-pad)">
+        <figure className="relative max-md:-mx-(--wrap-pad)">
           <img src="/photos/kb-11.jpg" alt="A woman in a violet and rose silk saree, smiling at a brass hand mirror" className="aspect-[4/5] w-full object-cover md:max-h-[78vh]" fetchPriority="high" />
         </figure>
       </section>
