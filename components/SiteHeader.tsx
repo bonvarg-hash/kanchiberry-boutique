@@ -63,6 +63,23 @@ export function SiteHeader() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Phone tab bar: shrinks to 70% while the page is scrolled down (reading) and
+  // returns to full size on scrolling back up or near the top.
+  const [compactBar, setCompactBar] = useState(false);
+  useEffect(() => {
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (y < 40) setCompactBar(false);
+      else if (y - last > 6) setCompactBar(true);
+      else if (last - y > 6) setCompactBar(false);
+      else return;
+      last = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   useEffect(() => {
     if (!lastAdded) return;
     setBump(true);
@@ -223,7 +240,7 @@ export function SiteHeader() {
       </dialog>
 
       {/* Phones: a black bar of tabs; the current one is light, with its label (styles: .tab-bar). */}
-      <nav aria-label="Shortcuts" className="tab-bar md:hidden">
+      <nav aria-label="Shortcuts" className="tab-bar md:hidden" data-compact={compactBar || undefined}>
         <Link href="/" className="tab-bar-item" data-active={tabIndex === 0 || undefined} aria-current={pathname === "/" ? "page" : undefined} onClick={() => setPendingTab(0)}>
           <span className="tab-bar-icon">
             <TabHome />
