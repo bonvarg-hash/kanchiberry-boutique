@@ -17,7 +17,7 @@ export default function CollectionsPage() {
   return (
     <div className="wrap pb-24 pt-14 max-md:pb-16 max-md:pt-8 lg:pt-20">
       <p className="eyebrow">Collections</p>
-      <h1 className="serif mt-4 text-[clamp(3rem,8vw,7rem)] max-md:mt-3 font-light leading-[0.9]">Edits & Weaves</h1>
+      <h1 className="serif mt-4 text-[clamp(3rem,8vw,7rem)] max-md:mt-3 font-light leading-[0.9] md:text-[clamp(3.2rem,9vw,8.5rem)] md:leading-[0.88]">Edits & Weaves</h1>
 
       <section aria-labelledby="edits" className="mt-16 max-md:mt-10">
         <h2 id="edits" className="eyebrow mb-8 max-md:mb-4">

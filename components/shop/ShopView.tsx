@@ -119,8 +119,8 @@ export function ShopView() {
           </ol>
         </nav>
         {singleWeave && <p className="eyebrow mt-6 max-md:mt-2 md:mt-10 lg:mt-14">{singleWeave.region}</p>}
-        {/* Same type as the Wishlist and Shopping Bag titles. */}
-        <h1 className={`font-sans text-[clamp(3rem,7vw,6rem)] font-normal leading-[0.9] max-md:text-[42px] ${singleWeave ? "mt-3 md:mt-4" : "mt-6 max-md:mt-2 md:mt-10 lg:mt-14"}`}>
+        {/* Phones: same type as the Wishlist and Shopping Bag titles. Desktop: the serif hero title used on The Art of Weaving. */}
+        <h1 className={`font-sans text-[clamp(3rem,7vw,6rem)] font-normal leading-[0.9] max-md:text-[42px] md:[font-family:var(--font-title)] md:text-[clamp(3.2rem,9vw,8.5rem)] md:font-normal md:leading-[0.88] md:tracking-[-0.015em] ${singleWeave ? "mt-3 md:mt-4" : "mt-6 max-md:mt-2 md:mt-10 lg:mt-14"}`}>
           {singleWeave ? singleWeave.name : q ? "Search" : "All Collections"}
         </h1>
         {/* Phones: the standard one-line description under the title (see PageHeader). */}
