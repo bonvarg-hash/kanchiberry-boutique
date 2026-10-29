@@ -251,6 +251,9 @@ export interface GiftDetails {
   sendToRecipient: boolean;
   occasion?: Occasion | null;
   who?: Who | null;
+  /** Chosen in the 3D gift studio. */
+  ribbon?: string;
+  cardDesign?: string;
 }
 
 export const packagingPrice = (g?: GiftDetails) => (g ? (PACKAGING.find((x) => x.id === g.packaging)?.price ?? 0) : 0);

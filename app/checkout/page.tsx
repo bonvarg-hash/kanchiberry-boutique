@@ -72,6 +72,7 @@ export default function CheckoutPage() {
                           <dt className="text-ink-soft">Packaging</dt>
                           <dd>
                             {pack.label} {pack.price ? `(+ ${formatPrice(pack.price)})` : "(included)"}
+                            {gift!.ribbon && <span className="block text-ink-soft">{gift!.ribbon} ribbon{gift!.cardDesign ? `, ${gift!.cardDesign} card` : ""}</span>}
                           </dd>
                         </div>
                         <div>

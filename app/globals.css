@@ -2867,3 +2867,214 @@ details.acc[open] .acc-icon {
     animation: none;
   }
 }
+
+/* ---------- Gift studio (/gifting) ---------- */
+.studio-bg {
+  background: linear-gradient(180deg, #f6f1ea 0%, #f6f1ea 55%, #efe5d4 100%);
+  color: #24170f;
+}
+.studio-cta {
+  display: inline-flex;
+  min-height: 56px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 32px;
+  background: #190e14;
+  color: #f6f1ea;
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: transform 0.25s var(--ease-cloth), box-shadow 0.25s, opacity 0.2s;
+}
+.studio-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -14px rgb(25 14 20 / 0.6);
+}
+.studio-cta:active {
+  transform: translateY(0) scale(0.99);
+}
+.studio-cta:disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+.studio-cta:focus-visible,
+.studio-option:focus-visible,
+.studio-round:focus-visible,
+.studio-choice:focus-visible,
+.studio-swatch:focus-visible,
+.studio-cardchip:focus-visible {
+  outline: 2px solid #87264d;
+  outline-offset: 3px;
+}
+.studio-in {
+  animation: studio-in 0.6s var(--ease-cloth) both;
+}
+@keyframes studio-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+.studio-option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  padding: 22px 16px;
+  background: #fffdf9;
+  border: 1px solid #eadfcd;
+  box-shadow: 0 1px 0 rgb(0 0 0 / 0.02);
+  animation: studio-in 0.55s var(--ease-cloth) both;
+  transition: transform 0.35s var(--ease-cloth), box-shadow 0.35s, border-color 0.25s;
+}
+.studio-option:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 40px -26px rgb(60 30 20 / 0.45);
+}
+.studio-option:active {
+  transform: scale(0.98);
+}
+.studio-option[aria-checked="true"] {
+  border-color: #87264d;
+  box-shadow: 0 0 0 1px #87264d, 0 22px 40px -26px rgb(135 38 77 / 0.5);
+}
+.studio-card-img {
+  transition: transform 0.8s var(--ease-cloth);
+}
+.studio-option:hover .studio-card-img {
+  transform: scale(1.05);
+}
+.studio-orb {
+  box-shadow: inset -8px -10px 18px rgb(0 0 0 / 0.25), inset 6px 8px 14px rgb(255 255 255 / 0.3), 0 14px 26px -14px rgb(0 0 0 / 0.5);
+  transition: transform 0.6s var(--ease-cloth);
+}
+.studio-option:hover .studio-orb,
+.studio-option:hover .studio-icon {
+  transform: scale(1.08) rotate(-4deg);
+}
+.studio-icon {
+  transition: transform 0.5s var(--ease-cloth);
+}
+.studio-box {
+  display: block;
+  background: linear-gradient(180deg, #2b1f25, #190e14);
+  border-top: 4px solid #87264d;
+  box-shadow: 0 8px 14px -8px rgb(0 0 0 / 0.5);
+}
+.studio-check {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: #87264d;
+  color: #fff;
+}
+.studio-panel {
+  background: rgb(255 253 249 / 0.92);
+  border: 1px solid #eadfcd;
+  box-shadow: 0 30px 60px -40px rgb(60 30 20 / 0.5);
+  backdrop-filter: blur(8px);
+}
+.studio-round {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid #d8ccb9;
+  transition: background 0.2s, border-color 0.2s;
+}
+.studio-round:hover {
+  background: #190e14;
+  border-color: #190e14;
+  color: #f6f1ea;
+}
+.studio-choice {
+  min-height: 64px;
+  padding: 12px 14px;
+  border: 1px solid #e2d6c3;
+  background: #fffdf9;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.studio-choice[aria-pressed="true"] {
+  border-color: #87264d;
+  box-shadow: 0 0 0 1px #87264d;
+}
+.studio-swatch {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.15);
+  transition: transform 0.2s;
+}
+.studio-swatch:hover {
+  transform: scale(1.08);
+}
+.studio-swatch[aria-pressed="true"] {
+  box-shadow: 0 0 0 2px #f6f1ea, 0 0 0 4px #87264d;
+}
+.studio-cardchip {
+  width: 56px;
+  height: 40px;
+  border: 1px solid;
+  font-family: var(--font-title);
+  font-style: italic;
+  font-size: 16px;
+}
+.studio-cardchip[aria-pressed="true"] {
+  box-shadow: 0 0 0 2px #f6f1ea, 0 0 0 4px #87264d;
+}
+.studio-input {
+  display: block;
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 14px;
+  background: #fffdf9;
+  border: 1px solid #e2d6c3;
+  font-size: 16px;
+  color: #24170f;
+}
+.studio-input:focus {
+  outline: none;
+  border-color: #87264d;
+}
+.studio-input[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+.studio-loader {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 2px solid #e2d6c3;
+  border-top-color: #87264d;
+  animation: spin-slow 0.9s linear infinite;
+}
+.studio-pulse {
+  animation: studio-pulse 2.2s ease-in-out infinite;
+}
+@keyframes studio-pulse {
+  50% {
+    transform: scale(1.05);
+    opacity: 0.85;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .studio-in,
+  .studio-option,
+  .studio-pulse {
+    animation: none;
+  }
+  .studio-option,
+  .studio-cta,
+  .studio-card-img,
+  .studio-orb,
+  .studio-icon {
+    transition: none;
+  }
+}

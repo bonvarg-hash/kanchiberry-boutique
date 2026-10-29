@@ -43,7 +43,7 @@ export default function GiftConfirmedPage() {
           </span>
           <p className="empty-state-title">No gift order yet</p>
           <p className="empty-state-text">When you complete a gift, its details will appear here.</p>
-          <Link href="/gifting/find" className="btn btn-primary mt-7">
+          <Link href="/gifting" className="btn btn-primary mt-7">
             Find the Perfect Gift
           </Link>
         </div>
@@ -119,7 +119,7 @@ export default function GiftConfirmedPage() {
       </section>
 
       <div className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-3">
-        <Link href="/gifting/find" className="btn btn-primary">
+        <Link href="/gifting" className="btn btn-primary">
           Send Another Gift
         </Link>
         <Link href="/shop" className="text-link">
